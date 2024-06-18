@@ -1,5 +1,5 @@
 <template>
-  <el-container class="layout-container-demo">
+  <el-container class="layout-container">
     <el-aside><Sidebar></Sidebar></el-aside>
     <el-container>
       <el-header style="text-align: right" height="80px"
@@ -14,27 +14,27 @@
 </template>
 
 <style scoped>
-.layout-container-demo {
+.layout-container {
   height: 100vh;
 }
-.layout-container-demo .el-header {
+.layout-container .el-header {
   position: relative;
   background-color: var(--el-color-primary-light-7);
   color: var(--el-text-color-primary);
 }
-.layout-container-demo .el-aside {
+.layout-container .el-aside {
   color: var(--el-text-color-primary);
 
   /* background: var(--el-color-primary-light-8); */
 }
-.layout-container-demo .el-menu {
+.layout-container .el-menu {
   border-right: none;
 }
-.layout-container-demo .el-main {
+.layout-container .el-main {
   padding: 0;
   margin: 20px;
 }
-.layout-container-demo .toolbar {
+.layout-container .toolbar {
   display: inline-flex;
   align-items: center;
   justify-content: center;

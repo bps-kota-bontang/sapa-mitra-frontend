@@ -1,8 +1,5 @@
 import { login } from '@/api/authApi'
 import { defineStore } from 'pinia'
-import { useRouter } from 'vue-router'
-
-const router = useRouter();
 
 export const useUserStore = defineStore({
     id: 'user',
@@ -34,7 +31,7 @@ export const useUserStore = defineStore({
             this.router.push({ "name": "login" })
         },
 
-        async login(payload: string) {
+        async login(payload: any) {
             const result = await login(payload);
 
             if (result.data) {
