@@ -54,7 +54,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const user = useUserStore();
-  console.log("Status:", user.isLogin)
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.

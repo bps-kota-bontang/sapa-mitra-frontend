@@ -77,7 +77,6 @@ const submit = async (formEl: FormInstance | undefined) => {
 
     if (!valid) {
       loading.value = false;
-      console.log("error!");
       return;
     }
 
