@@ -59,7 +59,11 @@
               <el-table-column label="Aksi">
                 <template #default="scope">
                   <el-button
-                    v-if="scope.row.status == 'UNVERIFIED'"
+                    v-if="
+                      scope.row.status == 'UNVERIFIED' &&
+                      user.position == 'KETUA' &&
+                      user.team == scope.row.createdBy
+                    "
                     size="small"
                     type="primary"
                     @click="handleVerifyActivity(props.row._id, scope.row._id)"
@@ -178,7 +182,9 @@ import {
   deleteContractActivity,
 } from "@/api/contractApi";
 import { formatDate } from "@/utils/date";
+import { useUserStore } from "@/stores/user";
 
+const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
