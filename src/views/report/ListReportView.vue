@@ -19,7 +19,11 @@
       </div>
 
       <div style="display: flex; align-items: center">
-        <el-button size="large" round @click="print()"
+        <el-button
+          size="large"
+          round
+          @click="print()"
+          v-if="['TU'].includes(user.team)"
           ><el-icon :size="20" style="margin-right: 8px"><Printer /></el-icon
           >Cetak</el-button
         >
@@ -33,14 +37,14 @@
     <el-divider />
     <el-table
       :default-expand-all="expand"
-      ref="contractsTableRef"
+      ref="reportsTableRef"
       v-loading="loading"
       :data="filterReports"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"
     >
-      <el-table-column type="selection" />
+      <el-table-column type="selection" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
         <template #default="props">
           <div class="container-activity">
@@ -94,12 +98,14 @@
         <template #default="scope">
           <el-button
             size="small"
+            v-if="['TU'].includes(user.team)"
             type="primary"
             @click="handlePrint(scope.$index, scope.row)"
           >
             Cetak
           </el-button>
           <el-button
+            v-if="['TU'].includes(user.team)"
             size="small"
             type="danger"
             @click="handleDeleteReport(scope.row._id)"
@@ -110,7 +116,9 @@
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
-      <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+      <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)"
+        >Bersihkan Pilihan</el-button
+      >
       <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
       <el-button @click="expandData()">Tampilkan Rincian</el-button>
     </div>
@@ -123,7 +131,9 @@ import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
 import { getReports, deleteReport, deleteReportOutput } from "@/api/reportApi";
 import { formatDate } from "@/utils/date";
+import { useUserStore } from "@/stores/user";
 
+const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -144,55 +154,10 @@ const filterReports = computed(() => {
   );
 });
 
-// const sortTotal = (row: any, index: number) => {
-//   return row.grandTotal;
-// };
 
 const sortOutput = (row: any, index: number) => {
   return row.outputs.length;
 };
-
-// const sortStatus = (row: any, index: number) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   if (countVerified == totalActivities) {
-//     return 2;
-//   } else if (countVerified == 0) {
-//     return 0;
-//   } else {
-//     return 1;
-//   }
-// };
-
-// const teams = [
-//   {
-//     value: "SOSIAL",
-//     text: "SOSIAL",
-//   },
-//   {
-//     value: "PRODUKSI",
-//     text: "PRODUKSI",
-//   },
-//   {
-//     value: "DISTRIBUSI",
-//     text: "DISTRIBUSI",
-//   },
-//   {
-//     value: "NERWILIS",
-//     text: "NERWILIS",
-//   },
-//   {
-//     value: "IPDS",
-//     text: "IPDS",
-//   },
-//   {
-//     value: "TU",
-//     text: "TU",
-//   },
-// ];
 
 const options = [
   {
@@ -249,97 +214,13 @@ const filterPeriod = (value: string, row: any) => {
   return row.contract.period === value;
 };
 
-// const filterTeam = (value: string, row: any) => {
-//   const teams = row.activities.map((item: any) => item.createdBy);
-
-//   return [...new Set(teams)].includes(value);
-// };
-
-// const filterStatus = (value: string, row: any) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   let result;
-
-//   if (countVerified == totalActivities) {
-//     result = "Lengkap";
-//   } else if (countVerified == 0) {
-//     result = "Belum";
-//   } else {
-//     result = "Sebagian";
-//   }
-
-//   return result === value;
-// };
-
 const createReport = () => {
   router.push({ name: "createReport" });
 };
 
-// const statusType = (row: any) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   if (countVerified == totalActivities) {
-//     return "success";
-//   } else if (countVerified == 0) {
-//     return "danger";
-//   } else {
-//     return "warning";
-//   }
-// };
-
-// const statusText = (row: any) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   if (countVerified == totalActivities) {
-//     return "Lengkap";
-//   } else if (countVerified == 0) {
-//     return "Belum";
-//   } else {
-//     return "Sebagian";
-//   }
-// };
-
-// const totalFormatter = (row: any) => {
-//   return `Rp ${row.grandTotal}`;
-// };
-
-// const teamFormatter = (row: any): any[] => {
-//   const teams = row.activities.map((item: any) => item.createdBy);
-
-//   return [...new Set(teams)];
-// };
-
 const outputFormatter = (row: any) => {
   return `${row.outputs.length} Ouput`;
 };
-
-// const dateFormatter = (row: any) => {
-//   return `${formatDate(row.startDate)} - ${formatDate(row.endDate)}`;
-// };
-
-// const contractStatus = ({ row, rowIndex }: { row: any; rowIndex: number }) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   if (countVerified == totalActivities) {
-//     return "success-row";
-//   } else if (countVerified == 0) {
-//     return "danger-row";
-//   } else {
-//     return "warning-row";
-//   }
-// };
 
 const executeOperation = async (operation: () => Promise<void>) => {
   try {
@@ -363,15 +244,6 @@ const handleDeleteReport = (id: string) => {
 const handlePrint = (index: number, row: any) => {
   console.log(index, row);
 };
-
-// const isSelecetable = (row: any, index: number) => {
-//   const totalActivities = row.activities.length;
-//   const countVerified = row.activities.filter(
-//     (item: any) => item.status === "VERIFIED"
-//   ).length;
-
-//   return countVerified == totalActivities;
-// };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {
   if (period == undefined) {

@@ -5,26 +5,26 @@ export const useUserStore = defineStore({
     id: 'user',
     state: () => {
         return {
-            id: null,
-            name: null,
-            nip: null,
-            email: null,
-            team: null,
-            position: null,
-            token: null,
+            id: '',
+            name: '',
+            nip: '',
+            email: '',
+            team: '',
+            position: '',
+            token: '',
             isLogin: false,
         }
     },
     actions: {
         logout() {
             this.$patch({
-                id: null,
-                name: null,
-                nip: null,
-                email: null,
-                team: null,
-                position: null,
-                token: null,
+                id: '',
+                name: '',
+                nip: '',
+                email: '',
+                team: '',
+                position: '',
+                token: '',
                 isLogin: false,
             });
 

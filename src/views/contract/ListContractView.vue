@@ -19,11 +19,20 @@
       </div>
 
       <div style="display: flex; align-items: center">
-        <el-button size="large" round @click="print()"
+        <el-button
+          size="large"
+          round
+          @click="print()"
+          v-if="['TU'].includes(user.team)"
           ><el-icon :size="20" style="margin-right: 8px"><Printer /></el-icon
           >Cetak</el-button
         >
-        <el-button type="primary" size="large" round @click="createContract()"
+        <el-button
+          type="primary"
+          size="large"
+          round
+          @click="createContract()"
+          v-if="['ANGGOTA'].includes(user.position)"
           ><el-icon :size="20" style="margin-right: 8px"><Plus /></el-icon
           >Buat</el-button
         >
@@ -41,7 +50,11 @@
       style="width: 100%"
       @selection-change="handleSelection"
     >
-      <el-table-column type="selection" :selectable="isSelecetable" />
+      <el-table-column
+        type="selection"
+        :selectable="isSelecetable"
+        v-if="['TU'].includes(user.team)"
+      />
       <el-table-column type="expand">
         <template #default="props">
           <div class="container-activity">
@@ -70,6 +83,7 @@
                     Verifikasi
                   </el-button>
                   <el-button
+                    v-if="user.team == scope.row.createdBy"
                     size="small"
                     type="danger"
                     @click="handleDeleteActivity(props.row._id, scope.row._id)"
@@ -102,6 +116,7 @@
       <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam">
         <template #default="scope">
           <el-tag
+            v-if="!teamFormatter(scope.row).includes('-')"
             style="margin-right: 5px"
             type="primary"
             v-for="item in teamFormatter(scope.row)"
@@ -109,6 +124,7 @@
             :key="item"
             >{{ item }}</el-tag
           >
+          <el-text v-else>-</el-text>
         </template>
       </el-table-column>
 
@@ -147,12 +163,14 @@
         <template #default="scope">
           <el-button
             size="small"
+            v-if="['TU'].includes(user.team)"
             type="primary"
             @click="handlePrint(scope.$index, scope.row)"
           >
             Cetak
           </el-button>
           <el-button
+            v-if="['TU'].includes(user.team)"
             size="small"
             type="danger"
             @click="handleDeleteContract(scope.row._id)"
@@ -163,7 +181,9 @@
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
-      <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+      <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)"
+        >Bersihkan Pilihan</el-button
+      >
       <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
       <el-button @click="expandData()">Tampilkan Rincian</el-button>
     </div>
@@ -218,7 +238,9 @@ const sortStatus = (row: any, index: number) => {
     (item: any) => item.status === "VERIFIED"
   ).length;
 
-  if (countVerified == totalActivities) {
+  if (totalActivities == 0) {
+    return 0;
+  } else if (countVerified == totalActivities) {
     return 2;
   } else if (countVerified == 0) {
     return 0;
@@ -323,7 +345,9 @@ const filterStatus = (value: string, row: any) => {
 
   let result;
 
-  if (countVerified == totalActivities) {
+  if (totalActivities == 0) {
+    result = "Belum";
+  } else if (countVerified == totalActivities) {
     result = "Lengkap";
   } else if (countVerified == 0) {
     result = "Belum";
@@ -344,7 +368,9 @@ const statusType = (row: any) => {
     (item: any) => item.status === "VERIFIED"
   ).length;
 
-  if (countVerified == totalActivities) {
+  if (totalActivities == 0) {
+    return "danger";
+  } else if (countVerified == totalActivities) {
     return "success";
   } else if (countVerified == 0) {
     return "danger";
@@ -359,7 +385,9 @@ const statusText = (row: any) => {
     (item: any) => item.status === "VERIFIED"
   ).length;
 
-  if (countVerified == totalActivities) {
+  if (totalActivities == 0) {
+    return "Belum";
+  } else if (countVerified == totalActivities) {
     return "Lengkap";
   } else if (countVerified == 0) {
     return "Belum";
@@ -374,6 +402,10 @@ const totalFormatter = (row: any) => {
 
 const teamFormatter = (row: any): any[] => {
   const teams = row.activities.map((item: any) => item.createdBy);
+
+  if (teams.length == 0) {
+    return [...new Set(["-"])];
+  }
 
   return [...new Set(teams)];
 };
@@ -392,7 +424,9 @@ const contractStatus = ({ row, rowIndex }: { row: any; rowIndex: number }) => {
     (item: any) => item.status === "VERIFIED"
   ).length;
 
-  if (countVerified == totalActivities) {
+  if (totalActivities == 0) {
+    return "danger-row";
+  } else if (countVerified == totalActivities) {
     return "success-row";
   } else if (countVerified == 0) {
     return "danger-row";

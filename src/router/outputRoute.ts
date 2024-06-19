@@ -4,21 +4,22 @@ import AddOutputView from '@/views/output/AddOutputView.vue';
 const outputRoutes = [
     {
         path: '/output',
-        name: 'listOutput',
-        component: ListOutputView,
         meta: {
             layout: 'LayoutDashboard',
             requiresAuth: true
-        }
-    },
-    {
-        path: '/output/tambah',
-        name: 'addOutput',
-        component: AddOutputView,
-        meta: {
-            layout: 'LayoutDashboard',
-            requiresAuth: true
-        }
+        },
+        children: [
+            {
+                path: '',
+                name: 'listOutput',
+                component: ListOutputView,
+            },
+            {
+                path: 'tambah',
+                name: 'addOutput',
+                component: AddOutputView,
+            }
+        ]
     }
 ];
 

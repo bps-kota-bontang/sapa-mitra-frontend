@@ -7,6 +7,7 @@ import activityRoutes from '@/router/activityRoute'
 import outputRoutes from '@/router/outputRoute'
 import partnerRoutes from '@/router/partnerRoute'
 import userRoutes from '@/router/userRoute'
+import errorHandlingRoutes from '@/router/errorHandlingRoute'
 import ConfigurationView from '@/views/ConfigurationView.vue';
 import DashboardView from '@/views/DashboardView.vue'
 import LandingView from '@/views/LandingView.vue';
@@ -31,7 +32,12 @@ const router = createRouter({
       meta: {
         layout: 'LayoutDashboard',
         requiresAuth: true
-      }
+      },
+      beforeEnter: (to, from, next) => {
+        const user = useUserStore();
+        if (!["TU"].includes(user.team)) next({ "name": "unauthorized" })
+        else next();
+      },
     },
     {
       path: '/',
@@ -45,6 +51,7 @@ const router = createRouter({
     ...outputRoutes,
     ...partnerRoutes,
     ...userRoutes,
+    ...errorHandlingRoutes
   ]
 })
 
