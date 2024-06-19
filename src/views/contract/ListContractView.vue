@@ -142,13 +142,10 @@
           />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
-            Edit
-          </el-button>
           <el-button
             size="small"
             type="primary"
-            @click="handleEdit(scope.$index, scope.row)"
+            @click="handlePrint(scope.$index, scope.row)"
           >
             Cetak
           </el-button>
@@ -422,7 +419,7 @@ const handleDeleteContract = (id: string) => {
   executeOperation(() => deleteContract(id));
 };
 
-const handleEdit = (index: number, row: any) => {
+const handlePrint = (index: number, row: any) => {
   console.log(index, row);
 };
 
