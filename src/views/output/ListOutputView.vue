@@ -15,7 +15,6 @@
       ref="outputsTableRef"
       v-loading="loading"
       :data="filterOutputs"
-      height="850px"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"

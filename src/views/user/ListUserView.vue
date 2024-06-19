@@ -10,7 +10,6 @@
       ref="usersTableRef"
       v-loading="loading"
       :data="filterUsers"
-      height="850px"
       row-key="_id"
       style="width: 100%"
     >

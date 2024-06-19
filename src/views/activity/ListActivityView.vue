@@ -15,7 +15,6 @@
       ref="activitiesTableRef"
       v-loading="loading"
       :data="filterActivities"
-      height="850px"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"

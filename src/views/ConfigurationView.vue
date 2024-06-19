@@ -1,6 +1,5 @@
 <template>
   <el-card
-    shadow="never"
     style="
       width: 480px;
       padding-left: 20px;

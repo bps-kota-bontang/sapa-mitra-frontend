@@ -36,7 +36,6 @@
       ref="contractsTableRef"
       v-loading="loading"
       :data="filterReports"
-      height="850px"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"

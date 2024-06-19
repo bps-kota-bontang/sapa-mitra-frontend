@@ -15,7 +15,6 @@
       ref="partnersTableRef"
       v-loading="loading"
       :data="filterPartners"
-      height="850px"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"

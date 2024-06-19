@@ -5,33 +5,41 @@
       <el-header style="text-align: right" height="80px"
         ><Header></Header
       ></el-header>
-      <el-main>
-        <el-scrollbar><RouterView /></el-scrollbar
-      ></el-main>
-      <el-footer>Footer</el-footer>
+      <el-main><RouterView /></el-main>
+      <el-footer><Footer></Footer></el-footer>
     </el-container>
   </el-container>
 </template>
 
 <style scoped>
 .layout-container {
-  height: 100vh;
+  min-height: 100vh;
+  background-color: #f4f6fa;
 }
 .layout-container .el-header {
-  position: relative;
+  background-color: var(--el-color-primary-light-7);
+}
+
+.layout-container .el-footer {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   background-color: var(--el-color-primary-light-7);
   color: var(--el-text-color-primary);
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
 }
 .layout-container .el-aside {
   color: var(--el-text-color-primary);
+  background: white;
+}
 
-  /* background: var(--el-color-primary-light-8); */
-}
-.layout-container .el-menu {
-  border-right: none;
-}
 .layout-container .el-main {
-  padding: 0;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: white;
   margin: 20px;
 }
 .layout-container .toolbar {

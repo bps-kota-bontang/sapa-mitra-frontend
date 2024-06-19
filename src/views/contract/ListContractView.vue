@@ -37,7 +37,6 @@
       v-loading="loading"
       :row-class-name="contractStatus"
       :data="filterContracts"
-      height="850px"
       row-key="_id"
       style="width: 100%"
       @selection-change="handleSelection"

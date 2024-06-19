@@ -159,9 +159,9 @@ watch(
 <style scoped>
 .container {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  height: 100vh; /* Full viewport height */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   background-color: var(
     --el-color-primary-light-5
   ); /* Example background color */
