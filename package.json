@@ -11,10 +11,12 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "chart.js": "^4.4.3",
     "element-plus": "^2.7.5",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "vue": "^3.4.21",
+    "vue-chartjs": "^5.3.1",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
