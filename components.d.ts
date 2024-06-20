@@ -48,6 +48,8 @@ declare module 'vue' {
     FormReportPartnerItem: typeof import('./src/components/report/FormReportPartnerItem.vue')['default']
     Header: typeof import('./src/components/header/Header.vue')['default']
     IconBPS: typeof import('./src/components/icons/IconBPS.vue')['default']
+    NoAccess: typeof import('./src/components/illustration/NoAccess.vue')['default']
+    NotFound: typeof import('./src/components/illustration/NotFound.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/sidebar/Sidebar.vue')['default']
