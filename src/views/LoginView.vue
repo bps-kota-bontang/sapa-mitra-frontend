@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 import { Delete, Edit, Search, Share, Upload } from "@element-plus/icons-vue";
 
 const initialState = {
@@ -99,7 +99,7 @@ const rules = reactive<FormRules<any>>({
 const formRef = ref<FormInstance>();
 const form = reactive({ ...initialState });
 
-const user = useUserStore();
+const auth = useAuthStore();
 const loading = ref(false);
 const error = ref("");
 const feedback = ref({
@@ -121,7 +121,7 @@ const login = async (formEl: FormInstance | undefined) => {
     }
 
     try {
-      const { data, message } = await user.login(form);
+      const { data, message } = await auth.login(form);
       feedback.value = {
         title: "Success",
         message: message,

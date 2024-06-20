@@ -1,8 +1,8 @@
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 import { BASE_URL } from "./api";
 
 export const createConfiguration = async (payload: any) => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const body = {
         name: "AUTHORITY",
@@ -12,7 +12,7 @@ export const createConfiguration = async (payload: any) => {
     const response = await fetch(`${BASE_URL}/v1/configurations/authority`, {
         method: "PUT",
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
@@ -28,11 +28,11 @@ export const createConfiguration = async (payload: any) => {
 };
 
 export const getAuthority = async () => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/configurations/authority`, {
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
         },
     });
 

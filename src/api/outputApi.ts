@@ -1,12 +1,12 @@
 import { BASE_URL } from "./api";
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 
 export const getOutputs = async () => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/outputs`, {
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
         }
     });
     const result = await response.json();
@@ -19,12 +19,12 @@ export const getOutputs = async () => {
 };
 
 export const deleteOutput = async (id: string) => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/outputs/${id}`, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
         }
     });
 
@@ -35,12 +35,12 @@ export const deleteOutput = async (id: string) => {
 };
 
 export const createOutput = async (payload: any) => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/outputs`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)

@@ -23,11 +23,13 @@
 <script lang="ts" setup>
 import { Setting } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 
 const user = useUserStore();
+const auth = useAuthStore();
 
 const handleCommand = (command: string | number | object) => {
-  if (command == "logout") user.logout();
+  if (command == "logout") auth.logout();
 };
 </script>
 

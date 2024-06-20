@@ -1,12 +1,12 @@
 import { BASE_URL } from "./api";
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 
 export const getPartners = async () => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/partners`, {
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
             "Content-Type": "application/json"
         },
     });
@@ -20,12 +20,12 @@ export const getPartners = async () => {
 };
 
 export const deletePartner = async (id: string) => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/partners/${id}`, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
         }
     });
 
@@ -36,12 +36,12 @@ export const deletePartner = async (id: string) => {
 };
 
 export const createPartner = async (payload: any) => {
-    const user = useUserStore();
+    const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/partners`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${user.token}`,
+            "Authorization": `Bearer ${auth.token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)

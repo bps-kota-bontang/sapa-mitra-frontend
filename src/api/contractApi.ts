@@ -1,8 +1,8 @@
 import { BASE_URL } from "./api";
-import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 
 export const getContracts = async (period: string) => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   const query: any = {}
   if (period) {
@@ -11,7 +11,7 @@ export const getContracts = async (period: string) => {
 
   const response = await fetch(`${BASE_URL}/v1/contracts?` + new URLSearchParams(query), {
     headers: {
-      "Authorization": `Bearer ${user.token}`,
+      "Authorization": `Bearer ${auth.token}`,
     }
   });
   const result = await response.json();
@@ -25,11 +25,11 @@ export const getContracts = async (period: string) => {
 
 
 export const getContractStatistic = async () => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/statistics`, {
     headers: {
-      "Authorization": `Bearer ${user.token}`,
+      "Authorization": `Bearer ${auth.token}`,
     }
   });
   const result = await response.json();
@@ -43,7 +43,7 @@ export const getContractStatistic = async () => {
 
 
 export const createContract = async (payload: any, by: string = "partner") => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   let query: any = {}
   if (by == "activity") {
@@ -53,7 +53,7 @@ export const createContract = async (payload: any, by: string = "partner") => {
   const response = await fetch(`${BASE_URL}/v1/contracts?` + new URLSearchParams(query), {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${user.token}`,
+      "Authorization": `Bearer ${auth.token}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify(payload)
@@ -69,12 +69,12 @@ export const createContract = async (payload: any, by: string = "partner") => {
 };
 
 export const deleteContract = async (id: string) => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/${id}`, {
     method: "DELETE",
     headers: {
-      "Authorization": `Bearer ${user.token}`
+      "Authorization": `Bearer ${auth.token}`
     }
   });
 
@@ -86,11 +86,11 @@ export const deleteContract = async (id: string) => {
 
 
 export const verifyContractActivity = async (id: string, activityId: string) => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/${id}/activity/${activityId}/verify`, {
     headers: {
-      "Authorization": `Bearer ${user.token}`
+      "Authorization": `Bearer ${auth.token}`
     }
   });
 
@@ -102,12 +102,12 @@ export const verifyContractActivity = async (id: string, activityId: string) => 
 };
 
 export const deleteContractActivity = async (id: string, activityId: string) => {
-  const user = useUserStore();
+  const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/${id}/activity/${activityId}`, {
     method: "DELETE",
     headers: {
-      "Authorization": `Bearer ${user.token}`
+      "Authorization": `Bearer ${auth.token}`
     }
   });
 

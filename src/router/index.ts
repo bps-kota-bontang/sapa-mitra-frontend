@@ -11,6 +11,7 @@ import errorHandlingRoutes from '@/router/errorHandlingRoute'
 import ConfigurationView from '@/views/ConfigurationView.vue';
 import DashboardView from '@/views/DashboardView.vue'
 import { useUserStore } from "@/stores/user";
+import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,25 +56,25 @@ const router = createRouter({
 
 
 
-router.beforeEach((to, from, next) => {
-  const user = useUserStore();
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore();
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    if (!user.isLogin) {
+    if (!auth.isLogin) {
       next({ name: 'login' })
     } else {
-      next() // go to wherever I'm going
+      const user = useUserStore();
+      await user.fetchProfile();
+      next()
     }
   } else {
     if (to.name == "login") {
-      if (user.isLogin) {
+      if (auth.isLogin) {
         next({ name: 'dashboard' })
       } else {
         next();
       }
     } else {
-      next() // does not require auth, make sure to always call next()!
+      next()
     }
 
   }

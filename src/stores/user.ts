@@ -1,4 +1,5 @@
-import { login } from '@/api/authApi'
+import { getProfile } from '@/api/userApi';
+import { da } from 'element-plus/es/locales.mjs';
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore({
@@ -11,46 +12,25 @@ export const useUserStore = defineStore({
             email: '',
             team: '',
             position: '',
-            token: '',
-            isLogin: false,
         }
     },
     actions: {
-        logout() {
-            this.$patch({
-                id: '',
-                name: '',
-                nip: '',
-                email: '',
-                team: '',
-                position: '',
-                token: '',
-                isLogin: false,
-            });
+        async fetchProfile() {
+            try {
+                const { data, message } = await getProfile();
 
-            this.router.push({ "name": "login" })
-        },
-
-        async login(payload: any) {
-            const result = await login(payload);
-
-            if (result.data) {
                 this.$patch({
-                    name: result.data.name,
-                    nip: result.data.nip,
-                    email: result.data.email,
-                    team: result.data.team,
-                    position: result.data.position,
-                    token: result.data.token,
-                    isLogin: true,
+                    id: data._id,
+                    name: data.name,
+                    nip: data.nip,
+                    email: data.email,
+                    team: data.team,
+                    position: data.position,
                 });
-
-                this.router.push({ "name": "dashboard" })
+            } catch (e) {
+                if (e instanceof Error) console.error(e.message)
             }
-
-            return result;
         }
-    },
-    persist: true,
+    }
 })
 
