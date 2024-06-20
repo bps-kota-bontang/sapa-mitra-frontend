@@ -9,7 +9,7 @@
     :router="true"
     :default-active="$route.path"
   >
-    <el-menu-item index="/dasbor"
+    <el-menu-item index="/"
       ><el-icon><House /></el-icon>Dasbor</el-menu-item
     >
     <el-sub-menu index="1">
