@@ -8,8 +8,7 @@
         />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="profile">Profil</el-dropdown-item>
-            <el-dropdown-item command="logout" divided>Logout</el-dropdown-item>
+            <el-dropdown-item command="logout">Logout</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
