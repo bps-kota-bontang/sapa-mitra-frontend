@@ -33,7 +33,7 @@
       <el-menu-item index="/kegiatan">Daftar Kegiatan</el-menu-item>
       <el-menu-item index="/kegiatan/tambah">Tambah Kegiatan</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="4">
+    <el-sub-menu index="4" v-if="['TU'].includes(user.team)">
       <template #title>
         <el-icon><Memo /></el-icon>Output
       </template>
