@@ -37,6 +37,7 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElText: typeof import('element-plus/es')['ElText']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     Footer: typeof import('./src/components/footer/Footer.vue')['default']
     FormContractActivityItem: typeof import('./src/components/contract/FormContractActivityItem.vue')['default']
     FormContractByActivity: typeof import('./src/components/contract/FormContractByActivity.vue')['default']

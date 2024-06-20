@@ -3,6 +3,20 @@
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center"></div>
       <div style="display: flex; align-items: center">
+        <el-upload
+          :action="uploadUrl"
+          :limit="1"
+          accept="text/csv"
+          :show-file-list="false"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          :headers="headers"
+        >
+          <el-button size="large" round
+            ><el-icon :size="20" style="margin-right: 8px"><Upload /></el-icon
+            >Upload</el-button
+          ></el-upload
+        >
         <el-button type="primary" size="large" round @click="addActivity()"
           ><el-icon :size="20" style="margin-right: 8px"><Plus /></el-icon
           >Tambah</el-button
@@ -57,11 +71,19 @@
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Printer, Plus } from "@element-plus/icons-vue";
+import { Printer, Plus, Upload } from "@element-plus/icons-vue";
 import { getActivities, deleteActivity } from "@/api/activityApi";
+import { useUserStore } from "@/stores/user";
+import { BASE_URL } from "@/api/api";
 
 const router = useRouter();
 const route = useRoute();
+const user = useUserStore();
+
+const headers = ref({
+  Authorization: `Bearer ${user.token}`,
+});
+const uploadUrl = ref(`${BASE_URL}/v1/activities/upload`);
 
 const activitiesTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
@@ -69,6 +91,34 @@ const loading = ref(false);
 const activities = ref<any[]>([]);
 const error = ref("");
 const activitiesSelected = ref<any[]>([]);
+
+const handleError = (
+  error: Error,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  const result = JSON.parse(error.message);
+
+  ElNotification({
+    title: "Error",
+    message: result.message,
+    type: "error",
+  });
+};
+
+const handleSuccess = async (
+  response: any,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  ElNotification({
+    title: "Success",
+    message: response.message,
+    type: "success",
+  });
+
+  await fetchData();
+};
 
 const filterActivities = computed(() => {
   return activities.value.filter(
@@ -117,7 +167,6 @@ const handleEdit = (index: number, row: any) => {
 
 const fetchData = async () => {
   loading.value = true;
-  activities.value = [];
   error.value = "";
 
   try {
