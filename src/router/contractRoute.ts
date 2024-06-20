@@ -15,11 +15,17 @@ const contractRoutes = [
                 path: '',
                 name: 'listContract',
                 component: ListContractView,
+                meta: {
+                    title: "Daftar SPK"
+                }
             },
             {
                 path: 'buat',
                 name: 'createContract',
                 component: CreateContractView,
+                meta: {
+                    title: "Buat SPK"
+                },
                 beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
                     const user = useUserStore();
                     if (!["ANGGOTA"].includes(user.position)) next({ "name": "unauthorized" })

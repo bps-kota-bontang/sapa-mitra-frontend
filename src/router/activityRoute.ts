@@ -19,12 +19,18 @@ const activityRoutes = [
             {
                 path: '',
                 name: 'listActivity',
-                component: ListActivityView
+                component: ListActivityView,
+                meta: {
+                    title: "Daftar Kegiatan"
+                }
             },
             {
                 path: 'tambah',
                 name: 'addActivity',
-                component: AddActivityView
+                component: AddActivityView,
+                meta: {
+                    title: "Tambah Kegiatan"
+                }
             }
         ]
     },

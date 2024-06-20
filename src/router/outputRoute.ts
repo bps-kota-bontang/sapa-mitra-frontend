@@ -13,12 +13,19 @@ const outputRoutes = [
                 path: '',
                 name: 'listOutput',
                 component: ListOutputView,
+                meta: {
+                    title: "Daftar Output"
+                }
             },
             {
                 path: 'tambah',
                 name: 'addOutput',
                 component: AddOutputView,
+                meta: {
+                    title: "Tambah Output"
+                }
             }
+
         ]
     }
 ];

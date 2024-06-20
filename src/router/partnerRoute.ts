@@ -20,12 +20,18 @@ const partnerRoutes = [
                 path: '',
                 name: 'listPartner',
                 component: ListPartnerView,
+                meta: {
+                    title: "Daftar Mitra"
+                }
 
             },
             {
                 path: 'tambah',
                 name: 'addPartner',
                 component: AddPartnerView,
+                meta: {
+                    title: "Tambah Mitra"
+                }
             }
         ]
     }

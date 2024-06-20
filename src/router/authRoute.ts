@@ -4,7 +4,10 @@ const authRoutes = [
     {
         path: '/masuk',
         name: 'login',
-        component: LoginView
+        component: LoginView,
+        meta: {
+            title: "Masuk",
+        }
     },
 ];
 

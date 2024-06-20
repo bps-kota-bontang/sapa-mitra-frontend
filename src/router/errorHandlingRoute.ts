@@ -7,6 +7,7 @@ const errorHandlingRoutes = [
         name: 'unauthorized',
         component: UnauthorizedView,
         meta: {
+            title: "Tidak ada akses",
             layout: 'LayoutDashboard',
             requiresAuth: true
         }
@@ -14,7 +15,10 @@ const errorHandlingRoutes = [
     {
         path: '/:pathMatch(.*)*',
         name: 'notFound',
-        component: NotFoundView
+        component: NotFoundView,
+        meta: {
+            title: "Halaman tidak ditemukan"
+        }
     },
 ];
 

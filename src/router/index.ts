@@ -20,15 +20,17 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
       meta: {
+        title: "Dasbor",
         layout: 'LayoutDashboard',
         requiresAuth: true
-      }
+      },
     },
     {
       path: '/konfigurasi',
       name: 'configuration',
       component: ConfigurationView,
       meta: {
+        title: "Konfigurasi",
         layout: 'LayoutDashboard',
         requiresAuth: true
       },
@@ -75,6 +77,12 @@ router.beforeEach((to, from, next) => {
     }
 
   }
+})
+
+router.afterEach((to, form) => {
+  const title: string = to.meta.title as string;
+  const app = import.meta.env.VITE_APP_TITLE;
+  document.title = `${app} - ${title}`
 })
 
 export default router

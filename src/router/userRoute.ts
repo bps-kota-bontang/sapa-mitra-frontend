@@ -8,6 +8,7 @@ const userRoutes = [
         name: 'listUser',
         component: ListUserView,
         meta: {
+            title: "Daftar Pengguna",
             layout: 'LayoutDashboard',
             requiresAuth: true
         },

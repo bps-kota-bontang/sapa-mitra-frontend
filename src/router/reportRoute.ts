@@ -13,11 +13,17 @@ const reportRoutes = [
                 path: '',
                 name: 'listReport',
                 component: ListReportView,
+                meta: {
+                    title: "Daftar BAST"
+                }
             },
             {
                 path: 'buat',
                 name: 'createReport',
                 component: CreateReportView,
+                meta: {
+                    title: "Buat BAST"
+                }
             }
         ]
     }
