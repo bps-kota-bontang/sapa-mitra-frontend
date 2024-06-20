@@ -10,14 +10,13 @@ import userRoutes from '@/router/userRoute'
 import errorHandlingRoutes from '@/router/errorHandlingRoute'
 import ConfigurationView from '@/views/ConfigurationView.vue';
 import DashboardView from '@/views/DashboardView.vue'
-import LandingView from '@/views/LandingView.vue';
 import { useUserStore } from "@/stores/user";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/dasbor',
+      path: '',
       name: 'dashboard',
       component: DashboardView,
       meta: {
@@ -38,11 +37,6 @@ const router = createRouter({
         if (!["TU"].includes(user.team)) next({ "name": "unauthorized" })
         else next();
       },
-    },
-    {
-      path: '/',
-      name: 'landing',
-      component: LandingView
     },
     ...authRoutes,
     ...contractRoutes,
