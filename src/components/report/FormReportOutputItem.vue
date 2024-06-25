@@ -11,7 +11,7 @@
       }"
     >
       <el-select
-        v-model="props.output.outputId"
+        v-model="output.outputId"
         placeholder="Pilih Nama Output"
         clearable
         filterable
@@ -37,7 +37,7 @@
     >
       <el-input
         type="number"
-        v-model="props.output.total"
+        v-model="output.total"
         placeholder="Masukkan Total"
       />
     </el-form-item>
@@ -52,7 +52,7 @@
 import { ref, onMounted, toRefs } from "vue";
 import { getOutputs } from "@/api/outputApi";
 
-const props: any = defineProps({
+defineProps({
   output: Object,
   index: Number,
 });
@@ -60,7 +60,7 @@ const props: any = defineProps({
 const outputs = ref<any[]>([]);
 
 const getProp = (key: string) => {
-  return `outputs[${props.index}].${key}`;
+  return `outputs[${index}].${key}`;
 };
 
 onMounted(async () => {

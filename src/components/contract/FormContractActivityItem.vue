@@ -11,7 +11,7 @@
       }"
     >
       <el-select
-        v-model="props.activity.activityId"
+        v-model="activity.activityId"
         placeholder="Pilih Nama Kegiatan"
         clearable
         filterable
@@ -36,7 +36,7 @@
     >
       <el-col>
         <el-date-picker
-          v-model="props.activity.startDate"
+          v-model="activity.startDate"
           type="date"
           placeholder="Pilih Tanggal Mulai"
         />
@@ -54,7 +54,7 @@
     >
       <el-col>
         <el-date-picker
-          v-model="props.activity.endDate"
+          v-model="activity.endDate"
           type="date"
           placeholder="Pilih Tanggal Selesai"
         />
@@ -72,7 +72,7 @@
     >
       <el-input
         type="number"
-        v-model="props.activity.volume"
+        v-model="activity.volume"
         placeholder="Masukkan Volume"
       />
     </el-form-item>
@@ -88,7 +88,7 @@
     >
       <el-input
         type="number"
-        v-model="props.activity.rate"
+        v-model="activity.rate"
         placeholder="Masukkan Rate"
       />
     </el-form-item>
@@ -102,7 +102,7 @@
         trigger: 'blur',
       }"
     >
-      <el-input v-model="props.activity.unit" placeholder="Masukkan Satuan" />
+      <el-input v-model="activity.unit" placeholder="Masukkan Satuan" />
     </el-form-item>
     <template #footer>
       <el-button type="danger" @click="$emit('remove')"
@@ -116,7 +116,7 @@
 import { ref, onMounted, toRefs } from "vue";
 import { getActivities } from "@/api/activityApi";
 
-const props: any = defineProps({
+defineProps({
   activity: Object,
   index: Number,
 });
@@ -124,7 +124,7 @@ const props: any = defineProps({
 const activities = ref<any[]>([]);
 
 const getProp = (key: string) => {
-  return `activities[${props.index}].${key}`;
+  return `activities[${index}].${key}`;
 };
 
 onMounted(async () => {
