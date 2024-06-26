@@ -71,7 +71,7 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import FormReportPartnerItem from "@/components/report/FormReportPartnerItem.vue";
 import { createReport } from "@/api/reportApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getOutputs } from "@/api/outputApi";
 
 const formRef = ref<FormInstance>();

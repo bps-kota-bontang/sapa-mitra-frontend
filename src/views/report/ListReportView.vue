@@ -130,8 +130,8 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
 import { getReports, deleteReport, deleteReportOutput } from "@/api/reportApi";
-import { formatDate } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
+import { ElNotification, type ElTable } from "element-plus";
 
 const user = useUserStore();
 const router = useRouter();
@@ -205,9 +205,12 @@ const clearSelection = () => {
 };
 
 const expandData = () => {
-  reportsTableRef.value.data.forEach((row: any) => {
+  if(reportsTableRef.value){
+    reportsTableRef.value.data.forEach((row: any) => {
     reportsTableRef.value!.toggleRowExpansion(row, undefined);
   });
+  }
+ 
 };
 
 const filterPeriod = (value: string, row: any) => {

@@ -1,51 +1,22 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
     <el-form-item required label="Mitra" prop="partner.partnerId">
-      <el-select
-        v-model="form.partner.partnerId"
-        placeholder="Pilih Nama Mitra"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="partner in partners"
-          :key="partner._id"
-          :label="partner.name"
-          :value="partner._id"
-        >
+      <el-select v-model="form.partner.partnerId" placeholder="Pilih Nama Mitra" clearable filterable>
+        <el-option v-for="partner in partners" :key="partner._id" :label="partner.name" :value="partner._id">
           <span style="float: left">{{ partner.name }}</span>
-          <span
-            style="
+          <span style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            "
-          >
+            ">
             {{ partner.address }}
           </span>
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item required label="Periode" prop="contract.period">
-      <el-select
-        v-model="form.contract.period"
-        placeholder="Pilih Periode SPK"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="item in periods"
-          :key="item.value"
-          :label="item.text"
-          :value="item.value"
-        />
+      <el-select v-model="form.contract.period" placeholder="Pilih Periode SPK" clearable filterable>
+        <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
       </el-select>
     </el-form-item>
 
@@ -56,17 +27,11 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractActivityItem
-          v-for="(activity, index) in form.activities"
-          :key="index"
-          :index="index"
-          :activity="activity"
-          @remove="removeActivity(index)"
-        />
+        <FormContractActivityItem v-for="(activity, index) in form.activities" :key="index" :index="index"
+          :activity="activity" @remove="removeActivity(index)" />
       </div>
 
-      <template #footer
-        ><el-button @click="addActivity">Tambah Kegiatan</el-button>
+      <template #footer><el-button @click="addActivity">Tambah Kegiatan</el-button>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -82,7 +47,7 @@ import { ref, reactive, onMounted, watch } from "vue";
 import FormContractActivityItem from "@/components/contract/FormContractActivityItem.vue";
 import { formatDateOriginal } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 
 const formRef = ref<FormInstance>();
 

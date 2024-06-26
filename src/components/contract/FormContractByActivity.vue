@@ -1,79 +1,38 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
     <el-form-item required label="Kegiatan" prop="activity.activityId">
-      <el-select
-        v-model="form.activity.activityId"
-        placeholder="Pilih Nama Kegiatan"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="activity in activities"
-          :key="activity._id"
-          :label="activity.name"
-          :value="activity._id"
-        >
+      <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
+        <el-option v-for="activity in activities" :key="activity._id" :label="activity.name" :value="activity._id">
           <span style="float: left">{{ activity.name }}</span>
-          <span
-            style="
+          <span style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            "
-          >
+            ">
             {{ activity.code }}
           </span>
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item required label="Periode" prop="contract.period">
-      <el-select
-        v-model="form.contract.period"
-        placeholder="Pilih Periode SPK"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="item in periods"
-          :key="item.value"
-          :label="item.text"
-          :value="item.value"
-        />
+      <el-select v-model="form.contract.period" placeholder="Pilih Periode SPK" clearable filterable>
+        <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
       </el-select>
     </el-form-item>
 
     <el-form-item required label="Tanggal Mulai" prop="activity.startDate">
       <el-col>
-        <el-date-picker
-          v-model="form.activity.startDate"
-          type="date"
-          placeholder="Pilih Tanggal Mulai"
-        />
+        <el-date-picker v-model="form.activity.startDate" type="date" placeholder="Pilih Tanggal Mulai" />
       </el-col>
     </el-form-item>
     <el-form-item required label="Tanggal Selesai" prop="activity.endDate">
       <el-col>
-        <el-date-picker
-          v-model="form.activity.endDate"
-          type="date"
-          placeholder="Pilih Tanggal Selesai"
-        />
+        <el-date-picker v-model="form.activity.endDate" type="date" placeholder="Pilih Tanggal Selesai" />
       </el-col>
     </el-form-item>
 
     <el-form-item required label="Rate" prop="activity.rate">
-      <el-input
-        type="number"
-        v-model="form.activity.rate"
-        placeholder="Masukkan Rate"
-      />
+      <el-input type="number" v-model="form.activity.rate" placeholder="Masukkan Rate" />
     </el-form-item>
     <el-form-item required label="Satuan" prop="activity.unit">
       <el-input v-model="form.activity.unit" placeholder="Masukkan Satuan" />
@@ -86,17 +45,11 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractPartnerItem
-          v-for="(partner, index) in form.partners"
-          :key="index"
-          :index="index"
-          :partner="partner"
-          @remove="removePartner(index)"
-        />
+        <FormContractPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index"
+          :partner="partner" @remove="removePartner(index)" />
       </div>
 
-      <template #footer
-        ><el-button @click="addPartner">Tambah Mitra</el-button>
+      <template #footer><el-button @click="addPartner">Tambah Mitra</el-button>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -111,7 +64,7 @@ import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
 import { formatDateOriginal } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getActivities } from "@/api/activityApi";
 
 const formRef = ref<FormInstance>();

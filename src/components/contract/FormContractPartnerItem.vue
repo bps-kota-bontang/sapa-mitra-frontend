@@ -1,45 +1,21 @@
 <template>
   <el-card shadow="never" style="width: 400px">
-    <el-form-item
-      required
-      :prop="getProp('partnerId')"
-      label="Mitra"
-      :rules="{
-        required: true,
-        message: 'Nama mitra perlu terisi',
-        trigger: 'change',
-      }"
-    >
-      <el-select
-        v-model="partner.partnerId"
-        placeholder="Pilih Nama Mitra"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="partner in partners"
-          :key="partner._id"
-          :label="partner.name"
-          :value="partner._id"
-        />
+    <el-form-item required :prop="getProp('partnerId')" label="Mitra" :rules="{
+      required: true,
+      message: 'Nama mitra perlu terisi',
+      trigger: 'change',
+    }">
+      <el-select v-model="props.partnerpartnerId" placeholder="Pilih Nama Mitra" clearable filterable>
+        <el-option v-for="partner in partners" :key="partner._id" :label="partner.name" :value="partner._id" />
       </el-select>
     </el-form-item>
 
-    <el-form-item
-      required
-      label="Volume"
-      :prop="getProp('volume')"
-      :rules="{
-        required: true,
-        message: 'Volume perlu terisi',
-        trigger: 'blur',
-      }"
-    >
-      <el-input
-        type="number"
-        v-model="partner.volume"
-        placeholder="Masukkan Volume"
-      />
+    <el-form-item required label="Volume" :prop="getProp('volume')" :rules="{
+      required: true,
+      message: 'Volume perlu terisi',
+      trigger: 'blur',
+    }">
+      <el-input type="number" v-model="props.partnervolume" placeholder="Masukkan Volume" />
     </el-form-item>
 
     <template #footer>
@@ -52,7 +28,7 @@
 import { ref, onMounted } from "vue";
 import { getPartners } from "@/api/partnerApi";
 
-defineProps({
+const props: any = defineProps({
   partner: Object,
   index: Number,
 });
@@ -60,7 +36,7 @@ defineProps({
 const partners = ref<any[]>([]);
 
 const getProp = (key: string) => {
-  return `partners[${index}].${key}`;
+  return `partners[${props.index}].${key}`;
 };
 
 onMounted(async () => {

@@ -24,7 +24,7 @@
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
 import { createOutput } from "@/api/outputApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 
 const formRef = ref<FormInstance>();
 

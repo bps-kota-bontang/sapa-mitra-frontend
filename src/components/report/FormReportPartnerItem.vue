@@ -11,7 +11,7 @@
       }"
     >
       <el-select
-        v-model="partner.partnerId"
+        v-model="props.partner.partnerId"
         placeholder="Pilih Nama Mitra"
         clearable
         filterable
@@ -37,7 +37,7 @@
     >
       <el-input
         type="number"
-        v-model="partner.total"
+        v-model="props.partner.total"
         placeholder="Masukkan Total"
       />
     </el-form-item>
@@ -52,7 +52,7 @@
 import { ref, onMounted } from "vue";
 import { getPartners } from "@/api/partnerApi";
 
-defineProps({
+const props: any = defineProps({
   partner: Object,
   index: Number,
 });
@@ -60,7 +60,7 @@ defineProps({
 const partners = ref<any[]>([]);
 
 const getProp = (key: string) => {
-  return `partners[${index}].${key}`;
+  return `partners[${props.index}].${key}`;
 };
 
 onMounted(async () => {

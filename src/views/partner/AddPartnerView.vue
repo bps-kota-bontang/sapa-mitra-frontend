@@ -1,12 +1,5 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
     <el-form-item required label="Nama" prop="name">
       <el-input v-model="form.name" placeholder="Masukkan Nama Partner" />
     </el-form-item>
@@ -27,7 +20,7 @@
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
 import { createPartner } from "@/api/partnerApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 
 const formRef = ref<FormInstance>();
 

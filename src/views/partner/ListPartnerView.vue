@@ -3,36 +3,21 @@
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center"></div>
       <div style="display: flex; align-items: center">
-        <el-upload
-          :action="uploadUrl"
-          :limit="1"
-          accept="text/csv"
-          :show-file-list="false"
-          :on-success="handleSuccess"
-          :on-error="handleError"
-          :headers="headers"
-        >
-          <el-button size="large" round
-            ><el-icon :size="20" style="margin-right: 8px"><Upload /></el-icon
-            >Upload</el-button
-          ></el-upload
-        >
-        <el-button type="primary" size="large" round @click="addPartner()"
-          ><el-icon :size="20" style="margin-right: 8px"><Plus /></el-icon
-          >Tambah</el-button
-        >
+        <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
+          :on-error="handleError" :headers="headers">
+          <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
+              <Upload />
+            </el-icon>Upload</el-button></el-upload>
+        <el-button type="primary" size="large" round @click="addPartner()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Plus />
+          </el-icon>Tambah</el-button>
       </div>
     </div>
 
     <el-divider />
-    <el-table
-      ref="partnersTableRef"
-      v-loading="loading"
-      :data="filterPartners"
-      row-key="_id"
-      style="width: 100%"
-      @selection-change="handleSelection"
-    >
+    <el-table ref="partnersTableRef" v-loading="loading" :data="filterPartners" row-key="_id" style="width: 100%"
+      @selection-change="handleSelection">
       <el-table-column type="selection" />
 
       <el-table-column type="index" label="No" />
@@ -42,21 +27,13 @@
 
       <el-table-column align="right">
         <template #header>
-          <el-input
-            v-model="search"
-            size="small"
-            placeholder="Type to search"
-          />
+          <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
             Edit
           </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDeletePartner(scope.row._id)"
-          >
+          <el-button size="small" type="danger" @click="handleDeletePartner(scope.row._id)">
             Hapus
           </el-button>
         </template>
@@ -76,10 +53,12 @@ import { Printer, Plus, Upload } from "@element-plus/icons-vue";
 import { getPartners, deletePartner } from "@/api/partnerApi";
 import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "@/api/api";
+import { ElNotification, ElTable } from "element-plus";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 const route = useRoute();
-const user = useUserStore();
+const user = useAuthStore();
 
 const headers = ref({
   Authorization: `Bearer ${user.token}`,
@@ -95,8 +74,6 @@ const partnersSelected = ref<any[]>([]);
 
 const handleError = (
   error: Error,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
 ) => {
   const result = JSON.parse(error.message);
 
@@ -109,8 +86,6 @@ const handleError = (
 
 const handleSuccess = async (
   response: any,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
 ) => {
   ElNotification({
     title: "Success",
@@ -204,6 +179,7 @@ onMounted(async () => {
 .el-table .danger-row {
   --el-table-tr-bg-color: var(--el-color-danger-light-9);
 }
+
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }

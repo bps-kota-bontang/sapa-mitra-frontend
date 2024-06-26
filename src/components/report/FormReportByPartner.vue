@@ -82,7 +82,7 @@ import { ref, reactive, onMounted, watch } from "vue";
 import FormReportOutputItem from "@/components/report/FormReportOutputItem.vue";
 import { formatDateOriginal } from "@/utils/date";
 import { createReport } from "@/api/reportApi";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 
 const formRef = ref<FormInstance>();
 

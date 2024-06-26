@@ -202,6 +202,7 @@ import {
 } from "@/api/contractApi";
 import { formatDate } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
+import { ElNotification, ElTable } from "element-plus";
 
 const user = useUserStore();
 const router = useRouter();
@@ -322,9 +323,12 @@ const clearSelection = () => {
 };
 
 const expandData = () => {
-  contractsTableRef.value.data.forEach((row: any) => {
+  if(contractsTableRef.value){
+    contractsTableRef.value.data.forEach((row: any) => {
     contractsTableRef.value!.toggleRowExpansion(row, undefined);
   });
+  }
+ 
 };
 
 const filterPeriod = (value: string, row: any) => {

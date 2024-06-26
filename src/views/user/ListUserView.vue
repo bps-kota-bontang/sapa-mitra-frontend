@@ -36,6 +36,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
 import { getUsers } from "@/api/userApi";
+import { ElNotification, ElTable } from "element-plus";
 
 const usersTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");

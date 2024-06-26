@@ -72,7 +72,7 @@
 import { ref, reactive, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
-import { Delete, Edit, Search, Share, Upload } from "@element-plus/icons-vue";
+import { ElNotification } from "element-plus";
 
 const initialState = {
   email: "",
