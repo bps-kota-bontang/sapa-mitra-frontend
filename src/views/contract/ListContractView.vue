@@ -116,6 +116,7 @@ import {
   deleteContract,
   verifyContractActivity,
   deleteContractActivity,
+  printContracts,
 } from "@/api/contractApi";
 import { formatDate } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
@@ -229,7 +230,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const print = () => {
-  console.log(contractsSelected.value);
+  printContracts(contractsSelected.value);
 };
 
 const clearFilter = () => {
