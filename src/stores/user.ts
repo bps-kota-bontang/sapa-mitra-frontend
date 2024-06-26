@@ -1,6 +1,6 @@
 import { getProfile } from '@/api/userApi';
-import { da } from 'element-plus/es/locales.mjs';
 import { defineStore } from 'pinia'
+import { useAuthStore } from '@/stores/auth';
 
 export const useUserStore = defineStore({
     id: 'user',
@@ -28,7 +28,7 @@ export const useUserStore = defineStore({
                     position: data.position,
                 });
             } catch (e) {
-                if (e instanceof Error) console.error(e.message)
+                if (e instanceof Error) useAuthStore().logout();
             }
         }
     }
