@@ -5,7 +5,7 @@
       message: 'Nama mitra perlu terisi',
       trigger: 'change',
     }">
-      <el-select v-model="props.partnerpartnerId" placeholder="Pilih Nama Mitra" clearable filterable>
+      <el-select v-model="props.partner.partnerId" placeholder="Pilih Nama Mitra" clearable filterable>
         <el-option v-for="partner in partners" :key="partner._id" :label="partner.name" :value="partner._id" />
       </el-select>
     </el-form-item>
@@ -15,7 +15,7 @@
       message: 'Volume perlu terisi',
       trigger: 'blur',
     }">
-      <el-input type="number" v-model="props.partnervolume" placeholder="Masukkan Volume" />
+      <el-input type="number" v-model="props.partner.volume" placeholder="Masukkan Volume" />
     </el-form-item>
 
     <template #footer>
