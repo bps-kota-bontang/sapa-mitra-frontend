@@ -3,47 +3,26 @@
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center">
         <span style="margin-right: 20px">Periode</span>
-        <el-select
-          v-model="periodSelected"
-          placeholder="Select"
-          clearable
-          style="width: 240px"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.text"
-            :value="item.value"
-          />
+        <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
+          <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
       </div>
 
       <div style="display: flex; align-items: center">
-        <el-button
-          size="large"
-          round
-          @click="print()"
-          v-if="['TU'].includes(user.team)"
-          ><el-icon :size="20" style="margin-right: 8px"><Printer /></el-icon
-          >Cetak</el-button
-        >
-        <el-button type="primary" size="large" round @click="createReport()"
-          ><el-icon :size="20" style="margin-right: 8px"><Plus /></el-icon
-          >Buat</el-button
-        >
+        <el-button size="large" round @click="print()" v-if="['TU'].includes(user.team)"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Printer />
+          </el-icon>Cetak</el-button>
+        <el-button type="primary" size="large" round @click="createReport()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Plus />
+          </el-icon>Buat</el-button>
       </div>
     </div>
 
     <el-divider />
-    <el-table
-      :default-expand-all="expand"
-      ref="reportsTableRef"
-      v-loading="loading"
-      :data="filterReports"
-      row-key="_id"
-      style="width: 100%"
-      @selection-change="handleSelection"
-    >
+    <el-table :default-expand-all="expand" ref="reportsTableRef" v-loading="loading" :data="filterReports" row-key="_id"
+      style="width: 100%" @selection-change="handleSelection">
       <el-table-column type="selection" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
         <template #default="props">
@@ -56,11 +35,7 @@
 
               <el-table-column label="Aksi">
                 <template #default="scope">
-                  <el-button
-                    size="small"
-                    type="danger"
-                    @click="handleDeleteOutput(props.row._id, scope.row._id)"
-                  >
+                  <el-button size="small" type="danger" @click="handleDeleteOutput(props.row._id, scope.row._id)">
                     Hapus
                   </el-button>
                 </template>
@@ -73,52 +48,28 @@
       <el-table-column type="index" label="No" />
       <el-table-column label="Nama" sortable prop="partner.name" />
       <el-table-column label="No BAST" prop="number" />
-      <el-table-column
-        label="Periode"
-        sortable
-        prop="contract.period"
-        :filters="options"
-        :filter-method="filterPeriod"
-      />
-      <el-table-column
-        label="Output"
-        sortable
-        :sort-by="sortOutput"
-        :formatter="outputFormatter"
-      />
+      <el-table-column label="Periode" sortable prop="contract.period" :filters="options"
+        :filter-method="filterPeriod" />
+      <el-table-column label="Output" sortable :sort-by="sortOutput" :formatter="outputFormatter" />
 
       <el-table-column align="right">
         <template #header>
-          <el-input
-            v-model="search"
-            size="small"
-            placeholder="Type to search"
-          />
+          <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
-          <el-button
-            size="small"
-            v-if="['TU'].includes(user.team)"
-            type="primary"
-            @click="handlePrint(scope.$index, scope.row)"
-          >
+          <el-button size="small" v-if="['TU'].includes(user.team)" type="primary"
+            @click="handlePrint(scope.$index, scope.row)">
             Cetak
           </el-button>
-          <el-button
-            v-if="['TU'].includes(user.team)"
-            size="small"
-            type="danger"
-            @click="handleDeleteReport(scope.row._id)"
-          >
+          <el-button v-if="['TU'].includes(user.team)" size="small" type="danger"
+            @click="handleDeleteReport(scope.row._id)">
             Hapus
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
-      <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)"
-        >Bersihkan Pilihan</el-button
-      >
+      <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
       <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
       <el-button @click="expandData()">Tampilkan Rincian</el-button>
     </div>
@@ -129,9 +80,10 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
-import { getReports, deleteReport, deleteReportOutput } from "@/api/reportApi";
+import { getReports, deleteReport, deleteReportOutput, printReports } from "@/api/reportApi";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
+import { BASE_URL } from "@/api/api";
 
 const user = useUserStore();
 const router = useRouter();
@@ -193,7 +145,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const print = () => {
-  console.log(reportsSelected.value);
+  printReports(reportsSelected.value);
 };
 
 const clearFilter = () => {
@@ -205,12 +157,12 @@ const clearSelection = () => {
 };
 
 const expandData = () => {
-  if(reportsTableRef.value){
+  if (reportsTableRef.value) {
     reportsTableRef.value.data.forEach((row: any) => {
-    reportsTableRef.value!.toggleRowExpansion(row, undefined);
-  });
+      reportsTableRef.value!.toggleRowExpansion(row, undefined);
+    });
   }
- 
+
 };
 
 const filterPeriod = (value: string, row: any) => {
@@ -245,7 +197,7 @@ const handleDeleteReport = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  console.log(index, row);
+  window.location.href = `${BASE_URL}/v1/reports/${row._id}/print`;
 };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {
@@ -305,6 +257,7 @@ watch(
 .el-table .danger-row {
   --el-table-tr-bg-color: var(--el-color-danger-light-9);
 }
+
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
