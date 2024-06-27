@@ -38,6 +38,11 @@ export const printReports = async (payload: any) => {
     body: JSON.stringify(payload),
   });
 
+  if (!response.ok) {
+    const result: any = await response.text();
+    throw new Error(result.message);
+  }
+
   const blob = await response.blob();
 
   const url = window.URL.createObjectURL(blob);
