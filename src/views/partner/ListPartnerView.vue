@@ -48,6 +48,7 @@
       <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
     </div>
   </div>
+  <DialogFormEditPartner @close-dialog="handleCloseDialogFormEdit" :id="editedPartnerId" :isShow="showDialogFormEdit" />
 </template>
 
 <script lang="ts" setup>
@@ -75,6 +76,8 @@ const loading = ref(false);
 const partners = ref<any[]>([]);
 const error = ref("");
 const partnersSelected = ref<any[]>([]);
+const editedPartnerId = ref(null);
+const showDialogFormEdit = ref(false);
 
 const handleError = (
   error: Error,
@@ -145,8 +148,15 @@ const handleDeletePartner = (id: string) => {
   executeOperation(() => deletePartner(id));
 };
 
+const handleCloseDialogFormEdit = async (refetch: boolean = false) => {
+  editedPartnerId.value = null;
+  showDialogFormEdit.value = false;
+  if (refetch) await fetchData();
+};
+
 const handleEdit = (index: number, row: any) => {
-  console.log(index, row);
+  editedPartnerId.value = row._id;
+  showDialogFormEdit.value = true;
 };
 
 const fetchData = async () => {

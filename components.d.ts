@@ -7,6 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DialogFormEditActivity: typeof import('./src/components/activity/DialogFormEditActivity.vue')['default']
+    DialogFormEditOutput: typeof import('./src/components/output/DialogFormEditOutput.vue')['default']
+    DialogFormEditPartner: typeof import('./src/components/partner/DialogFormEditPartner.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -14,6 +17,7 @@ declare module 'vue' {
     ElCol: typeof import('element-plus/es')['ElCol']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']

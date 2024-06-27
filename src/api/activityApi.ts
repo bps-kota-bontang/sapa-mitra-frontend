@@ -1,6 +1,44 @@
 import { useAuthStore } from "@/stores/auth";
 import { BASE_URL } from "./api";
 
+export const getActivity = async (id: string) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/activities/${id}`, {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
+export const updateActivity = async (id: string, payload: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/activities/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};
+
 export const getActivities = async () => {
   const auth = useAuthStore();
 
