@@ -3,8 +3,8 @@
     <el-form-item required label="Nama" prop="name">
       <el-input v-model="form.name" placeholder="Masukkan Nama Partner" />
     </el-form-item>
-    <el-form-item required label="NIK" type="number" prop="nik">
-      <el-input v-model="form.nik" placeholder="Masukkan NIK Partner" />
+    <el-form-item required label="NIK" prop="nik">
+      <el-input v-model="form.nik" type="number" placeholder="Masukkan NIK Partner" />
     </el-form-item>
     <el-form-item required label="Alamat" prop="address">
       <el-input v-model="form.address" placeholder="Masukkan Alamat Partner" />
