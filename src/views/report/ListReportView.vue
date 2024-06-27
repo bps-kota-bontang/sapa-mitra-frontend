@@ -80,7 +80,7 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
-import { getReports, deleteReport, deleteReportOutput, printReports } from "@/api/reportApi";
+import { getReports, deleteReport, deleteReportOutput, printReports, printReport } from "@/api/reportApi";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
 import { BASE_URL } from "@/api/api";
@@ -197,7 +197,7 @@ const handleDeleteReport = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  window.location.href = `${BASE_URL}/v1/reports/${row._id}/print`;
+  printReport(row._id)
 };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {

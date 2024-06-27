@@ -69,6 +69,31 @@ export const printContracts = async (payload: any) => {
   document.body.removeChild(a);
 };
 
+export const printContract = async (id: string) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/${id}/print`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const blob = await response.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.style.display = "none";
+  a.href = url;
+  a.download = `SPK - ${new Date().valueOf()}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+};
+
 export const createContract = async (payload: any, by: string = "partner") => {
   const auth = useAuthStore();
 

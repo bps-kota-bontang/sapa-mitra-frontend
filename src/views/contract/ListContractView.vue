@@ -117,6 +117,7 @@ import {
   verifyContractActivity,
   deleteContractActivity,
   printContracts,
+  printContract
 } from "@/api/contractApi";
 import { formatDate } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
@@ -382,7 +383,7 @@ const handleDeleteContract = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  window.location.href = `${BASE_URL}/v1/contracts/${row._id}/print`;
+  printContract(row._id)
 };
 
 const isSelecetable = (row: any, index: number) => {
