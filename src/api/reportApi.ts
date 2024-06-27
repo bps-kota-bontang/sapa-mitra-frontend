@@ -39,7 +39,7 @@ export const printReports = async (payload: any) => {
   });
 
   if (!response.ok) {
-    const result: any = await response.text();
+    const result: any = await response.json();
     throw new Error(result.message);
   }
 
@@ -69,7 +69,7 @@ export const printReport = async (id: string) => {
   });
 
   if (!response.ok) {
-    const result: any = await response.text();
+    const result: any = await response.json();
     throw new Error(result.message);
   }
 

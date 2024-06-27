@@ -56,7 +56,7 @@ export const printContracts = async (payload: any) => {
   });
 
   if (!response.ok) {
-    const result: any = await response.text();
+    const result: any = await response.json();
     throw new Error(result.message);
   }
 
@@ -86,7 +86,7 @@ export const printContract = async (id: string) => {
   });
 
   if (!response.ok) {
-    const result: any = await response.text();
+    const result: any = await response.json();
     throw new Error(result.message);
   }
 
