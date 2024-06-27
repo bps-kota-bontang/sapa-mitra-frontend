@@ -78,7 +78,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
 
@@ -236,6 +236,8 @@ const print = () => {
 
 const clearFilter = () => {
   contractsTableRef.value!.clearFilter();
+  search.value = ""
+  periodSelected.value = null;
 };
 
 const clearSelection = () => {

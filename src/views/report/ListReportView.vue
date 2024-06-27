@@ -150,6 +150,8 @@ const print = () => {
 
 const clearFilter = () => {
   reportsTableRef.value!.clearFilter();
+  search.value = ""
+  periodSelected.value = null;
 };
 
 const clearSelection = () => {
