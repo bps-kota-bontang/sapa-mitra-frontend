@@ -231,7 +231,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const print = () => {
-  printContracts(contractsSelected.value);
+  executeOperation(() => printContracts(contractsSelected.value), false);
 };
 
 const clearFilter = () => {
@@ -359,10 +359,10 @@ const contractStatus = ({ row, rowIndex }: { row: any; rowIndex: number }) => {
   }
 };
 
-const executeOperation = async (operation: () => Promise<void>) => {
+const executeOperation = async (operation: () => Promise<void>, refetch: boolean = true) => {
   try {
     await operation();
-    await fetchData(route.query.period, false);
+    if (refetch) await fetchData(route.query.period, false);
   } catch (e) {
     if (e instanceof Error) {
       error.value = e.message;
@@ -383,7 +383,7 @@ const handleDeleteContract = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  printContract(row._id)
+  executeOperation(() => printContract(row._id), false);
 };
 
 const isSelecetable = (row: any, index: number) => {

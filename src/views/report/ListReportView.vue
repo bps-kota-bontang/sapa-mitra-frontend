@@ -145,7 +145,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const print = () => {
-  printReports(reportsSelected.value);
+  executeOperation(() => printReports(reportsSelected.value), false);
 };
 
 const clearFilter = () => {
@@ -177,10 +177,10 @@ const outputFormatter = (row: any) => {
   return `${row.outputs.length} Ouput`;
 };
 
-const executeOperation = async (operation: () => Promise<void>) => {
+const executeOperation = async (operation: () => Promise<void>, refetch: boolean = true) => {
   try {
     await operation();
-    await fetchData(route.query.period, false);
+    if (refetch) await fetchData(route.query.period, false);
   } catch (e) {
     if (e instanceof Error) {
       error.value = e.message;
@@ -197,7 +197,7 @@ const handleDeleteReport = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  printReport(row._id)
+  executeOperation(() => printReport(row._id), false);
 };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {
