@@ -1,13 +1,17 @@
 <template>
   <div>
-    <div style="display: flex; justify-content: space-between">
+    <div style="display: flex; justify-content: space-between;">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center; gap:10px">
+        <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Download />
+          </el-icon>Unduh Template</el-button>
         <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
           :on-error="handleError" :headers="headers">
           <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
               <Upload />
-            </el-icon>Upload</el-button></el-upload>
+            </el-icon>Unggah</el-button></el-upload>
         <el-button type="primary" size="large" round @click="addActivity()"><el-icon :size="20"
             style="margin-right: 8px">
             <Plus />
@@ -47,16 +51,14 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { Printer, Plus, Upload } from "@element-plus/icons-vue";
-import { getActivities, deleteActivity, deleteActivities } from "@/api/activityApi";
-import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+import { Download, Plus, Upload } from "@element-plus/icons-vue";
+import { getActivities, deleteActivity, deleteActivities, downloadActivityTemplate } from "@/api/activityApi";
 import { BASE_URL } from "@/api/api";
 import { useAuthStore } from "@/stores/auth";
 import { ElNotification, ElTable } from "element-plus";
 
 const router = useRouter();
-const route = useRoute();
 const auth = useAuthStore();
 
 const headers = ref({
@@ -116,6 +118,10 @@ const deleteSelection = () => {
 const clearSelection = () => {
   activitiesTableRef.value!.clearSelection();
 };
+
+const downloadTemplate = () => {
+  executeOperation(() => downloadActivityTemplate());
+}
 
 const addActivity = () => {
   router.push({ name: "addActivity" });

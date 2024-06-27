@@ -2,7 +2,11 @@
   <div>
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center; gap:10px">
+        <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Download />
+          </el-icon>Unduh Template</el-button>
         <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
           :on-error="handleError" :headers="headers">
           <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
@@ -49,8 +53,8 @@
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Printer, Plus, Upload } from "@element-plus/icons-vue";
-import { getPartners, deletePartner, deletePartners } from "@/api/partnerApi";
+import { Download, Plus, Upload } from "@element-plus/icons-vue";
+import { getPartners, deletePartner, deletePartners, downloadPartnerTemplate } from "@/api/partnerApi";
 import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
@@ -103,6 +107,10 @@ const filterPartners = computed(() => {
       data.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
+
+const downloadTemplate = () => {
+  executeOperation(() => downloadPartnerTemplate());
+}
 
 const handleSelection = (value: any[]) => {
   const partnerIdsSelected = value.map((item) => item._id);
