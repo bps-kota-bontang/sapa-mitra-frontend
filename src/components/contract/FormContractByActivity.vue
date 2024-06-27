@@ -62,7 +62,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
-import { formatDateOriginal } from "@/utils/date";
+import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getActivities } from "@/api/activityApi";
@@ -206,32 +206,7 @@ const removePartner = (index: number) => {
   form.partners.splice(index, 1);
 };
 
-const periods = [
-  {
-    value: "2024-06",
-    text: "2024-06",
-  },
-  {
-    value: "2024-05",
-    text: "2024-05",
-  },
-  {
-    value: "2024-04",
-    text: "2024-04",
-  },
-  {
-    value: "2024-03",
-    text: "2024-03",
-  },
-  {
-    value: "2024-02",
-    text: "2024-02",
-  },
-  {
-    value: "2024-01",
-    text: "2024-01",
-  },
-];
+const periods = generatePeriods();
 
 watch(
   () => feedback.value,

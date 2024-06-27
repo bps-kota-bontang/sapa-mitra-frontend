@@ -1,42 +1,15 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
     <el-form-item required label="Ouput" prop="output.outputId">
-      <el-select
-        v-model="form.output.outputId"
-        placeholder="Pilih Nama Ouput"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="output in outputs"
-          :key="output._id"
-          :label="output.name"
-          :value="output._id"
-        >
+      <el-select v-model="form.output.outputId" placeholder="Pilih Nama Ouput" clearable filterable>
+        <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id">
           <span style="float: left">{{ output.name }}</span>
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item required label="Periode" prop="contract.period">
-      <el-select
-        v-model="form.contract.period"
-        placeholder="Pilih Periode SPK"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="item in periods"
-          :key="item.value"
-          :label="item.text"
-          :value="item.value"
-        />
+      <el-select v-model="form.contract.period" placeholder="Pilih Periode SPK" clearable filterable>
+        <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
       </el-select>
     </el-form-item>
 
@@ -47,17 +20,11 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormReportPartnerItem
-          v-for="(partner, index) in form.partners"
-          :key="index"
-          :index="index"
-          :partner="partner"
-          @remove="removePartner(index)"
-        />
+        <FormReportPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index" :partner="partner"
+          @remove="removePartner(index)" />
       </div>
 
-      <template #footer
-        ><el-button @click="addPartner">Tambah Mitra</el-button>
+      <template #footer><el-button @click="addPartner">Tambah Mitra</el-button>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -73,6 +40,7 @@ import FormReportPartnerItem from "@/components/report/FormReportPartnerItem.vue
 import { createReport } from "@/api/reportApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getOutputs } from "@/api/outputApi";
+import { generatePeriods } from "@/utils/date";
 
 const formRef = ref<FormInstance>();
 
@@ -170,32 +138,7 @@ const removePartner = (index: number) => {
   form.partners.splice(index, 1);
 };
 
-const periods = [
-  {
-    value: "2024-06",
-    text: "2024-06",
-  },
-  {
-    value: "2024-05",
-    text: "2024-05",
-  },
-  {
-    value: "2024-04",
-    text: "2024-04",
-  },
-  {
-    value: "2024-03",
-    text: "2024-03",
-  },
-  {
-    value: "2024-02",
-    text: "2024-02",
-  },
-  {
-    value: "2024-01",
-    text: "2024-01",
-  },
-];
+const periods = generatePeriods();
 
 watch(
   () => feedback.value,

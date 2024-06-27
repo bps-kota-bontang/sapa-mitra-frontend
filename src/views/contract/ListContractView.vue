@@ -4,7 +4,7 @@
       <div style="display: flex; align-items: center">
         <span style="margin-right: 20px">Periode</span>
         <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value" />
+          <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
       </div>
 
@@ -60,7 +60,7 @@
       <el-table-column type="index" label="No" />
       <el-table-column label="Nama" sortable prop="partner.name" />
       <el-table-column label="No SPK" prop="number" />
-      <el-table-column label="Periode" sortable prop="period" :filters="options" :filter-method="filterPeriod" />
+      <el-table-column label="Periode" sortable prop="period" :filters="periods" :filter-method="filterPeriod" />
       <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter" />
       <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam">
         <template #default="scope">
@@ -78,7 +78,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
 
@@ -119,7 +119,7 @@ import {
   printContracts,
   printContract
 } from "@/api/contractApi";
-import { formatDate } from "@/utils/date";
+import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, ElTable } from "element-plus";
 import { BASE_URL } from "@/api/api";
@@ -197,32 +197,7 @@ const teams = [
   },
 ];
 
-const options = [
-  {
-    value: "2024-06",
-    text: "2024-06",
-  },
-  {
-    value: "2024-05",
-    text: "2024-05",
-  },
-  {
-    value: "2024-04",
-    text: "2024-04",
-  },
-  {
-    value: "2024-03",
-    text: "2024-03",
-  },
-  {
-    value: "2024-02",
-    text: "2024-02",
-  },
-  {
-    value: "2024-01",
-    text: "2024-01",
-  },
-];
+const periods = generatePeriods();
 
 const handleSelection = (value: any[]) => {
   const contractIdsSelected = value.map((item) => item._id);
