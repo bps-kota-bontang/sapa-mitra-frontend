@@ -49,7 +49,7 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus, Upload } from "@element-plus/icons-vue";
-import { getActivities, deleteActivity } from "@/api/activityApi";
+import { getActivities, deleteActivity, deleteActivities } from "@/api/activityApi";
 import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "@/api/api";
 import { useAuthStore } from "@/stores/auth";
@@ -110,7 +110,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const deleteSelection = () => {
-  console.log(activitiesSelected.value);
+  executeOperation(() => deleteActivities(activitiesSelected.value));
 };
 
 const clearSelection = () => {

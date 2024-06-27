@@ -18,6 +18,23 @@ export const getOutputs = async () => {
     return result.data;
 };
 
+export const deleteOutputs = async (payload: any) => {
+    const auth = useAuthStore();
+  
+    const response = await fetch(`${BASE_URL}/v1/outputs`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.message);
+    }
+  };
+
 export const deleteOutput = async (id: string) => {
     const auth = useAuthStore();
 

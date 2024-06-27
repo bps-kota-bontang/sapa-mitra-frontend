@@ -48,7 +48,7 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Plus, Upload } from "@element-plus/icons-vue";
-import { getOutputs, deleteOutput } from "@/api/outputApi";
+import { getOutputs, deleteOutput, deleteOutputs } from "@/api/outputApi";
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
@@ -108,7 +108,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const deleteSelection = () => {
-  console.log(outputsSelected.value);
+  executeOperation(() => deleteOutputs(outputsSelected.value));
 };
 
 const clearSelection = () => {

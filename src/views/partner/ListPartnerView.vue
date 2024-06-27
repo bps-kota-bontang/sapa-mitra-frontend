@@ -50,7 +50,7 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus, Upload } from "@element-plus/icons-vue";
-import { getPartners, deletePartner } from "@/api/partnerApi";
+import { getPartners, deletePartner, deletePartners } from "@/api/partnerApi";
 import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
@@ -111,7 +111,7 @@ const handleSelection = (value: any[]) => {
 };
 
 const deleteSelection = () => {
-  console.log(partnersSelected.value);
+  executeOperation(() => deletePartners(partnersSelected.value));
 };
 
 const clearSelection = () => {
