@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%; display: flex; flex-direction: column">
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center"></div>
       <div style="display: flex; align-items: center; gap:10px">
@@ -18,13 +18,12 @@
           </el-icon>Tambah</el-button>
       </div>
     </div>
-
     <el-divider />
-    <el-table ref="partnersTableRef" v-loading="loading" :data="filterPartners" row-key="_id" style="width: 100%"
-      @selection-change="handleSelection">
+    <el-table ref="partnersTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
+      style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
       <el-table-column type="selection" />
 
-      <el-table-column type="index" label="No" />
+      <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIK" prop="nik" />
       <el-table-column label="Alamat" prop="address" />
@@ -43,9 +42,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
-      <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
-      <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
+    <div style="display: flex;  gap: 20px;">
+      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
+        :page-sizes="[8, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
+        @current-change="handlePageChange" class="pagination" />
+      <div>
+        <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+        <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
+      </div>
     </div>
   </div>
   <DialogFormEditPartner @close-dialog="handleCloseDialogFormEdit" :id="editedPartnerId" :isShow="showDialogFormEdit" />
@@ -56,7 +60,6 @@ import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Download, Plus, Upload } from "@element-plus/icons-vue";
 import { getPartners, deletePartner, deletePartners, downloadPartnerTemplate } from "@/api/partnerApi";
-import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
@@ -78,6 +81,21 @@ const error = ref("");
 const partnersSelected = ref<any[]>([]);
 const editedPartnerId = ref(null);
 const showDialogFormEdit = ref(false);
+
+const pageSize = ref(8)
+const currentPage = ref(1);
+
+const total = computed(() => filterPartners.value.length);
+
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filterPartners.value.slice(start, end);
+});
+
+const handlePageChange = (page: number) => {
+  currentPage.value = page;
+};
 
 const handleError = (
   error: Error,

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%; display: flex; flex-direction: column">
     <div style="display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center">
         <span style="margin-right: 20px">Periode</span>
@@ -22,7 +22,8 @@
 
     <el-divider />
     <el-table :default-expand-all="expand" ref="contractsTableRef" v-loading="loading" :row-class-name="contractStatus"
-      :data="filterContracts" row-key="_id" style="width: 100%" @selection-change="handleSelection">
+      :data="paginatedData" row-key="_id" style="width: 100%; flex: 1; margin-bottom: 20px;"
+      @selection-change="handleSelection">
       <el-table-column type="selection" :selectable="isSelecetable" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
         <template #default="props">
@@ -57,7 +58,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column type="index" label="No" />
+      <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="partner.name" />
       <el-table-column label="No SPK" prop="number" />
       <el-table-column label="Periode" sortable prop="period" :filters="periods" :filter-method="filterPeriod" />
@@ -99,11 +100,17 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
-      <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
-      <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
-      <el-button @click="expandData()">Tampilkan Rincian</el-button>
+    <div style="display: flex;  gap: 20px;">
+      <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
+        :page-sizes="[8, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
+        @current-change="handlePageChange" class="pagination" />
+      <div>
+        <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
+        <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
+        <el-button @click="expandData()">Tampilkan Rincian</el-button>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -122,7 +129,6 @@ import {
 import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, ElTable } from "element-plus";
-import { BASE_URL } from "@/api/api";
 
 const user = useUserStore();
 const router = useRouter();
@@ -136,6 +142,20 @@ const error = ref("");
 const contractsSelected = ref<any[]>([]);
 const periodSelected = ref(route.query.period);
 const expand = ref(false);
+const pageSize = ref(8)
+const currentPage = ref(1);
+
+const total = computed(() => filterContracts.value.length);
+
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filterContracts.value.slice(start, end);
+});
+
+const handlePageChange = (page: number) => {
+  currentPage.value = page;
+};
 
 const filterContracts = computed(() => {
   return contracts.value.filter(
