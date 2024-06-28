@@ -24,7 +24,7 @@
         <el-icon><DocumentCopy /></el-icon>BAST
       </template>
       <el-menu-item index="/bast">Daftar BAST</el-menu-item>
-      <el-menu-item index="/bast/buat">Buat BAST</el-menu-item>
+      <el-menu-item v-if="!['KEPALA'].includes(user.position)" index="/bast/buat">Buat BAST</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="3" v-if="['TU'].includes(user.team)">
       <template #title>
