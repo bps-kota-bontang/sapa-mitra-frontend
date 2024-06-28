@@ -1,18 +1,19 @@
 <template>
   <div>
-    <div style="display: flex; justify-content: space-between">
+
+    <div style="display: flex; justify-content: space-between;">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center"></div>
+      <div style="display: flex; align-items: center; gap:10px">
+        <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
+          :on-error="handleError" :headers="headers">
+          <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
+              <Upload />
+            </el-icon>Unggah</el-button></el-upload>
+      </div>
     </div>
 
     <el-divider />
-    <el-table
-      ref="usersTableRef"
-      v-loading="loading"
-      :data="filterUsers"
-      row-key="_id"
-      style="width: 100%"
-    >
+    <el-table ref="usersTableRef" v-loading="loading" :data="filterUsers" row-key="_id" style="width: 100%">
       <el-table-column type="index" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIP" prop="nip" />
@@ -21,11 +22,7 @@
 
       <el-table-column align="right">
         <template #header>
-          <el-input
-            v-model="search"
-            size="small"
-            placeholder="Type to search"
-          />
+          <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
       </el-table-column>
     </el-table>
@@ -36,13 +33,48 @@
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
 import { getUsers } from "@/api/userApi";
+import { Upload } from "@element-plus/icons-vue";
 import { ElNotification, ElTable } from "element-plus";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
+import { BASE_URL } from "@/api/api";
 
 const usersTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
 const loading = ref(false);
 const users = ref<any[]>([]);
 const error = ref("");
+
+const router = useRouter();
+const auth = useAuthStore();
+const headers = ref({
+  Authorization: `Bearer ${auth.token}`,
+});
+const uploadUrl = ref(`${BASE_URL}/v1/users/upload`);
+
+const handleError = (
+  error: Error,
+) => {
+  const result = JSON.parse(error.message);
+
+  ElNotification({
+    title: "Error",
+    message: result.message,
+    type: "error",
+  });
+};
+
+const handleSuccess = async (
+  response: any,
+) => {
+  ElNotification({
+    title: "Success",
+    message: response.message,
+    type: "success",
+  });
+
+  await fetchData();
+};
 
 const filterUsers = computed(() => {
   return users.value.filter(
