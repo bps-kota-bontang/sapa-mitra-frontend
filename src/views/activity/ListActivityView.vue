@@ -28,6 +28,7 @@
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Kode Kegiatan" prop="code" />
+      <el-table-column label="Tim" prop="team" />
 
       <el-table-column align="right">
         <template #header>

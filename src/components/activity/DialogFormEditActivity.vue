@@ -7,6 +7,11 @@
             <el-form-item required label="Kode Kegiatan" prop="code">
                 <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
             </el-form-item>
+            <el-form-item required label="Tim" prop="team">
+                <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
+                    <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
+                </el-select>
+            </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -23,10 +28,12 @@
 import { ref, reactive, watch } from "vue";
 import { getActivity, updateActivity } from "@/api/activityApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { teams } from "@/utils/constant";
 
 const initialState = {
     name: "",
-    code: ""
+    code: "",
+    team: ""
 };
 
 const rules = reactive<FormRules<any>>({
@@ -42,6 +49,13 @@ const rules = reactive<FormRules<any>>({
             required: true,
             message: "Kode kegiatan perlu terisi",
             trigger: "blur",
+        },
+    ],
+    team: [
+        {
+            required: true,
+            message: "Nama tim perlu terisi",
+            trigger: "change",
         },
     ],
 });
@@ -105,6 +119,7 @@ watch(() => props.id, async (newId) => {
         const data = await getActivity(props.id);
         form.name = data.name;
         form.code = data.code;
+        form.team = data.team;
     }
 }, { immediate: true });
 

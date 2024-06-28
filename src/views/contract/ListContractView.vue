@@ -129,6 +129,7 @@ import {
 import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, ElTable } from "element-plus";
+import { teams } from "@/utils/constant";
 
 const user = useUserStore();
 const router = useRouter();
@@ -189,33 +190,6 @@ const sortStatus = (row: any, index: number) => {
     return 1;
   }
 };
-
-const teams = [
-  {
-    value: "SOSIAL",
-    text: "SOSIAL",
-  },
-  {
-    value: "PRODUKSI",
-    text: "PRODUKSI",
-  },
-  {
-    value: "DISTRIBUSI",
-    text: "DISTRIBUSI",
-  },
-  {
-    value: "NERWILIS",
-    text: "NERWILIS",
-  },
-  {
-    value: "IPDS",
-    text: "IPDS",
-  },
-  {
-    value: "TU",
-    text: "TU",
-  },
-];
 
 const periods = generatePeriods();
 

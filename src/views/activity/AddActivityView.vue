@@ -1,23 +1,15 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
     <el-form-item required label="Nama" prop="name">
-      <el-input
-        v-model="form.name"
-        placeholder="Masukkan Nama Kegiatan"
-      />
+      <el-input v-model="form.name" placeholder="Masukkan Nama Kegiatan" />
     </el-form-item>
     <el-form-item required label="Kode" prop="code">
-      <el-input
-        v-model="form.code"
-        placeholder="Masukkan Kode Kegiatan"
-      />
+      <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
+    </el-form-item>
+    <el-form-item required label="Tim" prop="team">
+      <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
+        <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
+      </el-select>
     </el-form-item>
 
     <el-form-item required style="margin-top: 20px">
@@ -31,6 +23,7 @@
 import { ref, reactive, watch } from "vue";
 import { createActivity } from "@/api/activityApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { teams } from "@/utils/constant";
 
 const formRef = ref<FormInstance>();
 
@@ -49,11 +42,19 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
+  team: [
+    {
+      required: true,
+      message: "Nama tim perlu terisi",
+      trigger: "change",
+    },
+  ],
 });
 
 const initialState = {
   name: "",
   code: "",
+  team: ""
 };
 
 let feedback = ref({
