@@ -13,8 +13,8 @@
             style="margin-right: 8px">
             <Printer />
           </el-icon>Cetak</el-button>
-        <el-button type="primary" size="large" round @click="createReport()"><el-icon :size="20"
-            style="margin-right: 8px">
+        <el-button v-if="!['KEPALA'].includes(user.position)" type="primary" size="large" round
+          @click="createReport()"><el-icon :size="20" style="margin-right: 8px">
             <Plus />
           </el-icon>Buat</el-button>
       </div>
