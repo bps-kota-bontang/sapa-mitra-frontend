@@ -47,7 +47,7 @@
       <el-menu-item index="/mitra">Daftar Mitra</el-menu-item>
       <el-menu-item index="/mitra/tambah">Tambah Mitra</el-menu-item>
     </el-sub-menu>
-    <el-menu-item index="/pengguna" v-if="['TU'].includes(user.team)"
+    <el-menu-item index="/pengguna" v-if="['TU', 'IPDS'].includes(user.team)"
       ><el-icon><User /></el-icon>Pengguna</el-menu-item
     >
     <el-menu-item index="/konfigurasi" v-if="['TU'].includes(user.team)"

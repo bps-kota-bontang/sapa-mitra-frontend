@@ -14,7 +14,7 @@ const userRoutes = [
         },
         beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
             const user = useUserStore();
-            if (!["TU"].includes(user.team)) next({ "name": "unauthorized" })
+            if (!["TU", "IPDS"].includes(user.team)) next({ "name": "unauthorized" })
             else next();
         },
     }
