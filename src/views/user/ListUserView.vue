@@ -14,7 +14,7 @@
     <el-divider />
     <el-table ref="usersTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
       style="width: 100%; flex: 1; margin-bottom: 20px;">
-      <el-table-column type="index" label="No" />
+      <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIP" prop="nip" />
       <el-table-column label="Tim" prop="team" :formatter="teamFormatter" />
