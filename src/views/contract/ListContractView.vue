@@ -79,7 +79,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
 
@@ -89,7 +89,7 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
-          <el-button size="small" v-if="['TU'].includes(user.team)" type="primary"
+          <el-button size="small" v-if="['TU'].includes(user.team) && statusText(scope.row) == 'Lengkap'" type="primary"
             @click="handlePrint(scope.$index, scope.row)">
             Cetak
           </el-button>
