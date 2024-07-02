@@ -42,6 +42,7 @@
 .layout-container .el-aside {
   color: var(--el-text-color-primary);
   background: white;
+  width: 250px
 }
 
 .layout-container .el-main {
