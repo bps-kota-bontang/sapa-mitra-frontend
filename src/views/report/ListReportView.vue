@@ -4,7 +4,7 @@
       <div style="display: flex; align-items: center">
         <span style="margin-right: 20px">Periode</span>
         <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value" />
+          <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
       </div>
 
@@ -48,7 +48,7 @@
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="partner.name" />
       <el-table-column label="No BAST" prop="number" />
-      <el-table-column label="Periode" sortable prop="contract.period" :filters="options"
+      <el-table-column label="Periode" sortable prop="contract.period" :filters="periods"
         :filter-method="filterPeriod" />
       <el-table-column label="Output" sortable :sort-by="sortOutput" :formatter="outputFormatter" />
 
@@ -89,6 +89,7 @@ import { Printer, Plus } from "@element-plus/icons-vue";
 import { getReports, deleteReport, deleteReportOutput, printReports, printReport } from "@/api/reportApi";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
+import { generatePeriods } from "@/utils/date";
 
 const user = useUserStore();
 const router = useRouter();
@@ -130,32 +131,7 @@ const sortOutput = (row: any, index: number) => {
   return row.outputs.length;
 };
 
-const options = [
-  {
-    value: "2024-06",
-    text: "2024-06",
-  },
-  {
-    value: "2024-05",
-    text: "2024-05",
-  },
-  {
-    value: "2024-04",
-    text: "2024-04",
-  },
-  {
-    value: "2024-03",
-    text: "2024-03",
-  },
-  {
-    value: "2024-02",
-    text: "2024-02",
-  },
-  {
-    value: "2024-01",
-    text: "2024-01",
-  },
-];
+const periods = generatePeriods();
 
 const handleSelection = (value: any[]) => {
   const reportIdsSelected = value.map((item) => item._id);
