@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="never" style="width: 400px">
+  <el-card shadow="never" style="width: 350px">
     <el-form-item
       required
       :prop="getProp('partnerId')"
