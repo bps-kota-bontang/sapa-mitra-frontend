@@ -1,15 +1,15 @@
 import { useAuthStore } from "@/stores/auth";
 import { BASE_URL } from "./api";
 
-export const createConfiguration = async (payload: any) => {
+export const createConfiguration = async (payload: any, type:string) => {
     const auth = useAuthStore();
 
     const body = {
-        name: "AUTHORITY",
+        name: type,
         value: payload
     }
 
-    const response = await fetch(`${BASE_URL}/v1/configurations/authority`, {
+    const response = await fetch(`${BASE_URL}/v1/configurations/${type}`, {
         method: "PUT",
         headers: {
             "Authorization": `Bearer ${auth.token}`,
@@ -31,6 +31,24 @@ export const getAuthority = async () => {
     const auth = useAuthStore();
 
     const response = await fetch(`${BASE_URL}/v1/configurations/authority`, {
+        headers: {
+            "Authorization": `Bearer ${auth.token}`,
+        },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message)
+    }
+
+    return result;
+};
+
+export const getRate = async () => {
+    const auth = useAuthStore();
+
+    const response = await fetch(`${BASE_URL}/v1/configurations/rate`, {
         headers: {
             "Authorization": `Bearer ${auth.token}`,
         },
