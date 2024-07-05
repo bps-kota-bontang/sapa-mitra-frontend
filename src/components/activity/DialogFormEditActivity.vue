@@ -10,6 +10,11 @@
             <el-form-item required label="Satuan" prop="unit">
                 <el-input v-model="form.unit" placeholder="Masukkan Satuan Kegiatan" />
             </el-form-item>
+            <el-form-item required label="Jenis" prop="type">
+                <el-select v-model="form.type" placeholder="Pilih Jenis Kegiatan" clearable filterable>
+                    <el-option v-for="type in activityTypes" :key="type.value" :label="type.text" :value="type.value" />
+                </el-select>
+            </el-form-item>
             <el-form-item required label="Tim" prop="team">
                 <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
                     <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
@@ -31,12 +36,13 @@
 import { ref, reactive, watch } from "vue";
 import { getActivity, updateActivity } from "@/api/activityApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
-import { teams } from "@/utils/constant";
+import { activityTypes, teams } from "@/utils/constant";
 
 const initialState = {
     name: "",
     code: "",
     unit: "",
+    type: "",
     team: ""
 };
 
@@ -59,6 +65,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Satuan kegiatan perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    type: [
+        {
+            required: true,
+            message: "Jenis kegiatan perlu terisi",
             trigger: "blur",
         },
     ],
@@ -131,6 +144,7 @@ watch(() => props.id, async (newId) => {
         form.name = data.name;
         form.code = data.code;
         form.unit = data.unit;
+        form.type = data.type;
         form.team = data.team;
     }
 }, { immediate: true });

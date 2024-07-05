@@ -24,3 +24,18 @@ export const teams = [
     text: "TU",
   },
 ];
+
+export const activityTypes = [
+  {
+    value: "ENUMERATION",
+    text: "Pencacahan",
+  },
+  {
+    value: "SUPERVISION",
+    text: "Pemeriksaan",
+  },
+  {
+    value: "PROCESSING",
+    text: "Pengolahan",
+  },
+];
