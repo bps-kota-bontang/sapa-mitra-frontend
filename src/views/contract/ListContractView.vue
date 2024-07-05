@@ -149,6 +149,7 @@ import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, ElTable } from "element-plus";
 import { teams } from "@/utils/constant";
+import { formatCurrency } from "@/utils/currency";
 
 const user = useUserStore();
 const router = useRouter();
@@ -315,11 +316,11 @@ const statusText = (row: any) => {
 };
 
 const limitFormatter = (row: any) => {
-  return `Rp ${row.limit}`;
+  return `Rp ${formatCurrency(row.limit)}`;
 };
 
 const totalFormatter = (row: any) => {
-  return `Rp ${row.grandTotal}`;
+  return `Rp ${formatCurrency(row.grandTotal)}`;
 };
 
 const teamFormatter = (row: any): any[] => {
