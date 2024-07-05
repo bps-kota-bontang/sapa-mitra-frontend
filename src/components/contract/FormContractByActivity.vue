@@ -34,9 +34,6 @@
     <el-form-item required label="Rate" prop="activity.rate">
       <el-input type="number" v-model="form.activity.rate" placeholder="Masukkan Rate" />
     </el-form-item>
-    <el-form-item required label="Satuan" prop="activity.unit">
-      <el-input v-model="form.activity.unit" placeholder="Masukkan Satuan" />
-    </el-form-item>
 
     <el-card shadow="never">
       <template #header>
@@ -91,13 +88,6 @@ const rules = reactive<FormRules<any>>({
       trigger: "change",
     },
   ],
-  "activity.unit": [
-    {
-      required: true,
-      message: "Satuan perlu terisi",
-      trigger: "blur",
-    },
-  ],
   "activity.rate": [
     {
       required: true,
@@ -119,7 +109,6 @@ const initialState = {
     activityId: "",
     startDate: "",
     endDate: "",
-    unit: "",
     rate: "",
   },
   contract: {

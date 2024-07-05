@@ -41,13 +41,6 @@
     }">
       <el-input type="number" v-model="props.activity.rate" placeholder="Masukkan Rate" />
     </el-form-item>
-    <el-form-item required label="Satuan" :prop="getProp('unit')" :rules="{
-      required: true,
-      message: 'Satuan perlu terisi',
-      trigger: 'blur',
-    }">
-      <el-input v-model="props.activity.unit" placeholder="Masukkan Satuan" />
-    </el-form-item>
     <template #footer>
       <el-button type="danger" @click="$emit('remove')">Hapus Kegiatan</el-button>
     </template>

@@ -82,7 +82,6 @@ const initialState = {
       endDate: "",
       volume: "",
       rate: "",
-      unit: "",
     },
   ],
 };
@@ -156,7 +155,6 @@ const addActivity = () => {
     endDate: "",
     volume: "",
     rate: "",
-    unit: "",
   });
 };
 
