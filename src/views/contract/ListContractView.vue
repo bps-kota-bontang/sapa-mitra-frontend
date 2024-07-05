@@ -50,7 +50,8 @@
                   <el-button v-if="
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
-                    user.team == scope.row.createdBy
+                    user.team == scope.row.createdBy,
+                    !props.row.isExceeded
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
                   </el-button>
@@ -89,8 +90,18 @@
             }}</el-tag>
         </template>
       </el-table-column>
-
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
+      <el-table-column sortable label="Batas" prop="isExceeded" :filters="[
+        { text: 'Aman', value: false },
+        { text: 'Tidak Aman', value: true },
+      ]" :filter-method="filterLimit">
+        <template #default="scope">
+          <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
+            scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
+          }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
       <el-table-column align="right">
         <template #header>
           <el-input v-model="search" size="small" placeholder="Type to search" />
@@ -240,6 +251,10 @@ const filterTeam = (value: string, row: any) => {
   return [...new Set(teams)].includes(value);
 };
 
+const filterLimit = (value: string, row: any) => {
+  return row.isExceeded === value;
+};
+
 const filterStatus = (value: string, row: any) => {
   const totalActivities = row.activities.length;
   const countVerified = row.activities.filter(
@@ -297,6 +312,10 @@ const statusText = (row: any) => {
   } else {
     return "Sebagian";
   }
+};
+
+const limitFormatter = (row: any) => {
+  return `Rp ${row.limit}`;
 };
 
 const totalFormatter = (row: any) => {
