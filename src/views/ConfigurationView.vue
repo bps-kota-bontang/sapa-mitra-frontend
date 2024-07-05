@@ -41,16 +41,16 @@
       <el-form @submit.prevent style="margin-top: 15px" :rules="rulesRate" ref="formRateRef" v-loading="loading"
         :model="formRate" label-width="auto" label-position="top">
         <el-form-item label="Pencacahan" required prop="enumeration">
-          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" size="large" v-model="formRate.enumeration"
-            placeholder="Masukkan batas atas honor pencacahan" />
+          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" type="number" size="large"
+            v-model="formRate.enumeration" placeholder="Masukkan batas atas honor pencacahan" />
         </el-form-item>
         <el-form-item label="Pemeriksaan" required prop="supervision">
-          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" size="large" v-model="formRate.supervision"
-            placeholder="Masukkan batas atas honor pemeriksaan" />
+          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" type="number" size="large"
+            v-model="formRate.supervision" placeholder="Masukkan batas atas honor pemeriksaan" />
         </el-form-item>
         <el-form-item label="Pengolahan" required prop="processing">
-          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" size="large" v-model="formRate.processing"
-            placeholder="Masukkan batas atas honor pengolahan" />
+          <el-input @keyup.enter="save(formRateRef, formRate, 'RATE')" type="number" size="large"
+            v-model="formRate.processing" placeholder="Masukkan batas atas honor pengolahan" />
         </el-form-item>
         <el-form-item style="margin-top: 30px">
           <el-button type="primary" size="large" style="width: 100%"
