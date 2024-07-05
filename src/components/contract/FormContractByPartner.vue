@@ -87,11 +87,6 @@ const initialState = {
 };
 
 const partners = ref<any[]>([]);
-let feedback = ref({
-  title: "",
-  message: "",
-  type: "",
-});
 const loading = ref(false);
 const form = reactive({ ...initialState });
 
@@ -126,21 +121,23 @@ const submit = async (formEl: FormInstance | undefined) => {
 
     try {
       const { data, message } = await createContract(payload);
-      feedback.value = {
-        title: "Success",
-        message: message,
-        type: "success",
-      };
+      showNotification("Success", message, "success")
+
+      if (data.isExceeded) {
+        ElNotification({
+          title: "Warning",
+          message: `${data.partner.name}'s contract in the ${data.period} period exceeded the limit`,
+          type: "warning",
+          duration: 0,
+          offset: 100
+        });
+      }
       if (formRef.value) {
         formRef.value.resetFields();
       }
     } catch (e) {
       if (e instanceof Error) {
-        feedback.value = {
-          title: "Error",
-          message: e.message,
-          type: "error",
-        };
+        showNotification("Error", e.message, "error")
       }
     } finally {
       loading.value = false;
@@ -164,19 +161,13 @@ const removeActivity = (index: number) => {
 
 const periods = generatePeriods();
 
-watch(
-  () => feedback.value,
-  (feedback: any) => {
-    if (feedback.message != "") {
-      ElNotification({
-        title: feedback.title,
-        message: feedback.message,
-        type: feedback.type,
-      });
-    }
-  },
-  { immediate: true }
-);
+const showNotification = (title: string, message: string, type: string) => {
+  ElNotification({
+    title: title,
+    message: message,
+    type: type,
+  } as any);
+}
 
 onMounted(async () => {
   partners.value = await getPartners();
