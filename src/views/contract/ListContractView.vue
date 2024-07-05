@@ -41,6 +41,13 @@
               <el-table-column label="Aksi">
                 <template #default="scope">
                   <el-button v-if="
+                    scope.row.status == 'VERIFIED' &&
+                    user.position == 'KETUA' &&
+                    user.team == scope.row.createdBy
+                  " size="small" type="warning" @click="handleCancelActivity(props.row._id, scope.row._id)">
+                    Batal
+                  </el-button>
+                  <el-button v-if="
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
                     user.team == scope.row.createdBy
@@ -79,7 +86,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
 
@@ -124,7 +131,8 @@ import {
   verifyContractActivity,
   deleteContractActivity,
   printContracts,
-  printContract
+  printContract,
+  cancelContractActivity
 } from "@/api/contractApi";
 import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
@@ -339,6 +347,10 @@ const executeOperation = async (operation: () => Promise<void>, refetch: boolean
       error.value = e.message;
     }
   }
+};
+
+const handleCancelActivity = async (id: string, activityId: string) => {
+  executeOperation(() => cancelContractActivity(id, activityId));
 };
 
 const handleVerifyActivity = async (id: string, activityId: string) => {

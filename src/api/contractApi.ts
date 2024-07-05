@@ -171,6 +171,28 @@ export const verifyContractActivity = async (
   }
 };
 
+export const cancelContractActivity = async (
+  id: string,
+  activityId: string
+) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/${id}/activity/${activityId}/cancel`,
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+};
+
 export const deleteContractActivity = async (
   id: string,
   activityId: string
