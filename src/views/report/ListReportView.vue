@@ -171,7 +171,7 @@ const createReport = () => {
 };
 
 const outputFormatter = (row: any) => {
-  return `${row.outputs.length} Ouput`;
+  return `${row.outputs.length} Output`;
 };
 
 const executeOperation = async (operation: () => Promise<void>, refetch: boolean = true) => {

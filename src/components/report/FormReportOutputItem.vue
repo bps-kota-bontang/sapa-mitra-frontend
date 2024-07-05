@@ -1,6 +1,6 @@
 <template>
   <el-card shadow="never" style="width: 350px">
-    <el-form-item required :prop="getProp('outputId')" label="Ouput" :rules="{
+    <el-form-item required :prop="getProp('outputId')" label="Output" :rules="{
       required: true,
       message: 'Nama Output perlu terisi',
       trigger: 'change',

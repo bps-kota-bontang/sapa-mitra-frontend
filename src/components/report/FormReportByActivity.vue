@@ -1,7 +1,7 @@
 <template>
   <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
-    <el-form-item required label="Ouput" prop="output.outputId">
-      <el-select v-model="form.output.outputId" placeholder="Pilih Nama Ouput" clearable filterable>
+    <el-form-item required label="Output" prop="output.outputId">
+      <el-select v-model="form.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
         <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id">
           <span style="float: left">{{ output.name }}</span>
         </el-option>

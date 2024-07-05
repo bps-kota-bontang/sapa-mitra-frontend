@@ -42,7 +42,7 @@
           <Memo />
         </el-icon>Output
       </template>
-      <el-menu-item index="/output">Daftar Ouput</el-menu-item>
+      <el-menu-item index="/output">Daftar Output</el-menu-item>
       <el-menu-item index="/output/tambah">Tambah Output</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="5" v-if="['TU', 'IPDS'].includes(user.team)">
