@@ -157,26 +157,25 @@ const submit = async (formEl: FormInstance | undefined) => {
     try {
       const { data, message } = await createContract(payload, "activity");
 
-      showNotification("Success", message, "success");
+      await showNotification("Success", message, "success");
 
-      data.forEach((contract: any, index: number) => {
+      for await (const contract of data) {
         if (contract.isExceeded) {
           ElNotification({
             title: "Warning",
             message: `${contract.partner.name}'s contract in the ${contract.period} period exceeded the limit`,
             type: "warning",
             duration: 0,
-            offset: 100 * (index + 1)
           });
         }
-      });
+      }
 
       if (formRef.value) {
         formRef.value.resetFields();
       }
     } catch (e) {
       if (e instanceof Error) {
-        showNotification("Error", e.message, "error");
+        await showNotification("Error", e.message, "error");
       }
     } finally {
       loading.value = false;
@@ -197,7 +196,7 @@ const removePartner = (index: number) => {
 
 const periods = generatePeriods();
 
-const showNotification = (title: string, message: string, type: string) => {
+const showNotification = async (title: string, message: string, type: string) => {
   ElNotification({
     title: title,
     message: message,
