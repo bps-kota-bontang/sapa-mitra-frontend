@@ -50,7 +50,7 @@
                   <el-button v-if="
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
-                    user.team == scope.row.createdBy,
+                    user.team == scope.row.createdBy &&
                     !props.row.isExceeded
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
