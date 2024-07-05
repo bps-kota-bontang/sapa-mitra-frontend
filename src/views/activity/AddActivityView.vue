@@ -9,9 +9,9 @@
     <el-form-item required label="Satuan" prop="unit">
       <el-input v-model="form.unit" placeholder="Masukkan Satuan Kegiatan" />
     </el-form-item>
-    <el-form-item required label="Jenis" prop="type">
-      <el-select v-model="form.type" placeholder="Pilih Jenis Kegiatan" clearable filterable>
-        <el-option v-for="type in activityTypes" :key="type.value" :label="type.text" :value="type.value" />
+    <el-form-item required label="Kategori" prop="category">
+      <el-select v-model="form.category" placeholder="Pilih Jenis Kegiatan" clearable filterable>
+        <el-option v-for="category in activityCategories" :key="category.value" :label="category.text" :value="category.value" />
       </el-select>
     </el-form-item>
     <el-form-item required label="Tim" prop="team">
@@ -31,7 +31,7 @@
 import { ref, reactive, watch } from "vue";
 import { createActivity } from "@/api/activityApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
-import { teams, activityTypes } from "@/utils/constant";
+import { teams, activityCategories } from "@/utils/constant";
 
 const formRef = ref<FormInstance>();
 
@@ -57,10 +57,10 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
-  type: [
+  category: [
     {
       required: true,
-      message: "Jenis kegiatan perlu terisi",
+      message: "Kategori kegiatan perlu terisi",
       trigger: "change",
     },
   ],
@@ -77,7 +77,7 @@ const initialState = {
   name: "",
   code: "",
   unit: "",
-  type: "",
+  category: "",
   team: ""
 };
 

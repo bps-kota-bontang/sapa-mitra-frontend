@@ -25,7 +25,7 @@ export const teams = [
   },
 ];
 
-export const activityTypes = [
+export const activityCategories = [
   {
     value: "ENUMERATION",
     text: "Pencacahan",

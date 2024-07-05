@@ -29,7 +29,7 @@
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Kode Kegiatan" prop="code" />
       <el-table-column label="Unit" prop="unit" />
-      <el-table-column label="Jenis" prop="type" :formatter="typeFormatter" />
+      <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" />
       <el-table-column label="Tim" prop="team" />
 
       <el-table-column align="right">
@@ -102,10 +102,10 @@ const handlePageChange = (page: number) => {
   currentPage.value = page;
 };
 
-const typeFormatter = (row: any) => {
-  if (row.type == "ENUMERATION") return "Pencacahan";
-  if (row.type == "SUPERVISION") return "Pemeriksaan";
-  if (row.type == "PROCESSING") return "Pengolahan";
+const categoryFormatter = (row: any) => {
+  if (row.category == "ENUMERATION") return "Pencacahan";
+  if (row.category == "SUPERVISION") return "Pemeriksaan";
+  if (row.category == "PROCESSING") return "Pengolahan";
 };
 
 const handleError = (
