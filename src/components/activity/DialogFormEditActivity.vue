@@ -7,6 +7,9 @@
             <el-form-item required label="Kode Kegiatan" prop="code">
                 <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
             </el-form-item>
+            <el-form-item required label="Satuan" prop="unit">
+                <el-input v-model="form.unit" placeholder="Masukkan Satuan Kegiatan" />
+            </el-form-item>
             <el-form-item required label="Tim" prop="team">
                 <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
                     <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
@@ -33,6 +36,7 @@ import { teams } from "@/utils/constant";
 const initialState = {
     name: "",
     code: "",
+    unit: "",
     team: ""
 };
 
@@ -48,6 +52,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Kode kegiatan perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    unit: [
+        {
+            required: true,
+            message: "Satuan kegiatan perlu terisi",
             trigger: "blur",
         },
     ],
@@ -119,6 +130,7 @@ watch(() => props.id, async (newId) => {
         const data = await getActivity(props.id);
         form.name = data.name;
         form.code = data.code;
+        form.unit = data.unit;
         form.team = data.team;
     }
 }, { immediate: true });

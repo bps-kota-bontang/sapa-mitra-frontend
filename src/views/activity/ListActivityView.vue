@@ -21,13 +21,14 @@
 
     <el-divider />
     <el-table ref="activitiesTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
-    style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
+      style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
 
       <el-table-column type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Kode Kegiatan" prop="code" />
+      <el-table-column label="Unit" prop="unit" />
       <el-table-column label="Tim" prop="team" />
 
       <el-table-column align="right">

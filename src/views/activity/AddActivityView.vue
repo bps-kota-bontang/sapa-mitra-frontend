@@ -6,6 +6,9 @@
     <el-form-item required label="Kode" prop="code">
       <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
     </el-form-item>
+    <el-form-item required label="Satuan" prop="unit">
+      <el-input v-model="form.unit" placeholder="Masukkan Satuan Kegiatan" />
+    </el-form-item>
     <el-form-item required label="Tim" prop="team">
       <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
         <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
@@ -42,6 +45,13 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
+  unit: [
+    {
+      required: true,
+      message: "Satuan kegiatan perlu terisi",
+      trigger: "blur",
+    },
+  ],
   team: [
     {
       required: true,
@@ -54,6 +64,7 @@ const rules = reactive<FormRules<any>>({
 const initialState = {
   name: "",
   code: "",
+  unit: "",
   team: ""
 };
 
