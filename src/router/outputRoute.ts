@@ -10,11 +10,6 @@ const outputRoutes = [
             layout: 'LayoutDashboard',
             requiresAuth: true
         },
-        beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-            const user = useUserStore();
-            if (!["TU"].includes(user.team)) next({ "name": "unauthorized" })
-            else next();
-        },
         children: [
             {
                 path: '',
