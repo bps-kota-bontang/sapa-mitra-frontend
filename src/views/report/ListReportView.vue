@@ -1,11 +1,12 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
     <div style="display: flex; justify-content: space-between">
-      <div style="display: flex; align-items: center">
-        <span style="margin-right: 20px">Periode</span>
+      <div style="display: flex; align-items: center; gap:20px">
+        <span>Periode</span>
         <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
           <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
+        <el-button @click="fetchData(route.query.period)">Muat Ulang</el-button>
       </div>
 
       <div style="display: flex; align-items: center">

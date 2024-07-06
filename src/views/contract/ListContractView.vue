@@ -1,11 +1,12 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
     <div style="display: flex; justify-content: space-between">
-      <div style="display: flex; align-items: center">
-        <span style="margin-right: 20px">Periode</span>
+      <div style="display: flex; align-items: center; gap:20px">
+        <span>Periode</span>
         <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
           <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
+        <el-button @click="fetchData(route.query.period)">Muat Ulang</el-button>
       </div>
 
       <div style="display: flex; align-items: center">
@@ -87,7 +88,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
@@ -98,7 +99,7 @@
         <template #default="scope">
           <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
             scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
