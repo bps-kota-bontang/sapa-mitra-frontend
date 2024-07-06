@@ -49,7 +49,7 @@ export const printReports = async (payload: any) => {
   const a = document.createElement("a");
   a.style.display = "none";
   a.href = url;
-  a.download = `SPK - ${new Date().valueOf()}.pdf`;
+  a.download = `BAST - ${new Date().valueOf()}.pdf`;
   document.body.appendChild(a);
   a.click();
 
@@ -79,7 +79,7 @@ export const printReport = async (id: string) => {
   const a = document.createElement("a");
   a.style.display = "none";
   a.href = url;
-  a.download = `SPK - ${new Date().valueOf()}.pdf`;
+  a.download = `BAST - ${new Date().valueOf()}.pdf`;
   document.body.appendChild(a);
   a.click();
 
