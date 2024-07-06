@@ -55,6 +55,8 @@
               Impor Mitra
             </el-button>
           </el-upload>
+          <el-button type="success" @click="downloadMasterPartner()">Unduh Master Data Mitra</el-button>
+          <el-button @click="downloadTemplateImportPartner()">Template Impor Mitra</el-button>
         </div>
       </template>
     </el-card>
@@ -70,10 +72,10 @@ import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
 import { formatDateOriginal, generatePeriods } from "@/utils/date";
-import { createContract } from "@/api/contractApi";
+import { createContract, downloadTemplatePartner } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getActivities } from "@/api/activityApi";
-import { getPartners } from "@/api/partnerApi";
+import { getPartners, downloadPartners } from "@/api/partnerApi";
 
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();
@@ -227,6 +229,14 @@ const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles
 const removePartner = (index: number) => {
   form.partners.splice(index, 1);
 };
+
+const downloadMasterPartner = () => {
+  downloadPartners()
+}
+
+const downloadTemplateImportPartner = () => {
+  downloadTemplatePartner()
+}
 
 const periods = generatePeriods();
 
