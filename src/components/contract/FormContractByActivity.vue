@@ -42,11 +42,20 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index"
-          :partner="partner" @remove="removePartner(index)" />
+        <FormContractPartnerItem v-for="(partner, index) in form.partners" :key="index" :partners="partners"
+          :index="index" :partner="partner" @remove="removePartner(index)" />
       </div>
 
-      <template #footer><el-button @click="addPartner">Tambah Mitra</el-button>
+      <template #footer>
+        <div style="gap:10px; display: flex;">
+          <el-button type="primary" @click="addPartner">Tambah Mitra</el-button>
+          <el-upload ref="fileInput" :limit="1" :show-file-list="false" action="#" accept="text/csv"
+            :auto-upload="false" :on-change="handleFileChange">
+            <el-button>
+              Impor Mitra
+            </el-button>
+          </el-upload>
+        </div>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -57,15 +66,17 @@
 </template>
 
 <script lang="ts" setup>
+import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
 import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
-import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getActivities } from "@/api/activityApi";
+import { getPartners } from "@/api/partnerApi";
 
 const formRef = ref<FormInstance>();
-
+const fileInput = ref<UploadInstance>();
 const rules = reactive<FormRules<any>>({
   "activity.activityId": [
     {
@@ -123,7 +134,7 @@ const initialState = {
 };
 
 const activities = ref<any[]>([]);
-
+const partners = ref<any[]>([]);
 const loading = ref(false);
 const form = reactive({ ...initialState });
 
@@ -190,6 +201,29 @@ const addPartner = () => {
   });
 };
 
+const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  const raw = await uploadFile.raw?.text();
+
+  if (!raw) return
+
+  var result = Papa.parse(raw, {
+    header: true
+  });
+
+  result.data.forEach((rawPartner: any) => {
+    const partner = partners.value.find(item => item.nik == rawPartner.nik);
+
+    if (!partner) return
+
+    form.partners.push({
+      partnerId: partner._id,
+      volume: rawPartner.volume,
+    });
+  });
+
+  fileInput.value?.clearFiles()
+}
+
 const removePartner = (index: number) => {
   form.partners.splice(index, 1);
 };
@@ -206,5 +240,6 @@ const showNotification = async (title: string, message: string, type: string) =>
 
 onMounted(async () => {
   activities.value = await getActivities();
+  partners.value = await getPartners();
 });
 </script>
