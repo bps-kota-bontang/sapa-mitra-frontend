@@ -22,12 +22,14 @@
 
     <el-form-item required label="Tanggal Mulai" prop="activity.startDate">
       <el-col>
-        <el-date-picker v-model="form.activity.startDate" type="date" placeholder="Pilih Tanggal Mulai" />
+        <el-date-picker v-model="form.activity.startDate" type="date" placeholder="Pilih Tanggal Mulai"
+          :default-value="formatPeriodDate(form.contract.period)" />
       </el-col>
     </el-form-item>
     <el-form-item required label="Tanggal Selesai" prop="activity.endDate">
       <el-col>
-        <el-date-picker v-model="form.activity.endDate" type="date" placeholder="Pilih Tanggal Selesai" />
+        <el-date-picker v-model="form.activity.endDate" type="date" placeholder="Pilih Tanggal Selesai"
+          :default-value="formatPeriodDate(form.contract.period)" />
       </el-col>
     </el-form-item>
 
@@ -72,7 +74,7 @@
 import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
-import { formatDateOriginal, generatePeriods } from "@/utils/date";
+import { formatDateOriginal, formatPeriodDate, generatePeriods } from "@/utils/date";
 import { createContract, downloadTemplatePartner } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getActivities } from "@/api/activityApi";

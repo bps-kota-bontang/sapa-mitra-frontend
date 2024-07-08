@@ -28,7 +28,7 @@
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
         <FormContractActivityItem :activities="activities" v-for="(activity, index) in form.activities" :key="index"
-          :index="index" :activity="activity" @remove="removeActivity(index)" />
+          :period="form.contract.period" :index="index" :activity="activity" @remove="removeActivity(index)" />
       </div>
 
       <template #footer><el-button @click="addActivity">Tambah Kegiatan</el-button>

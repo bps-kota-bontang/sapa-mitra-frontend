@@ -16,7 +16,8 @@
       trigger: 'change',
     }">
       <el-col>
-        <el-date-picker v-model="props.activity.startDate" type="date" placeholder="Pilih Tanggal Mulai" />
+        <el-date-picker v-model="props.activity.startDate" :default-value="formatPeriodDate(props.period)" type="date"
+          placeholder="Pilih Tanggal Mulai" />
       </el-col>
     </el-form-item>
     <el-form-item required label="Tanggal Selesai" :prop="getProp('endDate')" :rules="{
@@ -25,7 +26,8 @@
       trigger: 'change',
     }">
       <el-col>
-        <el-date-picker v-model="props.activity.endDate" type="date" placeholder="Pilih Tanggal Selesai" />
+        <el-date-picker v-model="props.activity.endDate" type="date" :default-value="formatPeriodDate(props.period)"
+          placeholder="Pilih Tanggal Selesai" />
       </el-col>
     </el-form-item>
     <el-form-item required label="Volume" :prop="getProp('volume')" :rules="{
@@ -52,9 +54,11 @@
 
 <script lang="ts" setup>
 import { formatParserNumber, formatNumber } from "@/utils/currency";
+import { formatPeriodDate } from "@/utils/date";
 
 const props: any = defineProps({
   activity: Object,
+  period: String,
   index: Number,
   activities: Object
 });

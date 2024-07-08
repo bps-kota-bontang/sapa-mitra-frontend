@@ -1,3 +1,12 @@
+export const formatPeriodDate = (period: string): Date => {
+  if (!period) return new Date();
+  const parts = period.split("-");
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+
+  return new Date(year, month);
+};
+
 export const formatDate = (isoDateString: string): string => {
   const date = new Date(isoDateString);
   const day = date.getUTCDate(); // Get day of the month (1-31)
