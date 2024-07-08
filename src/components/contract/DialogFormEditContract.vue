@@ -53,8 +53,7 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import { getContractActivity, updateContractActivity } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
-import { activityCategories, teams } from "@/utils/constant";
-import { formatDateOriginal, formatPeriodDate, generatePeriods } from "@/utils/date";
+import { formatPeriodDate } from "@/utils/date";
 import { formatParserNumber, formatNumber } from "@/utils/currency";
 
 const initialState = {
@@ -152,7 +151,6 @@ const update = async (formEl: FormInstance | undefined) => {
 watch(() => props.isShow, async (isShow) => {
     if (isShow) {
         const data = await getContractActivity(props.contractId, props.activityId);
-        form.activityId = data._id
         form.startDate = data.startDate
         form.endDate = data.endDate
         form.volume = data.volume
