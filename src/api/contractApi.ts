@@ -92,11 +92,21 @@ export const printContract = async (id: string) => {
 
   const blob = await response.blob();
 
+  const contentDisposition = response.headers.get("Content-Disposition");
+  let filename = `SPK - ${new Date().valueOf()}.pdf`;
+
+  if (contentDisposition) {
+    const matches = contentDisposition.match(/filename="(.+)"/);
+    if (matches && matches[1]) {
+      filename = matches[1];
+    }
+  }
+
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.style.display = "none";
   a.href = url;
-  a.download = `SPK - ${new Date().valueOf()}.pdf`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
 
