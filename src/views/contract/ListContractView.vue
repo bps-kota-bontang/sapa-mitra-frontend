@@ -44,14 +44,14 @@
                   <el-button v-if="
                     scope.row.status == 'VERIFIED' &&
                     user.position == 'KETUA' &&
-                    user.team == scope.row.createdBy
+                    (user.team == scope.row.createdBy || user.team == 'TU')
                   " size="small" type="warning" @click="handleCancelActivity(props.row._id, scope.row._id)">
                     Batal
                   </el-button>
                   <el-button v-if="
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
-                    user.team == scope.row.createdBy &&
+                    (user.team == scope.row.createdBy || user.team == 'TU') &&
                     !props.row.isExceeded
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
