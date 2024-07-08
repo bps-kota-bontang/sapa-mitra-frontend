@@ -44,7 +44,7 @@
     </el-table>
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
-        :page-sizes="[8, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
+        :page-sizes="[10, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
         @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
@@ -81,7 +81,7 @@ const error = ref("");
 const outputsSelected = ref<any[]>([]);
 const editedOutputId = ref(null);
 const showDialogFormEdit = ref(false);
-const pageSize = ref(8)
+const pageSize = ref(10)
 const currentPage = ref(1);
 
 const total = computed(() => filterOutputs.value.length);
