@@ -24,7 +24,7 @@
     <el-divider />
     <el-table :default-expand-all="expand" ref="contractsTableRef" v-loading="loading" :row-class-name="contractStatus"
       :data="paginatedData" row-key="_id" style="width: 100%; flex: 1; margin-bottom: 20px;"
-      @selection-change="handleSelection">
+      @filter-change="handleFilterChange" @selection-change="handleSelection">
       <el-table-column type="selection" :selectable="isSelecetable" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
         <template #default="props">
@@ -70,9 +70,10 @@
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="partner.name" />
       <el-table-column label="No SPK" prop="number" />
-      <el-table-column label="Periode" sortable prop="period" :filters="periods" :filter-method="filterPeriod" />
+      <el-table-column label="Periode" sortable prop="period" column-key="period" :filters="periods"
+        :filter-method="filterPeriod" />
       <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter" />
-      <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam">
+      <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
         <template #default="scope">
           <el-tag v-if="!teamFormatter(scope.row).includes('-')" style="margin-right: 5px" type="primary"
             v-for="item in teamFormatter(scope.row)" effect="dark" :key="item">{{ item }}</el-tag>
@@ -80,7 +81,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column sortable :sort-by="sortStatus" label="Verifikasi" :filters="[
+      <el-table-column sortable :sort-by="sortStatus" column-key="status" label="Verifikasi" :filters="[
         { text: 'Lengkap', value: 'Lengkap' },
         { text: 'Sebagian', value: 'Sebagian' },
         { text: 'Belum', value: 'Belum' },
@@ -92,7 +93,7 @@
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
-      <el-table-column sortable label="Batas" prop="isExceeded" :filters="[
+      <el-table-column sortable label="Batas" column-key="limit" prop="isExceeded" :filters="[
         { text: 'Aman', value: false },
         { text: 'Tidak Aman', value: true },
       ]" :filter-method="filterLimit">
@@ -151,41 +152,116 @@ import { useUserStore } from "@/stores/user";
 import { ElNotification, ElTable } from "element-plus";
 import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
+import type { Contract } from "@/types/contract";
+import type { Filter } from "@/types/filter";
 
 const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
+const initialFilter: Filter = {
+  team: [],
+  period: [],
+  status: [],
+  limit: []
+}
+
 const contractsTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
 const loading = ref(false);
-const contracts = ref<any[]>([]);
+const contracts = ref<Contract[]>([]);
 const error = ref("");
 const contractsSelected = ref<any[]>([]);
 const periodSelected = ref(route.query.period);
 const expand = ref(false);
 const pageSize = ref(10)
 const currentPage = ref(1);
-
-const total = computed(() => filterContracts.value.length);
+const filter = ref(initialFilter);
+const total = ref(0);
 
 const paginatedData = computed(() => {
+  let paginatedData: Contract[] = contracts.value
+  if (filter.value.period.length > 0) {
+    paginatedData = paginatedData.filter((item) => {
+      return filter.value.period.includes(item.period)
+    });
+  }
+
+  if (filter.value.team.length > 0) {
+    paginatedData = paginatedData.filter((item) => {
+      return item.activities.some((activity) => {
+        return filter.value.team.includes(activity.createdBy);
+      });
+    });
+  }
+
+  if (filter.value.status.length > 0) {
+    paginatedData = paginatedData.filter((item) => {
+      const totalActivities = item.activities.length;
+      const countVerified = item.activities.filter(
+        (item: any) => item.status === "VERIFIED"
+      ).length;
+
+      let result;
+
+      if (totalActivities == 0) {
+        result = "Belum";
+      } else if (countVerified == totalActivities) {
+        result = "Lengkap";
+      } else if (countVerified == 0) {
+        result = "Belum";
+      } else {
+        result = "Sebagian";
+      }
+
+      return filter.value.status.includes(result);
+    });
+  }
+
+  if (filter.value.limit.length > 0) {
+
+    paginatedData = paginatedData.filter((item) => {
+
+      return filter.value.limit.includes(item.isExceeded)
+    });
+  }
+
+  if (search.value) {
+    paginatedData = paginatedData.filter(
+      (data: any) =>
+        !search.value ||
+        data.partner.name.toLowerCase().includes(search.value.toLowerCase())
+    );
+  }
+
+  total.value = paginatedData.length
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filterContracts.value.slice(start, end);
+
+  return paginatedData.slice(start, end);
 });
+
+const handleFilterChange = (newFilters: any) => {
+  if (newFilters.period) {
+    filter.value.period = newFilters.period
+  }
+
+  if (newFilters.team) {
+    filter.value.team = newFilters.team
+  }
+
+  if (newFilters.status) {
+    filter.value.status = newFilters.status
+  }
+
+  if (newFilters.limit) {
+    filter.value.limit = newFilters.limit
+  }
+}
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
 };
-
-const filterContracts = computed(() => {
-  return contracts.value.filter(
-    (data: any) =>
-      !search.value ||
-      data.partner.name.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
 
 const sortTotal = (row: any, index: number) => {
   return row.grandTotal;
@@ -228,6 +304,12 @@ const clearFilter = () => {
   contractsTableRef.value!.clearFilter();
   search.value = ""
   periodSelected.value = null;
+  filter.value = {
+    team: [],
+    period: [],
+    status: [],
+    limit: []
+  }
 };
 
 const clearSelection = () => {
