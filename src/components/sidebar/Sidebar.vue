@@ -16,7 +16,7 @@
         </el-icon>SPK
       </template>
       <el-menu-item index="/spk">Daftar SPK</el-menu-item>
-      <el-menu-item v-if="['ANGGOTA'].includes(user.position)" index="/spk/buat">Buat SPK</el-menu-item>
+      <el-menu-item v-if="['ANGGOTA'].includes(user.position) || ['TU'].includes(user.team)" index="/spk/buat">Buat SPK</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="2">
       <template #title>
