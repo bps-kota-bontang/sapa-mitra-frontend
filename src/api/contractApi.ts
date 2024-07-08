@@ -74,7 +74,11 @@ export const printContracts = async (payload: any) => {
   document.body.removeChild(a);
 };
 
-export const printContract = async (id: string) => {
+export const printContract = async (
+  id: string,
+  number: string,
+  name: string
+) => {
   const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/${id}/print`, {
@@ -93,7 +97,7 @@ export const printContract = async (id: string) => {
   const blob = await response.blob();
 
   const contentDisposition = response.headers.get("Content-Disposition");
-  let filename = `SPK - ${new Date().valueOf()}.pdf`;
+  let filename = `${number}_${name}.pdf`;
 
   if (contentDisposition) {
     const matches = contentDisposition.match(/filename="(.+)"/);

@@ -195,7 +195,7 @@ const handleDeleteReport = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  executeOperation(() => printReport(row._id), false);
+  executeOperation(() => printReport(row._id, row.number, row.partner.name), false);
 };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {

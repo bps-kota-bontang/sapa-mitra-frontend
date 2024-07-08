@@ -494,7 +494,7 @@ const handleDeleteContract = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  executeOperation(() => printContract(row._id), false);
+  executeOperation(() => printContract(row._id, row.number, row.partner.name), false);
 };
 
 const isSelecetable = (row: any, index: number) => {
