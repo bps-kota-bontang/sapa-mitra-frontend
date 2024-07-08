@@ -63,8 +63,8 @@
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
                   </el-button>
-                  <el-button v-if="user.team == scope.row.createdBy" size="small" type="danger"
-                    @click="handleDeleteActivity(props.row._id, scope.row._id)">
+                  <el-button v-if="user.team == scope.row.createdBy || (user.position == 'KETUA' && user.team == 'TU')"
+                    size="small" type="danger" @click="handleDeleteActivity(props.row._id, scope.row._id)">
                     Hapus
                   </el-button>
                 </template>
