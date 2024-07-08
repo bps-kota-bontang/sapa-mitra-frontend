@@ -244,3 +244,51 @@ export const downloadTemplatePartner = async () => {
   window.URL.revokeObjectURL(url);
   document.body.removeChild(a);
 };
+
+export const getContractActivity = async (id: string, activityId: string) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/${id}/activity/${activityId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
+export const updateContractActivity = async (
+  id: string,
+  activityId: string,
+  payload: any
+) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/${id}/activity/${activityId}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};

@@ -41,6 +41,9 @@
 
               <el-table-column label="Aksi">
                 <template #default="scope">
+                  <el-button size="small" @click="handleEdit(props.row._id, scope.row._id)">
+                    Edit
+                  </el-button>
                   <el-button v-if="
                     scope.row.status == 'VERIFIED' &&
                     user.position == 'KETUA' &&
@@ -89,7 +92,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
@@ -100,7 +103,7 @@
         <template #default="scope">
           <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
             scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
@@ -132,6 +135,8 @@
     </div>
 
   </div>
+  <DialogFormEditContract @close-dialog="handleCloseDialogFormEdit" :contractId="editedContractId"
+    :activityId="editedActivityId" :isShow="showDialogFormEdit" />
 </template>
 
 <script lang="ts" setup>
@@ -178,6 +183,9 @@ const pageSize = ref(10)
 const currentPage = ref(1);
 const filter = ref(initialFilter);
 const total = ref(0);
+const editedContractId = ref<string | null>(null);
+const editedActivityId = ref<string | null>(null);
+const showDialogFormEdit = ref(false);
 
 const paginatedData = computed(() => {
   let paginatedData: Contract[] = contracts.value
@@ -362,6 +370,19 @@ const filterStatus = (value: string, row: any) => {
 
 const createContract = () => {
   router.push({ name: "createContract" });
+};
+
+const handleCloseDialogFormEdit = async (refetch: boolean = false) => {
+  editedContractId.value = null;
+  editedActivityId.value = null;
+  showDialogFormEdit.value = false;
+  if (refetch) await fetchData(route.query.period, false);
+};
+
+const handleEdit = (id: string, activityId: string) => {
+  editedContractId.value = id;
+  editedActivityId.value = activityId;
+  showDialogFormEdit.value = true;
 };
 
 const statusType = (row: any) => {
