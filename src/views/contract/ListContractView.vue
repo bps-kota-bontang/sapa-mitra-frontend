@@ -41,7 +41,11 @@
 
               <el-table-column label="Aksi">
                 <template #default="scope">
-                  <el-button size="small" @click="handleEdit(props.row._id, scope.row._id)">
+                  <el-button v-if="
+                    scope.row.status == 'UNVERIFIED' &&
+                    user.position == 'KETUA' &&
+                    (user.team == scope.row.createdBy || user.team == 'TU')
+                  " size="small" @click="handleEdit(props.row._id, scope.row._id)">
                     Edit
                   </el-button>
                   <el-button v-if="
