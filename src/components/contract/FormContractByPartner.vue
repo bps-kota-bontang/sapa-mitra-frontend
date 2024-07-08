@@ -48,6 +48,7 @@ import FormContractActivityItem from "@/components/contract/FormContractActivity
 import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { getActivities } from "@/api/activityApi";
 
 const formRef = ref<FormInstance>();
 
@@ -171,6 +172,6 @@ const showNotification = async (title: string, message: string, type: string) =>
 
 onMounted(async () => {
   partners.value = await getPartners();
-  activities.value = await getPartners();
+  activities.value = await getActivities();
 });
 </script>
