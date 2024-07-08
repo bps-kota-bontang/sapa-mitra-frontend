@@ -6,7 +6,16 @@
       trigger: 'change',
     }">
       <el-select v-model="props.partner.partnerId" placeholder="Pilih Nama Mitra" clearable filterable>
-        <el-option v-for="partner in props.partners" :key="partner._id" :label="partner.name" :value="partner._id" />
+        <el-option v-for="partner in props.partners" :key="partner._id" :label="partner.name" :value="partner._id">
+          <span style="float: left">{{ partner.name }}</span>
+          <span style="
+              float: right;
+              color: var(--el-text-color-secondary);
+              font-size: 13px;
+            ">
+            {{ partner.address }}
+          </span>
+        </el-option>
       </el-select>
     </el-form-item>
 
