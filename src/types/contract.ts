@@ -24,5 +24,6 @@ export type Contract = {
   signDate: Date;
   handOverDate: Date;
   penalty: number;
+  isExceeded: boolean;
   grandTotal: number;
 };
