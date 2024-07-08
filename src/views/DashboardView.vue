@@ -1,37 +1,15 @@
 <template>
-  <div
-    style="
+  <div style="
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-    "
-  >
-    <Bar
-      v-if="load"
-      :options="optionsByStatus"
-      :data="dataByStatus"
-      :style="style"
-    />
-    <Bar
-      v-if="load"
-      :options="optionsByTeam"
-      :data="dataByTeam"
-      :style="style"
-    />
-    <Line
-      v-if="load"
-      :options="optionsPartners"
-      :data="dataPartners"
-      :style="style"
-    />
-    <Line
-      v-if="load"
-      :options="optionsActivities"
-      :data="dataActivities"
-      :style="style"
-    />
+    ">
+    <Bar v-if="load" :options="optionsByStatus" :data="dataByStatus" :style="style" />
+    <Bar v-if="load" :options="optionsByTeam" :data="dataByTeam" :style="style" />
+    <Line v-if="load" :options="optionsPartners" :data="dataPartners" :style="style" />
+    <Line v-if="load" :options="optionsActivities" :data="dataActivities" :style="style" />
   </div>
 </template>
 
@@ -102,7 +80,6 @@ const optionsByStatus = ref({
     y: {
       stacked: true,
       min: 0,
-      max: 20,
       ticks: {
         stepSize: 1,
       },
@@ -162,7 +139,6 @@ const optionsByTeam = ref({
     y: {
       stacked: true,
       min: 0,
-      max: 20,
       ticks: {
         stepSize: 1,
       },
@@ -193,7 +169,6 @@ const optionsPartners = ref({
   scales: {
     y: {
       min: 0,
-      max: 20,
       ticks: {
         stepSize: 1,
       },
@@ -224,7 +199,6 @@ const optionsActivities = ref({
   scales: {
     y: {
       min: 0,
-      max: 20,
       ticks: {
         stepSize: 1,
       },
