@@ -6,7 +6,8 @@
       trigger: 'change',
     }">
       <el-select v-model="props.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
-        <el-option v-for="activity in activities" :key="activity._id" :label="activity.name" :value="activity._id" />
+        <el-option v-for="activity in props.activities" :key="activity._id" :label="activity.name"
+          :value="activity._id" />
       </el-select>
     </el-form-item>
     <el-form-item required label="Tanggal Mulai" :prop="getProp('startDate')" :rules="{
@@ -32,15 +33,15 @@
       message: 'Volume perlu terisi',
       trigger: 'blur',
     }">
-      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="props.activity.volume"
-        placeholder="Masukkan Volume" />
+      <el-input v-model="props.activity.volume" placeholder="Masukkan Volume" :formatter="formatNumber"
+        :parser="formatParserNumber" />
     </el-form-item>
     <el-form-item required label="Rate" :prop="getProp('rate')" :rules="{
       required: true,
       message: 'Rate perlu terisi',
       trigger: 'blur',
     }">
-      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="props.activity.rate"
+      <el-input v-model="props.activity.rate" :formatter="formatNumber" :parser="formatParserNumber"
         placeholder="Masukkan Rate" />
     </el-form-item>
     <template #footer>
@@ -50,24 +51,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import { getActivities } from "@/api/activityApi";
-import { formatNumber } from "chart.js/helpers";
-import { formatParserNumber } from "@/utils/currency";
+import { formatParserNumber, formatNumber } from "@/utils/currency";
 
 const props: any = defineProps({
   activity: Object,
   index: Number,
+  activities: Object
 });
-
-const activities = ref<any[]>([]);
 
 const getProp = (key: string) => {
   return `activities[${props.index}].${key}`;
 };
 
-onMounted(async () => {
-  const data = await getActivities();
-  activities.value = data;
-});
 </script>

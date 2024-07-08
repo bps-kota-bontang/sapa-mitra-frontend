@@ -27,8 +27,8 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractActivityItem v-for="(activity, index) in form.activities" :key="index" :index="index"
-          :activity="activity" @remove="removeActivity(index)" />
+        <FormContractActivityItem :activities="activities" v-for="(activity, index) in form.activities" :key="index"
+          :index="index" :activity="activity" @remove="removeActivity(index)" />
       </div>
 
       <template #footer><el-button @click="addActivity">Tambah Kegiatan</el-button>
@@ -87,6 +87,7 @@ const initialState = {
 };
 
 const partners = ref<any[]>([]);
+const activities = ref<any[]>([]);
 const loading = ref(false);
 const form = reactive({ ...initialState });
 
@@ -170,5 +171,6 @@ const showNotification = async (title: string, message: string, type: string) =>
 
 onMounted(async () => {
   partners.value = await getPartners();
+  activities.value = await getPartners();
 });
 </script>
