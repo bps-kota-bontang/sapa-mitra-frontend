@@ -15,7 +15,8 @@
       message: 'Volume perlu terisi',
       trigger: 'blur',
     }">
-      <el-input type="number" v-model="props.partner.volume" placeholder="Masukkan Volume" />
+      <el-input v-model="props.partner.volume" placeholder="Masukkan Volume" :formatter="formatNumber"
+        :parser="formatParserNumber" />
     </el-form-item>
 
     <template #footer>
@@ -25,8 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import { getPartners } from "@/api/partnerApi";
+import { formatNumber, formatParserNumber } from "@/utils/currency";
 
 const props: any = defineProps({
   partner: Object,

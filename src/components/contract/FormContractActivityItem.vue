@@ -32,14 +32,16 @@
       message: 'Volume perlu terisi',
       trigger: 'blur',
     }">
-      <el-input type="number" v-model="props.activity.volume" placeholder="Masukkan Volume" />
+      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="props.activity.volume"
+        placeholder="Masukkan Volume" />
     </el-form-item>
     <el-form-item required label="Rate" :prop="getProp('rate')" :rules="{
       required: true,
       message: 'Rate perlu terisi',
       trigger: 'blur',
     }">
-      <el-input type="number" v-model="props.activity.rate" placeholder="Masukkan Rate" />
+      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="props.activity.rate"
+        placeholder="Masukkan Rate" />
     </el-form-item>
     <template #footer>
       <el-button type="danger" @click="$emit('remove')">Hapus Kegiatan</el-button>
@@ -50,6 +52,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { getActivities } from "@/api/activityApi";
+import { formatNumber } from "chart.js/helpers";
+import { formatParserNumber } from "@/utils/currency";
 
 const props: any = defineProps({
   activity: Object,

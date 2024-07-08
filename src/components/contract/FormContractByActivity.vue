@@ -32,7 +32,8 @@
     </el-form-item>
 
     <el-form-item required label="Rate" prop="activity.rate">
-      <el-input type="number" v-model="form.activity.rate" placeholder="Masukkan Rate" />
+      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="form.activity.rate"
+        placeholder="Masukkan Rate" />
     </el-form-item>
 
     <el-card shadow="never">
@@ -76,6 +77,7 @@ import { createContract, downloadTemplatePartner } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getActivities } from "@/api/activityApi";
 import { getPartners, downloadPartners } from "@/api/partnerApi";
+import { formatNumber, formatParserNumber } from "@/utils/currency";
 
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();

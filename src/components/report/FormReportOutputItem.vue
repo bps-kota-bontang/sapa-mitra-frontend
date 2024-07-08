@@ -15,7 +15,8 @@
       message: 'Total perlu terisi',
       trigger: 'blur',
     }">
-      <el-input type="number" v-model="props.output.total" placeholder="Masukkan Total" />
+      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="props.output.total"
+        placeholder="Masukkan Total" />
     </el-form-item>
 
     <template #footer>
@@ -27,6 +28,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, toRefs } from "vue";
 import { getOutputs } from "@/api/outputApi";
+import { formatNumber, formatParserNumber } from "@/utils/currency";
 
 const props: any = defineProps({
   output: Object,
