@@ -29,8 +29,9 @@
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Kode Kegiatan" prop="code" />
       <el-table-column label="Unit" prop="unit" />
-      <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" />
-      <el-table-column label="Tim" prop="team" />
+      <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
+        :filter-method="filterCategory" column-key="team" />
+      <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
 
       <el-table-column align="right">
         <template #header>
@@ -70,6 +71,7 @@ import { getActivities, deleteActivity, deleteActivities, downloadActivities, do
 import { BASE_URL } from "@/api/api";
 import { useAuthStore } from "@/stores/auth";
 import { ElNotification, ElTable } from "element-plus";
+import { teams, activityCategories } from "@/utils/constant";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -101,6 +103,14 @@ const paginatedData = computed(() => {
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
+};
+
+const filterTeam = (value: string, row: any) => {
+  return row.team == value
+};
+
+const filterCategory = (value: string, row: any) => {
+  return row.category == value
 };
 
 const categoryFormatter = (row: any) => {
