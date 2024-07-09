@@ -53,6 +53,7 @@
         @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+        <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="downloadSelection()" type="success">Unduh</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
       </div>
@@ -103,6 +104,12 @@ const paginatedData = computed(() => {
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
+};
+
+const clearFilter = () => {
+  activitiesTableRef.value!.clearFilter();
+  search.value = ""
+  periodSelected.value = null;
 };
 
 const filterTeam = (value: string, row: any) => {
