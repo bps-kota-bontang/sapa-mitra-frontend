@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     DialogFormEditActivity: typeof import('./src/components/activity/DialogFormEditActivity.vue')['default']
     DialogFormEditContract: typeof import('./src/components/contract/DialogFormEditContract.vue')['default']
+    DialogFormEditContractActivity: typeof import('./src/components/contract/DialogFormEditContractActivity.vue')['default']
     DialogFormEditOutput: typeof import('./src/components/output/DialogFormEditOutput.vue')['default']
     DialogFormEditPartner: typeof import('./src/components/partner/DialogFormEditPartner.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']

@@ -1,20 +1,41 @@
 <template>
-    <el-dialog v-model="props.isShow" title="Ubah Kontrak" width="500" :before-close="handleClose">
+    <el-dialog v-model="props.isShow" title="Ubah Kegiatan" width="500" :before-close="handleClose">
         <el-form :model="form" ref="formRef" label-width="auto" label-position="top" :rules="rules" v-loading="loading">
-            <el-form-item required label="No SPK" :rules="{
+            <el-form-item required label="Tanggal Mulai" :rules="{
                 required: true,
-                message: 'Nomor SPK perlu terisi',
-                trigger: 'blur',
+                message: 'Tanggal mulai perlu terisi',
+                trigger: 'change',
             }">
-                <el-input v-model="form.number" placeholder="Masukkan No SPK" />
+                <el-col>
+                    <el-date-picker v-model="form.startDate" :default-value="formatPeriodDate(props.period)" type="date"
+                        placeholder="Pilih Tanggal Mulai" />
+                </el-col>
             </el-form-item>
-            <el-form-item required label="Grand Total" :rules="{
+            <el-form-item required label="Tanggal Selesai" :rules="{
                 required: true,
-                message: 'Grand Total perlu terisi',
+                message: 'Tanggal selesai perlu terisi',
+                trigger: 'change',
+            }">
+                <el-col>
+                    <el-date-picker v-model="form.endDate" type="date" :default-value="formatPeriodDate(props.period)"
+                        placeholder="Pilih Tanggal Selesai" />
+                </el-col>
+            </el-form-item>
+            <el-form-item required label="Volume" :rules="{
+                required: true,
+                message: 'Volume perlu terisi',
                 trigger: 'blur',
             }">
-                <el-input v-model="form.grandTotal" :formatter="formatNumber" :parser="formatParserNumber"
-                    placeholder="Masukkan Grand Total" />
+                <el-input v-model="form.volume" placeholder="Masukkan Volume" :formatter="formatNumber"
+                    :parser="formatParserNumber" />
+            </el-form-item>
+            <el-form-item required label="Rate" :rules="{
+                required: true,
+                message: 'Rate perlu terisi',
+                trigger: 'blur',
+            }">
+                <el-input v-model="form.rate" :formatter="formatNumber" :parser="formatParserNumber"
+                    placeholder="Masukkan Rate" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -29,28 +50,45 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
-import { getContract, updateContract } from "@/api/contractApi";
+import { ref, reactive, watch, onMounted } from "vue";
+import { getContractActivity, updateContractActivity } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { formatPeriodDate } from "@/utils/date";
 import { formatParserNumber, formatNumber } from "@/utils/currency";
 
 const initialState = {
-    number: "",
-    grandTotal: ""
+    startDate: "",
+    endDate: "",
+    volume: "",
+    rate: ""
 };
 
 const rules = reactive<FormRules<any>>({
-    number: [
+    startDate: [
         {
             required: true,
-            message: 'No SPK perlu terisi',
+            message: 'Tanggal mulai perlu terisi',
+            trigger: 'change',
+        },
+    ],
+    endDate: [
+        {
+            required: true,
+            message: 'Tanggal selesai perlu terisi',
+            trigger: 'change',
+        },
+    ],
+    volume: [
+        {
+            required: true,
+            message: 'Volume perlu terisi',
             trigger: 'blur',
         },
     ],
-    grandTotal: [
+    rate: [
         {
             required: true,
-            message: 'Grand Total perlu terisi',
+            message: 'Rate perlu terisi',
             trigger: 'blur',
         },
     ],
@@ -67,6 +105,7 @@ const emit = defineEmits(['closeDialog'])
 
 const props: any = defineProps({
     contractId: String,
+    activityId: String,
     isShow: Boolean,
 });
 
@@ -88,7 +127,7 @@ const update = async (formEl: FormInstance | undefined) => {
         }
 
         try {
-            const { data, message } = await updateContract(props.contractId, form);
+            const { data, message } = await updateContractActivity(props.contractId, props.activityId, form);
             feedback.value = {
                 title: "Success",
                 message: message,
@@ -111,9 +150,11 @@ const update = async (formEl: FormInstance | undefined) => {
 
 watch(() => props.isShow, async (isShow) => {
     if (isShow) {
-        const data = await getContract(props.contractId);
-        form.number = data.number
-        form.grandTotal = data.grandTotal
+        const data = await getContractActivity(props.contractId, props.activityId);
+        form.startDate = data.startDate
+        form.endDate = data.endDate
+        form.volume = data.volume
+        form.rate = data.rate
     }
 }, { immediate: true });
 

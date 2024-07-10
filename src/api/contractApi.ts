@@ -26,6 +26,23 @@ export const getContracts = async (period: string) => {
   return result.data;
 };
 
+export const getContract = async (id: string) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/${id}`, {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
 export const getContractStatistic = async () => {
   const auth = useAuthStore();
 
@@ -345,4 +362,24 @@ export const downloadContracts = async (payload: any) => {
 
   window.URL.revokeObjectURL(url);
   document.body.removeChild(a);
+};
+
+export const updateContract = async (id: string, payload: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
 };

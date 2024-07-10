@@ -130,6 +130,13 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
+          <el-button v-if="
+            statusText(scope.row) != 'Lengkap' &&
+            user.position == 'KETUA' &&
+            user.team == 'TU'
+          " size="small" @click="handleEditContract(scope.row._id)">
+            Edit
+          </el-button>
           <el-button size="small" v-if="['TU'].includes(user.team) && statusText(scope.row) == 'Lengkap'" type="primary"
             @click="handlePrint(scope.$index, scope.row)">
             Cetak
@@ -155,6 +162,8 @@
 
   </div>
   <DialogFormEditContract @close-dialog="handleCloseDialogFormEdit" :contractId="editedContractId"
+    :isShow="showDialogFormContractEdit" />
+  <DialogFormEditContractActivity @close-dialog="handleCloseDialogFormEdit" :contractId="editedContractId"
     :activityId="editedActivityId" :isShow="showDialogFormEdit" />
 </template>
 
@@ -201,6 +210,7 @@ const total = ref(0);
 const editedContractId = ref<string | null>(null);
 const editedActivityId = ref<string | null>(null);
 const showDialogFormEdit = ref(false);
+const showDialogFormContractEdit = ref(false);
 
 const paginatedData = computed(() => {
   let paginatedData: Contract[] = contracts.value
@@ -346,6 +356,11 @@ const print = () => {
   executeOperation(() => printContracts(contractsSelected.value), false);
 };
 
+const handleEditContract = (id: string) => {
+  editedContractId.value = id;
+  showDialogFormContractEdit.value = true;
+}
+
 const clearFilter = () => {
   contractsTableRef.value!.clearFilter();
   search.value = ""
@@ -415,6 +430,7 @@ const handleCloseDialogFormEdit = async (refetch: boolean = false) => {
   editedContractId.value = null;
   editedActivityId.value = null;
   showDialogFormEdit.value = false;
+  showDialogFormContractEdit.value = false;
   if (refetch) await fetchData(route.query.period, false);
 };
 
