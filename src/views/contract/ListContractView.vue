@@ -15,7 +15,8 @@
             <Printer />
           </el-icon>Cetak</el-button>
         <el-button type="primary" size="large" round @click="createContract()"
-          v-if="['ANGGOTA'].includes(user.position)"><el-icon :size="20" style="margin-right: 8px">
+          v-if="['ANGGOTA'].includes(user.position) || ['TU'].includes(user.team)"><el-icon :size="20"
+            style="margin-right: 8px">
             <Plus />
           </el-icon>Buat</el-button>
       </div>
@@ -96,10 +97,23 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
+      <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
+        { text: 'Konsisten', value: false },
+        { text: 'Inkonsisten', value: true },
+      ]" column-key="total">
+        <template #default="scope">
+          <el-space direction="vertical">
+            <el-text>{{ totalFormatter(scope.row) }}</el-text>
+            <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
+            <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
+              }}</el-text>
+          </el-space>
+        </template>
+      </el-table-column>
+
       <el-table-column sortable label="Batas" column-key="limit" prop="isExceeded" :filters="[
         { text: 'Aman', value: false },
         { text: 'Tidak Aman', value: true },
@@ -107,7 +121,7 @@
         <template #default="scope">
           <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
             scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
@@ -227,6 +241,21 @@ const paginatedData = computed(() => {
     });
   }
 
+  if (filter.value.total?.length) {
+
+    paginatedData = paginatedData.filter((item) => {
+
+      const grandTotal = item.activities.reduce(
+        (total: number, activity: any) => total + activity.total,
+        0
+      );
+
+      const hasError = grandTotal != item.grandTotal;
+
+      return filter.value.total?.includes(hasError)
+    });
+  }
+
   if (filter.value.limit?.length) {
 
     paginatedData = paginatedData.filter((item) => {
@@ -261,6 +290,10 @@ const handleFilterChange = (newFilters: any) => {
 
   if (newFilters.status) {
     filter.value.status = newFilters.status
+  }
+
+  if (newFilters.total) {
+    filter.value.total = newFilters.total
   }
 
   if (newFilters.limit) {
@@ -321,7 +354,8 @@ const clearFilter = () => {
     team: [],
     period: [],
     status: [],
-    limit: []
+    limit: [],
+    total: []
   }
 };
 
@@ -428,9 +462,26 @@ const limitFormatter = (row: any) => {
   return `Rp ${formatCurrency(row.limit)}`;
 };
 
-const totalFormatter = (row: any) => {
-  return `Rp ${formatCurrency(row.grandTotal)}`;
+const totalFormatter = (row: any, raw: boolean = false) => {
+  let total = row.grandTotal;
+  if (raw) {
+    total = row.activities.reduce(
+      (total: number, activity: any) => total + activity.total,
+      0
+    );
+  }
+
+  return `Rp ${formatCurrency(total)}`;
 };
+
+const hasErrorTotal = (row: any) => {
+  const grandTotal = row.activities.reduce(
+    (total: number, activity: any) => total + activity.total,
+    0
+  );
+
+  return grandTotal != row.grandTotal;
+}
 
 const teamFormatter = (row: any): any[] => {
   const teams = row.activities.map((item: any) => item.createdBy);

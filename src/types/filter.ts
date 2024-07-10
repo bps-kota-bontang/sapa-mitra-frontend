@@ -4,12 +4,13 @@ export type Filter = {
   status?: string[];
   limit?: boolean[];
   category?: string[];
+  total?: boolean[];
 };
 
 type FilterType = "activity" | "contract";
 
 const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
-  activity: { team: [], period: [], status: [], limit: [] },
+  activity: { team: [], period: [], status: [], limit: [], total: [] },
   contract: { team: [], category: [] },
 };
 
