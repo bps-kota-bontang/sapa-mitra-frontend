@@ -10,8 +10,8 @@ export type Filter = {
 type FilterType = "activity" | "contract";
 
 const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
-  activity: { team: [], period: [], status: [], limit: [], total: [] },
-  contract: { team: [], category: [] },
+  contract: { team: [], period: [], status: [], limit: [], total: [] },
+  activity: { team: [], category: [] },
 };
 
 export const createInitialFilter = (type: FilterType): Filter => {
