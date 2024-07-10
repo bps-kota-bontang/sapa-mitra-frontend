@@ -96,7 +96,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
@@ -107,7 +107,7 @@
         <template #default="scope">
           <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
             scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
@@ -135,6 +135,7 @@
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="expandData()">Tampilkan Rincian</el-button>
+        <el-button @click="downloadSelection()" type="success">Unduh</el-button>
       </div>
     </div>
 
@@ -154,7 +155,8 @@ import {
   deleteContractActivity,
   printContracts,
   printContract,
-  cancelContractActivity
+  cancelContractActivity,
+  downloadContracts
 } from "@/api/contractApi";
 import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
@@ -301,6 +303,10 @@ const handleSelection = (value: any[]) => {
   const contractIdsSelected = value.map((item) => item._id);
 
   contractsSelected.value = contractIdsSelected;
+};
+
+const downloadSelection = () => {
+  executeOperation(() => downloadContracts(contractsSelected.value));
 };
 
 const print = () => {
