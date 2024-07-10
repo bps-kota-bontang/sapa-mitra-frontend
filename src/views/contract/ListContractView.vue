@@ -156,7 +156,7 @@
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="expandData()">Tampilkan Rincian</el-button>
-        <el-button @click="downloadSelection()" type="success">Unduh</el-button>
+        <el-button @click="downloadSelection()" type="success">Unduh Kertas Kerja</el-button>
       </div>
     </div>
 
