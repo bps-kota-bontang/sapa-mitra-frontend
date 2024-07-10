@@ -24,7 +24,18 @@
           @remove="removePartner(index)" />
       </div>
 
-      <template #footer><el-button @click="addPartner">Tambah Mitra</el-button>
+      <template #footer>
+        <div style="gap:10px; display: flex;">
+          <el-button type="primary" @click="addPartner">Tambah Mitra</el-button>
+          <el-upload ref="fileInput" :limit="1" :show-file-list="false" action="#" accept="text/csv"
+            :auto-upload="false" :on-change="handleFileChange">
+            <el-button>
+              Impor Mitra
+            </el-button>
+          </el-upload>
+          <el-button type="success" @click="downloadMasterPartner()">Unduh Master Data Mitra</el-button>
+          <el-button @click="downloadTemplateImportPartner()">Template Impor Mitra</el-button>
+        </div>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -35,15 +46,18 @@
 </template>
 
 <script lang="ts" setup>
+import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormReportPartnerItem from "@/components/report/FormReportPartnerItem.vue";
 import { createReport } from "@/api/reportApi";
-import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getOutputs } from "@/api/outputApi";
 import { generatePeriods } from "@/utils/date";
+import { downloadPartners, getPartners } from "@/api/partnerApi";
+import { downloadTemplatePartner } from "@/api/reportApi";
 
 const formRef = ref<FormInstance>();
-
+const fileInput = ref<UploadInstance>();
 const rules = reactive<FormRules<any>>({
   "output.outputId": [
     {
@@ -77,7 +91,7 @@ const initialState = {
 };
 
 const outputs = ref<any[]>([]);
-
+const partners = ref<any[]>([]);
 let feedback = ref({
   title: "",
   message: "",
@@ -90,6 +104,37 @@ const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 };
+
+const downloadMasterPartner = () => {
+  downloadPartners()
+}
+
+const downloadTemplateImportPartner = () => {
+  downloadTemplatePartner()
+}
+
+const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  const raw = await uploadFile.raw?.text();
+
+  if (!raw) return
+
+  var result = Papa.parse(raw, {
+    header: true
+  });
+
+  result.data.forEach((rawPartner: any) => {
+    const partner = partners.value.find(item => item.nik == rawPartner.nik);
+
+    if (!partner) return
+
+    form.partners.push({
+      partnerId: partner._id,
+      total: rawPartner.total,
+    });
+  });
+
+  fileInput.value?.clearFiles()
+}
 
 const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -156,5 +201,6 @@ watch(
 
 onMounted(async () => {
   outputs.value = await getOutputs();
+  partners.value = await getPartners();
 });
 </script>
