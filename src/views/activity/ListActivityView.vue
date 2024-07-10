@@ -21,7 +21,8 @@
 
     <el-divider />
     <el-table ref="activitiesTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
-      style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
+      style="width: 100%; flex: 1; margin-bottom: 20px;" @filter-change="handleFilterChange"
+      @selection-change="handleSelection">
 
       <el-table-column type="selection" />
 
@@ -30,7 +31,7 @@
       <el-table-column label="Kode Kegiatan" prop="code" />
       <el-table-column label="Unit" prop="unit" />
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
-        :filter-method="filterCategory" column-key="team" />
+        :filter-method="filterCategory" column-key="category" />
       <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
 
       <el-table-column align="right">
@@ -73,9 +74,13 @@ import { BASE_URL } from "@/api/api";
 import { useAuthStore } from "@/stores/auth";
 import { ElNotification, ElTable } from "element-plus";
 import { teams, activityCategories } from "@/utils/constant";
+import { createInitialFilter, type Filter } from "@/types/filter";
+import type { Activity } from "@/types/activity";
 
 const router = useRouter();
 const auth = useAuthStore();
+
+const initialFilter = createInitialFilter("activity");
 
 const headers = ref({
   Authorization: `Bearer ${auth.token}`,
@@ -90,16 +95,38 @@ const error = ref("");
 const activitiesSelected = ref<any[]>([]);
 const editedActivityId = ref(null);
 const showDialogFormEdit = ref(false);
-
+const filter = ref<Filter>(initialFilter);
 const pageSize = ref(10)
 const currentPage = ref(1);
-
-const total = computed(() => filterActivities.value.length);
+const total = ref(0);
 
 const paginatedData = computed(() => {
+  let paginatedData: Activity[] = activities.value
+
+  if (filter.value.team?.length) {
+    paginatedData = paginatedData.filter((item) => {
+      return filter.value.team?.includes(item.team);
+    });
+  }
+
+  if (filter.value.category?.length) {
+    paginatedData = paginatedData.filter((item) => {
+      return filter.value.category?.includes(item.category);
+    });
+  }
+
+  if (search.value) {
+    paginatedData = paginatedData.filter(
+      (data: any) =>
+        !search.value ||
+        data.name.toLowerCase().includes(search.value.toLowerCase())
+    );
+  }
+
+  total.value = paginatedData.length
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filterActivities.value.slice(start, end);
+  return paginatedData.slice(start, end);
 });
 
 const handlePageChange = (page: number) => {
@@ -109,8 +136,21 @@ const handlePageChange = (page: number) => {
 const clearFilter = () => {
   activitiesTableRef.value!.clearFilter();
   search.value = ""
-  periodSelected.value = null;
+  filter.value = {
+    team: [],
+    category: []
+  }
 };
+
+const handleFilterChange = (newFilters: any) => {
+  if (newFilters.team) {
+    filter.value.team = newFilters.team
+  }
+
+  if (newFilters.category) {
+    filter.value.category = newFilters.category
+  }
+}
 
 const filterTeam = (value: string, row: any) => {
   return row.team == value
@@ -149,14 +189,6 @@ const handleSuccess = async (
 
   await fetchData();
 };
-
-const filterActivities = computed(() => {
-  return activities.value.filter(
-    (data: any) =>
-      !search.value ||
-      data.name.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
 
 const handleSelection = (value: any[]) => {
   const activityIdsSelected = value.map((item) => item._id);

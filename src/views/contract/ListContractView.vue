@@ -96,7 +96,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :formatter="totalFormatter" />
@@ -107,7 +107,7 @@
         <template #default="scope">
           <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
             scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
@@ -162,18 +162,13 @@ import { ElNotification, ElTable } from "element-plus";
 import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
-import type { Filter } from "@/types/filter";
+import { createInitialFilter } from "@/types/filter";
 
 const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
-const initialFilter: Filter = {
-  team: [],
-  period: [],
-  status: [],
-  limit: []
-}
+const initialFilter = createInitialFilter("contract");
 
 const contractsTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
@@ -193,21 +188,21 @@ const showDialogFormEdit = ref(false);
 
 const paginatedData = computed(() => {
   let paginatedData: Contract[] = contracts.value
-  if (filter.value.period.length > 0) {
+  if (filter.value.period?.length) {
     paginatedData = paginatedData.filter((item) => {
-      return filter.value.period.includes(item.period)
+      return filter.value.period?.includes(item.period)
     });
   }
 
-  if (filter.value.team.length > 0) {
+  if (filter.value.team?.length) {
     paginatedData = paginatedData.filter((item) => {
       return item.activities.some((activity) => {
-        return filter.value.team.includes(activity.createdBy);
+        return filter.value.team?.includes(activity.createdBy);
       });
     });
   }
 
-  if (filter.value.status.length > 0) {
+  if (filter.value.status?.length) {
     paginatedData = paginatedData.filter((item) => {
       const totalActivities = item.activities.length;
       const countVerified = item.activities.filter(
@@ -226,15 +221,15 @@ const paginatedData = computed(() => {
         result = "Sebagian";
       }
 
-      return filter.value.status.includes(result);
+      return filter.value.status?.includes(result);
     });
   }
 
-  if (filter.value.limit.length > 0) {
+  if (filter.value.limit?.length) {
 
     paginatedData = paginatedData.filter((item) => {
 
-      return filter.value.limit.includes(item.isExceeded)
+      return filter.value.limit?.includes(item.isExceeded)
     });
   }
 
