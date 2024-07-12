@@ -14,7 +14,7 @@ SAPAMITRA adalah aplikasi yang dirancang untuk membantu dalam manajemen dokumen 
 
 ### 3. Mengidentifikasi mitra yang melebihi batas terima honor dalam satu periode
 
-> Aplikasi ini dilengkapi dengan sistem monitoring yang dapat mengidentifikasi mitra yang menerima honorarium melebihi batas yang ditentukan dalam satu periode (satu bulan). Hal ini membantu dalam pengawasan dan memastikan keadilan dalam pembagian honorarium.
+> Aplikasi ini dilengkapi dengan sistem monitoring yang dapat mengidentifikasi mitra yang menerima honorarium melebihi batas yang ditentukan dalam satu periode (satu bulan).
 
 ## Teknologi yang Digunakan
 
@@ -85,7 +85,7 @@ Kami sangat terbuka terhadap kontribusi dari siapa saja. Jika Anda ingin berkont
 
 ## Lisensi
 
-Aplikasi ini dilisensikan di bawah MIT License.
+Aplikasi ini dilisensikan di bawah [MIT License](http://git.bps.go.id/sapa-mitra/sapa-mitra-frontend/blob/main/LICENSE).
 
 ## Kontak
 
