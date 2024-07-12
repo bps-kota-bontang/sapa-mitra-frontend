@@ -1,12 +1,10 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-loading="loading"
-    :model="form"
-    :rules="rules"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
+    <el-form-item required prop="activity.activityId" label="Nama Kegiatan">
+      <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
+        <el-option v-for="activity in activities" :key="activity._id" :label="activity.name" :value="activity._id" />
+      </el-select>
+    </el-form-item>
     <el-form-item required label="Nama" prop="name">
       <el-input v-model="form.name" placeholder="Masukkan Nama Output" />
     </el-form-item>
@@ -22,13 +20,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onMounted } from "vue";
 import { createOutput } from "@/api/outputApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { getActivities } from "@/api/activityApi";
 
 const formRef = ref<FormInstance>();
 
 const rules = reactive<FormRules<any>>({
+  "activity.activityId": [
+    {
+      required: true,
+      message: 'Nama kegiatan perlu terisi',
+      trigger: 'change',
+    }
+  ],
   name: [
     {
       required: true,
@@ -46,6 +52,9 @@ const rules = reactive<FormRules<any>>({
 });
 
 const initialState = {
+  activity: {
+    activityId: "",
+  },
   name: "",
   unit: "",
 };
@@ -57,7 +66,7 @@ let feedback = ref({
 });
 const loading = ref(false);
 const form = reactive({ ...initialState });
-
+const activities = ref<any[]>([]);
 const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
@@ -112,4 +121,7 @@ watch(
   },
   { immediate: true }
 );
+onMounted(async () => {
+  activities.value = await getActivities();
+});
 </script>

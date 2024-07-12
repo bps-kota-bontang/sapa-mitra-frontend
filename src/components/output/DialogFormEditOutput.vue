@@ -1,6 +1,12 @@
 <template>
     <el-dialog v-model="props.isShow" title="Ubah Output" width="500" :before-close="handleClose">
         <el-form :model="form" ref="formRef" label-width="auto" label-position="top" :rules="rules" v-loading="loading">
+            <el-form-item required prop="activity.activityId" label="Nama Kegiatan">
+                <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
+                    <el-option v-for="activity in activities" :key="activity._id" :label="activity.name"
+                        :value="activity._id" />
+                </el-select>
+            </el-form-item>
             <el-form-item required label="Nama Output" prop="name">
                 <el-input v-model="form.name" placeholder="Masukkan Nama Output" />
             </el-form-item>
@@ -20,16 +26,27 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onMounted } from "vue";
 import { getOutput, updateOutput } from "@/api/outputApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import { getActivities } from "@/api/activityApi";
 
 const initialState = {
+    activity: {
+        activityId: "",
+    },
     name: "",
     unit: ""
 };
 
 const rules = reactive<FormRules<any>>({
+    "activity.activityId": [
+        {
+            required: true,
+            message: 'Nama kegiatan perlu terisi',
+            trigger: 'change',
+        }
+    ],
     name: [
         {
             required: true,
@@ -54,7 +71,7 @@ const feedback = ref({
     type: "",
 });
 const emit = defineEmits(['closeDialog'])
-
+const activities = ref<any[]>([]);
 
 const props: any = defineProps({
     id: String,
@@ -103,6 +120,7 @@ const update = async (formEl: FormInstance | undefined) => {
 watch(() => props.id, async (newId) => {
     if (newId) {
         const data = await getOutput(props.id);
+        form.activity.activityId = data.activity._id;
         form.name = data.name;
         form.unit = data.unit;
     }
@@ -121,6 +139,8 @@ watch(
     },
     { immediate: true }
 );
-
+onMounted(async () => {
+    activities.value = await getActivities();
+});
 
 </script>

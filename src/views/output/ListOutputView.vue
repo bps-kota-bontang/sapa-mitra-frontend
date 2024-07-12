@@ -25,6 +25,7 @@
       <el-table-column type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
+      <el-table-column label="Nama Kegiatan" sortable prop="activity.name" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Satuan" prop="unit" />
 
