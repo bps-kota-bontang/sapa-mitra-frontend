@@ -4,14 +4,16 @@ export type Filter = {
   status?: string[];
   limit?: boolean[];
   category?: string[];
+  isSpecial?: boolean[];
+  hasSpecial?: boolean[];
   total?: boolean[];
 };
 
 type FilterType = "activity" | "contract";
 
 const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
-  contract: { team: [], period: [], status: [], limit: [], total: [] },
-  activity: { team: [], category: [] },
+  contract: { team: [], period: [], status: [], limit: [], total: [], hasSpecial: [] },
+  activity: { team: [], category: [], isSpecial: [] },
 };
 
 const deepClone = <T>(obj: T): T => {

@@ -33,6 +33,14 @@
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
         :filter-method="filterCategory" column-key="category" />
       <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
+      <el-table-column align="center" label="Status" prop="isSpecial" :filters="[
+        { text: 'Khusus', value: true },
+        { text: 'Biasa', value: false },
+      ]" :filter-method="filterIsSpecial" column-key="isSpecial" >
+        <template #default="scope">
+          <el-tag effect="dark">{{scope.row.isSpecial ? "Khusus" : "Biasa"}}</el-tag>
+        </template>
+      </el-table-column>
 
       <el-table-column align="right">
         <template #header>
@@ -115,6 +123,12 @@ const paginatedData = computed(() => {
     });
   }
 
+  if (filter.value.isSpecial?.length) {
+    paginatedData = paginatedData.filter((item) => {
+      return filter.value.isSpecial?.includes(item.isSpecial);
+    });
+  }
+
   if (search.value) {
     paginatedData = paginatedData.filter(
       (data: any) =>
@@ -150,10 +164,18 @@ const handleFilterChange = (newFilters: any) => {
   if (newFilters.category) {
     filter.value.category = newFilters.category
   }
+
+  if (newFilters.isSpecial) {
+    filter.value.isSpecial = newFilters.isSpecial
+  }
 }
 
 const filterTeam = (value: string, row: any) => {
   return row.team == value
+};
+
+const filterIsSpecial = (value: boolean, row: any) => {
+  return row.isSpecial == value
 };
 
 const filterCategory = (value: string, row: any) => {

@@ -21,6 +21,7 @@ export type Contract = {
     createdBy: Team;
     status: StatusContract;
   } & Document)[];
+  hasSpecial: boolean;
   signDate: Date;
   handOverDate: Date;
   penalty: number;
