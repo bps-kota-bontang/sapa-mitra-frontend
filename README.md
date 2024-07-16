@@ -79,6 +79,13 @@ bun run build
 bun run start
 ```
 
+## Pengguna
+
+| Email            | Password | Tim | Posisi  |
+| ---------------- | -------- | --- | ------- |
+| ketua@mail.com   | 123456   | TU  | Ketua   |
+| anggota@mail.com | 123456   | TU  | Anggota |
+
 ## Kontribusi
 
 Kami sangat terbuka terhadap kontribusi dari siapa saja. Jika Anda ingin berkontribusi, silakan _fork repository_ ini dan kirimkan _pull request_ dengan perubahan yang Anda buat.
