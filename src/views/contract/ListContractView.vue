@@ -38,6 +38,7 @@
               <el-table-column label="Rate" prop="rate" />
               <el-table-column label="Total" prop="total" />
               <el-table-column label="Team" prop="createdBy" />
+              <el-table-column label="Khusus" prop="isSpecial" :formatter="isSpecialFormatter" />
               <el-table-column label="Status" prop="status" />
 
               <el-table-column label="Aksi">
@@ -60,7 +61,8 @@
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
                     (user.team == scope.row.createdBy || user.team == 'TU') &&
-                    !props.row.isExceeded
+                    !props.row.isExceeded &&
+                    ((props.row.hasSpecial && props.row.activities.length == 1) || (!props.row.hasSpecial))
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
                   </el-button>
@@ -113,7 +115,14 @@
           </el-space>
         </template>
       </el-table-column>
-
+      <el-table-column column-key="hasSpecial" label="Khusus" :filters="[
+        { text: 'Ada', value: true },
+        { text: 'Tidak Ada', value: false },
+      ]" :filter-method="filterHasSpecial">
+        <template #default="scope">
+          <el-tag  effect="dark">{{ scope.row.hasSpecial ? 'Ada' : 'Tidak Ada' }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column sortable label="Batas" column-key="limit" prop="isExceeded" :filters="[
         { text: 'Aman', value: false },
         { text: 'Tidak Aman', value: true },
@@ -274,6 +283,14 @@ const paginatedData = computed(() => {
     });
   }
 
+  if (filter.value.hasSpecial?.length) {
+    
+    paginatedData = paginatedData.filter((item) => {
+      
+      return filter.value.hasSpecial?.includes(item.hasSpecial)
+    });
+  }
+
   if (search.value) {
     paginatedData = paginatedData.filter(
       (data: any) =>
@@ -308,6 +325,10 @@ const handleFilterChange = (newFilters: any) => {
 
   if (newFilters.limit) {
     filter.value.limit = newFilters.limit
+  }
+
+  if (newFilters.hasSpecial) {
+    filter.value.hasSpecial = newFilters.hasSpecial
   }
 }
 
@@ -397,8 +418,12 @@ const filterTeam = (value: string, row: any) => {
   return [...new Set(teams)].includes(value);
 };
 
-const filterLimit = (value: string, row: any) => {
+const filterLimit = (value: boolean, row: any) => {
   return row.isExceeded === value;
+};
+
+const filterHasSpecial = (value: boolean, row: any) => {
+  return row.hasSpecial === value;
 };
 
 const filterStatus = (value: string, row: any) => {
@@ -515,6 +540,10 @@ const activityFormatter = (row: any) => {
 
 const dateFormatter = (row: any) => {
   return `${formatDate(row.startDate)} - ${formatDate(row.endDate)}`;
+};
+
+const isSpecialFormatter = (row: any) => {
+  return row.isSpecial ? "Ya" : "Tidak";
 };
 
 const contractStatus = ({ row, rowIndex }: { row: any; rowIndex: number }) => {
