@@ -19,7 +19,9 @@
         <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
       </el-select>
     </el-form-item>
-
+    <el-form-item label="Khusus" prop="isSpecial">
+      <el-switch v-model="form.isSpecial" />
+    </el-form-item>
     <el-form-item required style="margin-top: 20px">
       <el-button @click="submit(formRef)" type="primary">Tambah</el-button>
       <el-button @click="reset(formRef)">Bersihkan</el-button>
@@ -78,7 +80,8 @@ const initialState = {
   code: "",
   unit: "",
   category: "",
-  team: ""
+  team: "",
+  isSpecial: false
 };
 
 let feedback = ref({

@@ -20,6 +20,9 @@
                     <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
                 </el-select>
             </el-form-item>
+            <el-form-item label="Khusus">
+                <el-switch v-model="form.isSpecial" />
+            </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -43,7 +46,8 @@ const initialState = {
     code: "",
     unit: "",
     category: "",
-    team: ""
+    team: "",
+    isSpecial: false
 };
 
 const rules = reactive<FormRules<any>>({
@@ -146,6 +150,7 @@ watch(() => props.id, async (newId) => {
         form.unit = data.unit;
         form.category = data.category;
         form.team = data.team;
+        form.isSpecial = data.isSpecial;
     }
 }, { immediate: true });
 
