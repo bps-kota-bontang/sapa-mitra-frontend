@@ -61,7 +61,7 @@
                     scope.row.status == 'UNVERIFIED' &&
                     user.position == 'KETUA' &&
                     (user.team == scope.row.createdBy || user.team == 'TU') &&
-                    !props.row.isExceeded &&
+                    (!props.row.isExceeded || props.row.hasSpecial) &&
                     ((props.row.hasSpecial && props.row.activities.length == 1) || (!props.row.hasSpecial))
                   " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
                     Verifikasi
@@ -123,13 +123,13 @@
           <el-tag  effect="dark">{{ scope.row.hasSpecial ? 'Ada' : 'Tidak Ada' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Batas" column-key="limit" prop="isExceeded" :filters="[
-        { text: 'Aman', value: false },
-        { text: 'Tidak Aman', value: true },
-      ]" :filter-method="filterLimit">
+      <el-table-column sortable label="Batas" column-key="safe" prop="isExceeded" :filters="[
+        { text: 'Aman', value: true },
+        { text: 'Tidak Aman', value: false },
+      ]" :filter-method="filterSafe">
         <template #default="scope">
-          <el-tag :type="scope.row.isExceeded ? 'danger' : 'success'" effect="dark">{{
-            scope.row.isExceeded ? 'Tidak Aman' : 'Aman'
+          <el-tag :type="scope.row.hasSpecial ? ( scope.row.activities.length == 1 ? 'success' : 'danger') : ( scope.row.isExceeded ? 'danger' : 'success')" effect="dark">{{
+            scope.row.hasSpecial ? ( scope.row.activities.length == 1 ? 'Aman' : 'Tidak Aman') : ( scope.row.isExceeded ? 'Tidak Aman' : 'Aman') 
             }}</el-tag>
         </template>
       </el-table-column>
@@ -275,11 +275,12 @@ const paginatedData = computed(() => {
     });
   }
 
-  if (filter.value.limit?.length) {
+  if (filter.value.safe?.length) {
 
     paginatedData = paginatedData.filter((item) => {
+      const isSafe = item.hasSpecial ? ( item.activities.length == 1 ? true : false) : ( item.isExceeded ? false : true);
 
-      return filter.value.limit?.includes(item.isExceeded)
+      return filter.value.safe?.includes(isSafe)
     });
   }
 
@@ -323,8 +324,8 @@ const handleFilterChange = (newFilters: any) => {
     filter.value.total = newFilters.total
   }
 
-  if (newFilters.limit) {
-    filter.value.limit = newFilters.limit
+  if (newFilters.safe) {
+    filter.value.safe = newFilters.safe
   }
 
   if (newFilters.hasSpecial) {
@@ -390,7 +391,7 @@ const clearFilter = () => {
     team: [],
     period: [],
     status: [],
-    limit: [],
+    safe: [],
     total: []
   }
 };
@@ -418,8 +419,10 @@ const filterTeam = (value: string, row: any) => {
   return [...new Set(teams)].includes(value);
 };
 
-const filterLimit = (value: boolean, row: any) => {
-  return row.isExceeded === value;
+const filterSafe = (value: boolean, row: any) => {
+  const isSafe = row.hasSpecial ? ( row.activities.length == 1 ? true : false) : ( row.isExceeded ? false : true);
+
+  return isSafe === value;
 };
 
 const filterHasSpecial = (value: boolean, row: any) => {

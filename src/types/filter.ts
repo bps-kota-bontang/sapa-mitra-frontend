@@ -2,7 +2,7 @@ export type Filter = {
   period?: string[];
   team?: string[];
   status?: string[];
-  limit?: boolean[];
+  safe?: boolean[];
   category?: string[];
   isSpecial?: boolean[];
   hasSpecial?: boolean[];
@@ -12,7 +12,7 @@ export type Filter = {
 type FilterType = "activity" | "contract";
 
 const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
-  contract: { team: [], period: [], status: [], limit: [], total: [], hasSpecial: [] },
+  contract: { team: [], period: [], status: [], safe: [], total: [], hasSpecial: [] },
   activity: { team: [], category: [], isSpecial: [] },
 };
 
