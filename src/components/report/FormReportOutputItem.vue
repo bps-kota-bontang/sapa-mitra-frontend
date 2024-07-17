@@ -6,7 +6,18 @@
       trigger: 'change',
     }">
       <el-select v-model="props.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
-        <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id" />
+        <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id" >
+          <span style="float: left">{{ output.name }}</span>
+          <span
+            style="
+              float: right;
+              color: var(--el-text-color-secondary);
+              font-size: 13px;
+            "
+          >
+            {{ output.activity.name }}
+          </span>
+        </el-option>
       </el-select>
     </el-form-item>
 
