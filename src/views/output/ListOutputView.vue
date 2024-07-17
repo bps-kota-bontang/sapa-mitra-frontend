@@ -49,6 +49,7 @@
         @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+        <el-button @click="downloadSelection()" type="success">Unduh</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
       </div>
     </div>
@@ -60,7 +61,7 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Download, Plus, Upload } from "@element-plus/icons-vue";
-import { getOutputs, deleteOutput, deleteOutputs, downloadOutputTemplate } from "@/api/outputApi";
+import { getOutputs, deleteOutput, deleteOutputs, downloadOutputTemplate, downloadOutputs } from "@/api/outputApi";
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
@@ -137,6 +138,10 @@ const handleSelection = (value: any[]) => {
   const outputIdsSelected = value.map((item) => item._id);
 
   outputsSelected.value = outputIdsSelected;
+};
+
+const downloadSelection = () => {
+  executeOperation(() => downloadOutputs(outputsSelected.value));
 };
 
 const deleteSelection = () => {
