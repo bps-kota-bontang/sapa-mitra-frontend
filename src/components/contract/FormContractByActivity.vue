@@ -177,7 +177,10 @@ const submit = async (formEl: FormInstance | undefined) => {
       await showNotification("Success", message, "success");
 
       for await (const contract of data) {
-        if (contract.isExceeded) {
+        
+        const hasSpecial = contract.activities.some(activity => activity.isSpecial);
+
+        if (contract.isExceeded && !hasSpecial) {
           ElNotification({
             title: "Warning",
             message: `${contract.partner.name}'s contract in the ${contract.period} period exceeded the limit`,
