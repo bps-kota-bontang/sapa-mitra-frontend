@@ -2,7 +2,7 @@
   <div shadow="never" style="border-radius: 10px; margin: 20px">
     <div style="  display: flex; align-items: center; gap:10px;  ">
       <IconBPS style="width: 48px; height: 48px;" />
-      <el-text tag="b" size="large">SAPAMITRA</el-text>
+      <el-text tag="b" size="large">{{ app }}</el-text>
     </div>
   </div>
   <el-menu style="border-right: none" :router="true" :default-active="$route.path">
@@ -16,7 +16,8 @@
         </el-icon>SPK
       </template>
       <el-menu-item index="/spk">Daftar SPK</el-menu-item>
-      <el-menu-item v-if="['ANGGOTA'].includes(user.position) || ['TU'].includes(user.team)" index="/spk/buat">Buat SPK</el-menu-item>
+      <el-menu-item v-if="['ANGGOTA'].includes(user.position) || ['TU'].includes(user.team)" index="/spk/buat">Buat
+        SPK</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="2">
       <template #title>
@@ -74,7 +75,7 @@ import {
   Setting,
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
-
+const app = import.meta.env.VITE_APP_TITLE;
 const user = useUserStore();
 </script>
 

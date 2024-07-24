@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <el-card style="
-        width: 480px;
+        width: 500px;
         padding-left: 20px;
         padding-right: 20px;
         padding-top: 10px;
         padding-bottom: 5px;
         border-radius: 30px;
       ">
-      <el-text style="font-size: 22pt; font-weight: 500">Selamat Datang! 👋</el-text>
+      <el-text style="font-size: 22pt; font-weight: 500">Selamat Datang di {{ app }} 👋</el-text>
       <el-form @submit.prevent style="margin-top: 15px" :rules="rules" ref="formRef" v-loading="loading" :model="form"
         label-width="auto" label-position="top">
         <el-form-item label="Email" required prop="email">
@@ -43,6 +43,8 @@ import { ref, reactive, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { ElNotification } from "element-plus";
+
+const app = import.meta.env.VITE_APP_TITLE;
 
 const initialState = {
   email: "",
