@@ -58,9 +58,27 @@
     <el-menu-item index="/pengguna" v-if="['TU', 'IPDS'].includes(user.team)"><el-icon>
         <User />
       </el-icon>Pengguna</el-menu-item>
-    <el-menu-item index="/konfigurasi" v-if="['TU'].includes(user.team)"><el-icon>
+    <el-menu-item index="/konfigurasi" v-if="['TU'].includes(user.team)">
+      <el-icon>
         <Setting />
-      </el-icon>Konfigurasi</el-menu-item>
+      </el-icon>Konfigurasi
+    </el-menu-item>
+    <el-sub-menu index="6">
+      <template #title>
+        <el-icon>
+          <VideoPlay />
+        </el-icon>Tutorial
+      </template>
+      <el-menu-item>
+        <a href="http://s.bps.go.id/Tutorial-Entri-SPK-SAPAMITRA" target="_blank">Tutorial Entri SPK</a>
+      </el-menu-item>
+      <el-menu-item>
+        <a href="http://s.bps.go.id/Tutorial-Entri-BAST-SAPAMITRA" target="_blank">Tutorial Entri BAST</a>
+      </el-menu-item>
+      <el-menu-item>
+        <a href="http://s.bps.go.id/Tutorial-Verifikasi-SPK-SAPAMITRA" target="_blank">Tutorial Verifikasi SPK</a>
+      </el-menu-item>
+    </el-sub-menu>
   </el-menu>
 </template>
 
@@ -73,10 +91,16 @@ import {
   Memo,
   User,
   Setting,
+  VideoPlay
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 const app = import.meta.env.VITE_APP_TITLE;
 const user = useUserStore();
 </script>
 
-<style></style>
+<style>
+.el-menu-item a {
+  text-decoration: none;
+  color: inherit;
+}
+</style>
