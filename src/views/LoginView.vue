@@ -4,8 +4,8 @@
       <div style="display: flex; align-items: center; gap:10px;">
         <el-image src="logo-bps-bontang.png" fit="cover" />
       </div>
-      <el-text style="font-size: 16pt; align-self: first baseline; font-weight: 500">Selamat Datang di <el-text
-          type="primary" style="font-size: 16pt; align-self: first baseline; font-weight: 500">{{ app
+      <el-text style="font-size: 14pt; align-self: first baseline; font-weight: 500">Selamat Datang di <el-text
+          type="primary" style="font-size: 14pt; align-self: first baseline; font-weight: 500">{{ app
           }}</el-text></el-text>
 
       <el-form @submit.prevent style="margin-top: 15px" :rules="rules" ref="formRef" v-loading="loading" :model="form"
