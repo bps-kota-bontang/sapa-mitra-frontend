@@ -44,7 +44,7 @@ const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
 const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;
 
 const style = ref({
-  width: "700px",
+  width: "550px",
 });
 
 const load = ref(false);
