@@ -1,14 +1,13 @@
 <template>
   <div class="container">
-    <el-card style="
-        width: 530px;
-        padding-left: 20px;
-        padding-right: 20px;
-        padding-top: 10px;
-        padding-bottom: 5px;
-        border-radius: 30px;
-      ">
-      <el-text style="font-size: 22pt; font-weight: 500">Selamat Datang di {{ app }} 👋</el-text>
+    <div class="form-container">
+      <div style="display: flex; align-items: center; gap:10px;">
+        <el-image src="logo-bps-bontang.png" fit="cover" />
+      </div>
+      <el-text style="font-size: 16pt; align-self: first baseline; font-weight: 500">Selamat Datang di <el-text
+          type="primary" style="font-size: 16pt; align-self: first baseline; font-weight: 500">{{ app
+          }}</el-text></el-text>
+
       <el-form @submit.prevent style="margin-top: 15px" :rules="rules" ref="formRef" v-loading="loading" :model="form"
         label-width="auto" label-position="top">
         <el-form-item label="Email" required prop="email">
@@ -34,7 +33,8 @@
           Login with SSO BPS
         </el-button>
       </div>
-    </el-card>
+    </div>
+    <div class="image-container"></div>
   </div>
 </template>
 
@@ -133,14 +133,23 @@ watch(
 <style scoped>
 .container {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  background-color: var(--el-color-primary-light-5);
-  /* Example background color */
+  width: 100vw;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.card {
-  max-width: 480px;
+.form-container {
+  width: 20%;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.image-container {
+  width: 80%;
+  background: url('/background-login.png') no-repeat center center;
+  background-size: cover;
+  height: 100vh;
 }
 </style>
