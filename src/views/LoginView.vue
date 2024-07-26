@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <el-card style="
-        width: 500px;
+        width: 530px;
         padding-left: 20px;
         padding-right: 20px;
         padding-top: 10px;
