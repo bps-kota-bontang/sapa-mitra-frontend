@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChangePassword: typeof import('./src/components/setting/ChangePassword.vue')['default']
     DialogFormEditActivity: typeof import('./src/components/activity/DialogFormEditActivity.vue')['default']
     DialogFormEditContract: typeof import('./src/components/contract/DialogFormEditContract.vue')['default']
     DialogFormEditContractActivity: typeof import('./src/components/contract/DialogFormEditContractActivity.vue')['default']
@@ -19,6 +20,8 @@ declare module 'vue' {
     ElCol: typeof import('element-plus/es')['ElCol']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDescriptions: typeof import('element-plus/es')['ElDescriptions']
+    ElDescriptionsItem: typeof import('element-plus/es')['ElDescriptionsItem']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
@@ -48,6 +51,7 @@ declare module 'vue' {
     ElText: typeof import('element-plus/es')['ElText']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Footer: typeof import('./src/components/footer/Footer.vue')['default']
+    FormChangePassword: typeof import('./src/components/setting/FormChangePassword.vue')['default']
     FormContractActivityItem: typeof import('./src/components/contract/FormContractActivityItem.vue')['default']
     FormContractByActivity: typeof import('./src/components/contract/FormContractByActivity.vue')['default']
     FormContractByPartner: typeof import('./src/components/contract/FormContractByPartner.vue')['default']
@@ -60,6 +64,7 @@ declare module 'vue' {
     IconBPS: typeof import('./src/components/icons/IconBPS.vue')['default']
     NoAccess: typeof import('./src/components/illustration/NoAccess.vue')['default']
     NotFound: typeof import('./src/components/illustration/NotFound.vue')['default']
+    ProfileUser: typeof import('./src/components/setting/ProfileUser.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/sidebar/Sidebar.vue')['default']

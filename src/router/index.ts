@@ -1,44 +1,55 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 
-import authRoutes from '@/router/authRoute'
-import contractRoutes from '@/router/contractRoute'
-import reportRoutes from '@/router/reportRoute'
-import activityRoutes from '@/router/activityRoute'
-import outputRoutes from '@/router/outputRoute'
-import partnerRoutes from '@/router/partnerRoute'
-import userRoutes from '@/router/userRoute'
-import errorHandlingRoutes from '@/router/errorHandlingRoute'
-import ConfigurationView from '@/views/ConfigurationView.vue';
-import DashboardView from '@/views/DashboardView.vue'
+import authRoutes from "@/router/authRoute";
+import contractRoutes from "@/router/contractRoute";
+import reportRoutes from "@/router/reportRoute";
+import activityRoutes from "@/router/activityRoute";
+import outputRoutes from "@/router/outputRoute";
+import partnerRoutes from "@/router/partnerRoute";
+import userRoutes from "@/router/userRoute";
+import errorHandlingRoutes from "@/router/errorHandlingRoute";
+import ConfigurationView from "@/views/ConfigurationView.vue";
+import DashboardView from "@/views/DashboardView.vue";
 import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
+import SettingView from "@/views/setting/SettingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '',
-      name: 'dashboard',
+      path: "",
+      name: "dashboard",
       component: DashboardView,
       meta: {
         title: "Dasbor",
-        layout: 'LayoutDashboard',
-        requiresAuth: true
+        layout: "LayoutDashboard",
+        requiresAuth: true,
       },
     },
     {
-      path: '/konfigurasi',
-      name: 'configuration',
+      path: "/konfigurasi",
+      name: "configuration",
       component: ConfigurationView,
       meta: {
         title: "Konfigurasi",
-        layout: 'LayoutDashboard',
-        requiresAuth: true
+        layout: "LayoutDashboard",
+        requiresAuth: true,
       },
       beforeEnter: (to, from, next) => {
         const user = useUserStore();
-        if (!["TU"].includes(user.team)) next({ "name": "unauthorized" })
+        if (!["TU"].includes(user.team)) next({ name: "unauthorized" });
         else next();
+      },
+    },
+    {
+      path: "/pengaturan",
+      name: "setting",
+      component: SettingView,
+      meta: {
+        title: "Pengaturan",
+        layout: "LayoutDashboard",
+        requiresAuth: true,
       },
     },
     ...authRoutes,
@@ -48,42 +59,37 @@ const router = createRouter({
     ...outputRoutes,
     ...partnerRoutes,
     ...userRoutes,
-    ...errorHandlingRoutes
-  ]
-})
-
-
-
-
+    ...errorHandlingRoutes,
+  ],
+});
 
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!auth.isLogin) {
-      next({ name: 'login' })
+      next({ name: "login" });
     } else {
       const user = useUserStore();
       await user.fetchProfile();
-      next()
+      next();
     }
   } else {
     if (to.name == "login") {
       if (auth.isLogin) {
-        next({ name: 'dashboard' })
+        next({ name: "dashboard" });
       } else {
         next();
       }
     } else {
-      next()
+      next();
     }
-
   }
-})
+});
 
 router.afterEach((to, form) => {
   const title: string = to.meta.title as string;
   const app = import.meta.env.VITE_APP_TITLE;
-  document.title = `${app} - ${title}`
-})
+  document.title = `${app} - ${title}`;
+});
 
-export default router
+export default router;
