@@ -79,6 +79,19 @@
         <a href="http://s.bps.go.id/Tutorial-Verifikasi-SPK-SAPAMITRA" target="_blank">Tutorial Verifikasi SPK</a>
       </el-menu-item>
     </el-sub-menu>
+    <el-sub-menu index="7">
+      <template #title>
+        <el-icon>
+          <Service />
+        </el-icon>SOP
+      </template>
+      <el-menu-item>
+        <a href="http://s.bps.go.id/SOP-SPK-SAPAMITRA" target="_blank">SOP entri SPK</a>
+      </el-menu-item>
+      <el-menu-item>
+        <a href="http://s.bps.go.id/SOP-BAST-SAPAMITRA" target="_blank">SOP entri BAST</a>
+      </el-menu-item>
+    </el-sub-menu>
   </el-menu>
 </template>
 
@@ -91,7 +104,8 @@ import {
   Memo,
   User,
   Setting,
-  VideoPlay
+  VideoPlay,
+  Service
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 const app = import.meta.env.VITE_APP_TITLE;
