@@ -28,7 +28,7 @@
           <span style="margin: 0 10px">OR</span>
           <el-divider style="margin-left: 10px"></el-divider>
         </div>
-        <el-button size="large" style="margin-top: 18px; width: 100%" @click="login(formRef)">
+        <el-button size="large" style="margin-top: 18px; width: 100%" @click="loginSso">
           <IconBPS style="width: 1.9em; height: 1.9em; margin-right: 10px" />
           Login with SSO BPS
         </el-button>
@@ -43,6 +43,8 @@ import { ref, reactive, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { ElNotification } from "element-plus";
+import { BASE_URL } from "@/api/api";
+import { useRoute } from "vue-router";
 
 const app = import.meta.env.VITE_APP_TITLE;
 
@@ -51,7 +53,7 @@ const initialState = {
   password: "",
 };
 
-const enableSso = ref(false);
+const enableSso = ref(true);
 
 const rules = reactive<FormRules<any>>({
   email: [
@@ -72,7 +74,7 @@ const rules = reactive<FormRules<any>>({
 
 const formRef = ref<FormInstance>();
 const form = reactive({ ...initialState });
-
+const route = useRoute();
 const auth = useAuthStore();
 const loading = ref(false);
 const error = ref("");
@@ -114,6 +116,52 @@ const login = async (formEl: FormInstance | undefined) => {
     }
   });
 };
+
+const loginSso = async () => {
+  window.location.href = `${BASE_URL}/v1/auth/sso`;
+}
+
+const handleError = (error: any) => {
+  let message = "";
+  if (error == "user_not_found") {
+    message = "User tidak ditemukan";
+  } else {
+    message = "Terjadi kesalahan, silahkan coba lagi";
+  }
+
+  feedback.value = {
+    title: "Error",
+    message: message,
+    type: "error",
+  };
+};
+
+
+watch(() => route.query.token, async (token) => {
+  if (token) {
+
+    try {
+      await auth.loginSso(token);
+      feedback.value = {
+        title: "Success",
+        message: "Successfully logged in",
+        type: "success",
+      };
+    } catch (e) {
+      if (e instanceof Error) {
+        feedback.value = {
+          title: "Error",
+          message: "Something went wrong, please try again",
+          type: "error",
+        };
+      }
+    }
+  }
+}, { immediate: true });
+
+watch(() => route.query.error, async (error) => {
+  if (error) handleError(error);
+}, { immediate: true });
 
 watch(
   () => feedback.value,
