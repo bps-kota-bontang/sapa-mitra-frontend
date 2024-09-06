@@ -4,13 +4,11 @@
       <el-select v-model="form.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
         <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id">
           <span style="float: left">{{ output.name }}</span>
-          <span
-            style="
+          <span style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            "
-          >
+            ">
             {{ output.activity.name }}
           </span>
         </el-option>
@@ -44,6 +42,7 @@
           </el-upload>
           <el-button type="success" @click="downloadMasterPartner()">Unduh Master Data Mitra</el-button>
           <el-button @click="downloadTemplateImportPartner()">Template Impor Mitra</el-button>
+          <el-button @click="syncPartner()">Sinkronisasi Mitra</el-button>
         </div>
       </template>
     </el-card>
@@ -64,6 +63,7 @@ import { getOutputs } from "@/api/outputApi";
 import { generatePeriods } from "@/utils/date";
 import { downloadPartners, getPartners } from "@/api/partnerApi";
 import { downloadTemplatePartner } from "@/api/reportApi";
+import { getContractActivityVolume } from "@/api/contractApi";
 
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();
@@ -120,6 +120,17 @@ const downloadMasterPartner = () => {
 
 const downloadTemplateImportPartner = () => {
   downloadTemplatePartner()
+}
+
+const syncPartner = async () => {
+  const result = await getContractActivityVolume(form.output.outputId, form.contract.period)
+
+  result.forEach((rawPartner: any) => {
+    form.partners.push({
+      partnerId: rawPartner.partnerId,
+      total: rawPartner.volume,
+    });
+  });
 }
 
 const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {

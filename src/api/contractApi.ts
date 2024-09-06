@@ -60,6 +60,35 @@ export const getContractStatistic = async () => {
   return result.data;
 };
 
+export const getContractActivityVolume = async (
+  outputId: string,
+  period: string
+) => {
+  const auth = useAuthStore();
+
+  const query = {
+    outputId: outputId,
+    period: period,
+  };
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/activity/volume?` + new URLSearchParams(query),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
 export const printContracts = async (payload: any) => {
   const auth = useAuthStore();
 
