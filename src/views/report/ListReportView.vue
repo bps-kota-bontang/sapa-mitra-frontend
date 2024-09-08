@@ -78,6 +78,7 @@
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="expandData()">Tampilkan Rincian</el-button>
+        <el-button @click="downloadSelection()" type="success">Unduh Kertas Kerja</el-button>
       </div>
     </div>
   </div>
@@ -87,7 +88,7 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
-import { getReports, deleteReport, deleteReportOutput, printReports, printReport } from "@/api/reportApi";
+import { getReports, deleteReport, deleteReportOutput, printReports, printReport, downloadReports } from "@/api/reportApi";
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
 import { generatePeriods } from "@/utils/date";
@@ -153,6 +154,11 @@ const clearFilter = () => {
 const clearSelection = () => {
   reportsTableRef.value!.clearSelection();
 };
+
+const downloadSelection = () => {
+  executeOperation(() => downloadReports(reportsSelected.value));
+};
+
 
 const expandData = () => {
   if (reportsTableRef.value) {
