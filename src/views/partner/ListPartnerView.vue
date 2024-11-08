@@ -27,6 +27,7 @@
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIK" prop="nik" />
       <el-table-column label="Alamat" prop="address" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" />
 
       <el-table-column align="right">
         <template #header>
@@ -63,6 +64,7 @@ import { getPartners, deletePartner, deletePartners, downloadPartnerTemplate } f
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
+import { generateYear } from "@/utils/date";
 
 const router = useRouter();
 const route = useRoute();

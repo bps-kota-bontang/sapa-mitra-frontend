@@ -28,6 +28,7 @@
       <el-table-column label="Nama Kegiatan" sortable prop="activity.name" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Satuan" prop="unit" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" />
 
       <el-table-column align="right">
         <template #header>
@@ -65,6 +66,7 @@ import { getOutputs, deleteOutput, deleteOutputs, downloadOutputTemplate, downlo
 import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
+import { generateYear } from "@/utils/date";
 
 const router = useRouter();
 const route = useRoute();

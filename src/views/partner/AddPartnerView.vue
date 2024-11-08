@@ -9,7 +9,9 @@
     <el-form-item required label="Alamat" prop="address">
       <el-input v-model="form.address" placeholder="Masukkan Alamat Partner" />
     </el-form-item>
-
+    <el-form-item required label="Tahun" prop="year">
+      <el-input v-model="form.year" placeholder="Masukkan Tahun Partner" />
+    </el-form-item>
     <el-form-item required style="margin-top: 20px">
       <el-button @click="submit(formRef)" type="primary">Tambah</el-button>
       <el-button @click="reset(formRef)">Bersihkan</el-button>
@@ -47,12 +49,20 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
+  year: [
+    {
+      required: true,
+      message: "Tahun mitra perlu terisi",
+      trigger: "blur",
+    },
+  ],
 });
 
 const initialState = {
   name: "",
   nik: "",
   address: "",
+  year: "",
 };
 
 let feedback = ref({

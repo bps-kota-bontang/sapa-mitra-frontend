@@ -12,13 +12,17 @@
             </el-form-item>
             <el-form-item required label="Kategori" prop="category">
                 <el-select v-model="form.category" placeholder="Pilih Jenis Kegiatan" clearable filterable>
-                    <el-option v-for="category in activityCategories" :key="category.value" :label="category.text" :value="category.value" />
+                    <el-option v-for="category in activityCategories" :key="category.value" :label="category.text"
+                        :value="category.value" />
                 </el-select>
             </el-form-item>
             <el-form-item required label="Tim" prop="team">
                 <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
                     <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
                 </el-select>
+            </el-form-item>
+            <el-form-item required label="Tahun Kegiatan" prop="year">
+                <el-input v-model="form.year" placeholder="Masukkan Tahun Kegiatan" />
             </el-form-item>
             <el-form-item label="Khusus">
                 <el-switch v-model="form.isSpecial" />
@@ -47,6 +51,7 @@ const initialState = {
     unit: "",
     category: "",
     team: "",
+    year: "",
     isSpecial: false
 };
 
@@ -83,6 +88,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Nama tim perlu terisi",
+            trigger: "change",
+        },
+    ],
+    year: [
+        {
+            required: true,
+            message: "Tahun perlu terisi",
             trigger: "change",
         },
     ],
@@ -150,6 +162,7 @@ watch(() => props.id, async (newId) => {
         form.unit = data.unit;
         form.category = data.category;
         form.team = data.team;
+        form.year = data.year;
         form.isSpecial = data.isSpecial;
     }
 }, { immediate: true });

@@ -11,6 +11,9 @@
     <el-form-item required label="Satuan" prop="unit">
       <el-input v-model="form.unit" placeholder="Masukkan Satuan Output" />
     </el-form-item>
+    <el-form-item required label="Tahun" prop="year">
+      <el-input v-model="form.year" placeholder="Masukkan Tahun Output"  />
+    </el-form-item>
 
     <el-form-item required style="margin-top: 20px">
       <el-button @click="submit(formRef)" type="primary">Tambah</el-button>
@@ -49,6 +52,13 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
+  year: [
+    {
+      required: true,
+      message: "Tahun output perlu terisi",
+      trigger: "blur",
+    },
+  ],
 });
 
 const initialState = {
@@ -57,6 +67,7 @@ const initialState = {
   },
   name: "",
   unit: "",
+  year: "",
 };
 
 let feedback = ref({

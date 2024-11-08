@@ -10,6 +10,9 @@
             <el-form-item required label="Alamat" prop="address">
                 <el-input v-model="form.address" placeholder="Masukkan Alamat Mitra" />
             </el-form-item>
+            <el-form-item required label="Tahun Mitra" prop="year">
+                <el-input v-model="form.year" placeholder="Masukkan Tahun Mitra" />
+            </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -30,7 +33,8 @@ import { ElNotification, type FormInstance, type FormRules } from "element-plus"
 const initialState = {
     name: "",
     nik: "",
-    address: ""
+    address: "",
+    year: "",
 };
 
 const rules = reactive<FormRules<any>>({
@@ -53,6 +57,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Alamat Mitra perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    year: [
+        {
+            required: true,
+            message: "Tahun Mitra perlu terisi",
             trigger: "blur",
         },
     ],
@@ -118,6 +129,7 @@ watch(() => props.id, async (newId) => {
         form.name = data.name;
         form.nik = data.nik;
         form.address = data.address;
+        form.year = data.year;
     }
 }, { immediate: true });
 

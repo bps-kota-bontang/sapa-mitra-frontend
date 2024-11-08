@@ -33,12 +33,13 @@
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
         :filter-method="filterCategory" column-key="category" />
       <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" />
       <el-table-column align="center" label="Status" prop="isSpecial" :filters="[
         { text: 'Khusus', value: true },
         { text: 'Biasa', value: false },
-      ]" :filter-method="filterIsSpecial" column-key="isSpecial" >
+      ]" :filter-method="filterIsSpecial" column-key="isSpecial">
         <template #default="scope">
-          <el-tag effect="dark">{{scope.row.isSpecial ? "Khusus" : "Biasa"}}</el-tag>
+          <el-tag effect="dark">{{ scope.row.isSpecial ? "Khusus" : "Biasa" }}</el-tag>
         </template>
       </el-table-column>
 
@@ -84,6 +85,7 @@ import { ElNotification, ElTable } from "element-plus";
 import { teams, activityCategories } from "@/utils/constant";
 import { createInitialFilter, type Filter } from "@/types/filter";
 import type { Activity } from "@/types/activity";
+import { generateYear } from "@/utils/date";
 
 const router = useRouter();
 const auth = useAuthStore();

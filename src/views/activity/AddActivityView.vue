@@ -11,13 +11,17 @@
     </el-form-item>
     <el-form-item required label="Kategori" prop="category">
       <el-select v-model="form.category" placeholder="Pilih Jenis Kegiatan" clearable filterable>
-        <el-option v-for="category in activityCategories" :key="category.value" :label="category.text" :value="category.value" />
+        <el-option v-for="category in activityCategories" :key="category.value" :label="category.text"
+          :value="category.value" />
       </el-select>
     </el-form-item>
     <el-form-item required label="Tim" prop="team">
       <el-select v-model="form.team" placeholder="Pilih Nama Tim" clearable filterable>
         <el-option v-for="team in teams" :key="team.value" :label="team.text" :value="team.value" />
       </el-select>
+    </el-form-item>
+    <el-form-item required label="Tahun" prop="year">
+      <el-input v-model="form.year" placeholder="Masukkan Tahun Kegiatan"  />
     </el-form-item>
     <el-form-item label="Khusus" prop="isSpecial">
       <el-switch v-model="form.isSpecial" />
@@ -73,6 +77,13 @@ const rules = reactive<FormRules<any>>({
       trigger: "change",
     },
   ],
+  year: [
+    {
+      required: true,
+      message: "Tahun perlu terisi",
+      trigger: "change",
+    },
+  ],
 });
 
 const initialState = {
@@ -81,6 +92,7 @@ const initialState = {
   unit: "",
   category: "",
   team: "",
+  year: "",
   isSpecial: false
 };
 

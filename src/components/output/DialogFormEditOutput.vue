@@ -13,6 +13,9 @@
             <el-form-item required label="Satuan Output" prop="unit">
                 <el-input v-model="form.unit" placeholder="Masukkan Satuan Output" />
             </el-form-item>
+            <el-form-item required label="Tahun Kegiatan" prop="year">
+                <el-input v-model="form.year" placeholder="Masukkan Tahun Output" />
+            </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -36,7 +39,8 @@ const initialState = {
         activityId: "",
     },
     name: "",
-    unit: ""
+    unit: "",
+    year: "",
 };
 
 const rules = reactive<FormRules<any>>({
@@ -58,6 +62,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Satuan Output perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    year: [
+        {
+            required: true,
+            message: "Tahun Output perlu terisi",
             trigger: "blur",
         },
     ],
@@ -123,6 +134,7 @@ watch(() => props.id, async (newId) => {
         form.activity.activityId = data.activity._id;
         form.name = data.name;
         form.unit = data.unit;
+        form.year = data.year;
     }
 }, { immediate: true });
 
