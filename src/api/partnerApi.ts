@@ -39,15 +39,23 @@ export const updatePartner = async (id: string, payload: any) => {
   return result;
 };
 
-export const getPartners = async () => {
+export const getPartners = async (year: string = "") => {
   const auth = useAuthStore();
 
-  const response = await fetch(`${BASE_URL}/v1/partners`, {
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  const query: any = {};
+  if (year) {
+    query.year = year;
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/v1/partners?` + new URLSearchParams(query),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
   const result = await response.json();
 
   if (!response.ok) {

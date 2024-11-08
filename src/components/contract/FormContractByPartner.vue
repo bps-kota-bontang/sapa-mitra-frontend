@@ -49,6 +49,9 @@ import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getActivities } from "@/api/activityApi";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const formRef = ref<FormInstance>();
 
@@ -173,7 +176,10 @@ const showNotification = async (title: string, message: string, type: string) =>
 }
 
 onMounted(async () => {
-  partners.value = await getPartners();
-  activities.value = await getActivities();
+  partners.value = await getPartners(route.query.year?.toString());
+  activities.value = await getActivities(route.query.year?.toString());
 });
+
+watch(() => route.query.year?.toString(), getActivities, { immediate: true });
+
 </script>

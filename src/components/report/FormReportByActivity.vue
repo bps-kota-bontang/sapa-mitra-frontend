@@ -64,6 +64,9 @@ import { generatePeriods } from "@/utils/date";
 import { downloadPartners, getPartners } from "@/api/partnerApi";
 import { downloadTemplatePartner } from "@/api/reportApi";
 import { getContractActivityVolume } from "@/api/contractApi";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();
@@ -220,7 +223,10 @@ watch(
 );
 
 onMounted(async () => {
-  outputs.value = await getOutputs();
-  partners.value = await getPartners();
+  outputs.value = await getOutputs(route.query.year?.toString());
+  partners.value = await getPartners(route.query.year?.toString());
 });
+
+watch(() => route.query.year?.toString(), getOutputs, { immediate: true });
+
 </script>

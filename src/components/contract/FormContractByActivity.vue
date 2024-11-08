@@ -80,6 +80,9 @@ import { ElNotification, type FormInstance, type FormRules, type UploadFile, typ
 import { getActivities } from "@/api/activityApi";
 import { getPartners, downloadPartners } from "@/api/partnerApi";
 import { formatNumber, formatParserNumber } from "@/utils/currency";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();
@@ -256,7 +259,9 @@ const showNotification = async (title: string, message: string, type: string) =>
 }
 
 onMounted(async () => {
-  activities.value = await getActivities();
-  partners.value = await getPartners();
+  partners.value = await getPartners(route.query.year?.toString());
+  activities.value = await getActivities(route.query.year?.toString());
 });
+
+watch(() => route.query.year?.toString(), getActivities, { immediate: true });
 </script>

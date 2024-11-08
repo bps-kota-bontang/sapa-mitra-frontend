@@ -38,3 +38,15 @@ export const generatePeriods = (
   }
   return periods;
 };
+
+export const generateYear = (
+  startYear: number = 2024
+): { value: string; text: string }[] => {
+  const periods = [];
+  const currentYear = new Date().getFullYear();
+  for (let year = currentYear; year >= startYear; year--) {
+    periods.push({ value: year.toString(), text: year.toString() });
+  }
+
+  return periods;
+};
