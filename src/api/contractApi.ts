@@ -43,14 +43,22 @@ export const getContract = async (id: string) => {
   return result.data;
 };
 
-export const getContractStatistic = async () => {
+export const getContractStatistic = async (year: string = "") => {
   const auth = useAuthStore();
 
-  const response = await fetch(`${BASE_URL}/v1/contracts/statistics`, {
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-    },
-  });
+  const query: any = {};
+  if (year) {
+    query.year = year;
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/statistics?` + new URLSearchParams(query),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
   const result = await response.json();
 
   if (!response.ok) {

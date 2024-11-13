@@ -1,20 +1,30 @@
 <template>
-  <div style="
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+  <div>
+    <div style="display: flex; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap:20px">
+        <span>Tahun</span>
+        <el-select v-model="yearSelected" placeholder="Select" clearable style="width: 240px"
+          @change="handleYearChange">
+          <el-option v-for="item in years" :key="item.value" :label="item.text" :value="item.value" />
+        </el-select>
+      </div>
+
+
+    </div>
+    <el-divider />
+    <div style="gap: 10px; display: flex; flex-wrap: wrap;
       align-items: center;
-      justify-content: center;
-    ">
-    <Bar v-if="load" :options="optionsByStatus" :data="dataByStatus" :style="style" />
-    <Bar v-if="load" :options="optionsByTeam" :data="dataByTeam" :style="style" />
-    <Line v-if="load" :options="optionsPartners" :data="dataPartners" :style="style" />
-    <Line v-if="load" :options="optionsActivities" :data="dataActivities" :style="style" />
+      justify-content: center;">
+      <Bar v-if="load" :options="optionsByStatus" :data="dataByStatus" :style="style" />
+      <Bar v-if="load" :options="optionsByTeam" :data="dataByTeam" :style="style" />
+      <Line v-if="load" :options="optionsPartners" :data="dataPartners" :style="style" />
+      <Line v-if="load" :options="optionsActivities" :data="dataActivities" :style="style" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { getContractStatistic } from "@/api/contractApi";
 import { Bar, Line } from "vue-chartjs";
 import {
@@ -28,6 +38,9 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { generateYear } from "@/utils/date";
+import { useRoute, useRouter } from "vue-router";
+
 
 Chart.register(
   Title,
@@ -40,12 +53,22 @@ Chart.register(
   LinearScale
 );
 
+const route = useRoute();
+const router = useRouter();
+
+
+
 const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
 const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;
 
 const style = ref({
-  width: "550px",
+  width: "525px",
 });
+
+
+const years = generateYear();
+
+const yearSelected = ref(route.query.year);
 
 const load = ref(false);
 const dataByStatus = ref({
@@ -323,10 +346,18 @@ const generateDataActivities = (data: any) => {
   };
 };
 
-const fetchData = async () => {
+const handleYearChange = (value: string) => {
+  const query: any = {};
+  if (value) {
+    query.year = value;
+  }
+  router.push({ name: "dashboard", query });
+};
+
+const fetchData = async (year: string = "") => {
   try {
     load.value = false;
-    const data = await getContractStatistic();
+    const data = await getContractStatistic(year);
 
     dataByStatus.value = generateDataByStatus(data);
     dataByTeam.value = generateDataByTeam(data);
@@ -341,7 +372,5 @@ const fetchData = async () => {
   }
 };
 
-onMounted(async () => {
-  await fetchData();
-});
+watch(() => route.query.year?.toString(), fetchData, { immediate: true });
 </script>
