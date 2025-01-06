@@ -7,32 +7,31 @@
       <el-text style="font-size: 14pt; align-self: first baseline; font-weight: 500">Selamat Datang di <el-text
           type="primary" style="font-size: 14pt; align-self: first baseline; font-weight: 500">{{ app
           }}</el-text></el-text>
-
-      <el-form @submit.prevent style="margin-top: 15px" :rules="rules" ref="formRef" v-loading="loading" :model="form"
-        label-width="auto" label-position="top">
-        <el-form-item label="Email" required prop="email">
-          <el-input @keyup.enter="login(formRef)" size="large" v-model="form.email" type="email"
-            placeholder="Masukkan Email" />
-        </el-form-item>
-        <el-form-item label="Password" required prop="password">
-          <el-input @keyup.enter="login(formRef)" size="large" v-model="form.password" type="password"
-            placeholder="Masukkan Password" />
-        </el-form-item>
-        <el-form-item style="margin-top: 30px">
-          <el-button type="primary" size="large" style="width: 100%" @click="login(formRef)">Login</el-button>
-        </el-form-item>
-      </el-form>
-      <div v-if="enableSso">
+      <div v-if="!onlySSO">
+        <el-form @submit.prevent style="margin-top: 15px" :rules="rules" ref="formRef" v-loading="loading" :model="form"
+          label-width="auto" label-position="top">
+          <el-form-item label="Email" required prop="email">
+            <el-input @keyup.enter="login(formRef)" size="large" v-model="form.email" type="email"
+              placeholder="Masukkan Email" />
+          </el-form-item>
+          <el-form-item label="Password" required prop="password">
+            <el-input @keyup.enter="login(formRef)" size="large" v-model="form.password" type="password"
+              placeholder="Masukkan Password" />
+          </el-form-item>
+          <el-form-item style="margin-top: 30px">
+            <el-button type="primary" size="large" style="width: 100%" @click="login(formRef)">Login</el-button>
+          </el-form-item>
+        </el-form>
         <div style="display: flex; align-items: center">
           <el-divider style="margin-right: 10px"></el-divider>
           <span style="margin: 0 10px">OR</span>
           <el-divider style="margin-left: 10px"></el-divider>
         </div>
-        <el-button size="large" style="margin-top: 18px; width: 100%" @click="loginSso">
-          <IconBPS style="width: 1.9em; height: 1.9em; margin-right: 10px" />
-          Login with SSO BPS
-        </el-button>
       </div>
+      <el-button size="large" style="margin-top: 18px; width: 100%" @click="loginSso">
+        <IconBPS style="width: 1.9em; height: 1.9em; margin-right: 10px" />
+        Login with SSO BPS
+      </el-button>
     </div>
     <div class="image-container"></div>
   </div>
@@ -53,7 +52,7 @@ const initialState = {
   password: "",
 };
 
-const enableSso = ref(true);
+const onlySSO = ref(true);
 
 const rules = reactive<FormRules<any>>({
   email: [
