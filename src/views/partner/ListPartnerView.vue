@@ -20,14 +20,16 @@
     </div>
     <el-divider />
     <el-table ref="partnersTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
-      style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
+      @filter-change="handleFilterChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
+      @selection-change="handleSelection">
       <el-table-column type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIK" prop="nik" />
       <el-table-column label="Alamat" prop="address" />
-      <el-table-column label="Tahun" prop="year" :filters="generateYear()" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
+        column-key="year" />
 
       <el-table-column align="right">
         <template #header>
@@ -65,6 +67,7 @@ import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
+import { createInitialFilter, type Filter } from "@/types/filter";
 
 const router = useRouter();
 const route = useRoute();
@@ -74,7 +77,7 @@ const headers = ref({
   Authorization: `Bearer ${user.token}`,
 });
 const uploadUrl = ref(`${BASE_URL}/v1/partners/upload`);
-
+const initialFilter = createInitialFilter("partner");
 const partnersTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
 const loading = ref(false);
@@ -83,7 +86,7 @@ const error = ref("");
 const partnersSelected = ref<any[]>([]);
 const editedPartnerId = ref(null);
 const showDialogFormEdit = ref(false);
-
+const filter = ref<Filter>(initialFilter);
 const pageSize = ref(10)
 const currentPage = ref(1);
 
@@ -139,6 +142,16 @@ const handleSelection = (value: any[]) => {
   const partnerIdsSelected = value.map((item) => item._id);
 
   partnersSelected.value = partnerIdsSelected;
+};
+
+const handleFilterChange = (newFilters: any) => {
+  if (newFilters.year) {
+    filter.value.year = newFilters.year
+  }
+}
+
+const filterYear = (value: string, row: any) => {
+  return row.year == value
 };
 
 const deleteSelection = () => {

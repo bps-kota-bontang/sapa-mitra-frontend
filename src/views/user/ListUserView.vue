@@ -3,6 +3,10 @@
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex; align-items: center"></div>
       <div style="display: flex; align-items: center; gap:10px">
+        <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Download />
+          </el-icon>Unduh Template</el-button>
         <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
           :on-error="handleError" :headers="headers">
           <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
@@ -36,8 +40,8 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
-import { getUsers } from "@/api/userApi";
-import { Upload } from "@element-plus/icons-vue";
+import { downloadUserTemplate, getUsers } from "@/api/userApi";
+import { Upload, Download } from "@element-plus/icons-vue";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
@@ -73,6 +77,21 @@ const handlePageChange = (page: number) => {
 const teamFormatter = (row: any) => {
   if (row.team == null) return "-";
   return row.team;
+};
+
+const downloadTemplate = () => {
+  executeOperation(() => downloadUserTemplate());
+}
+
+const executeOperation = async (operation: () => Promise<void>) => {
+  try {
+    await operation();
+    await fetchData();
+  } catch (e) {
+    if (e instanceof Error) {
+      error.value = e.message;
+    }
+  }
 };
 
 const handleError = (

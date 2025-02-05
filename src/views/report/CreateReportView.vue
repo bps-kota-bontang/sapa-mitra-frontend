@@ -32,10 +32,10 @@ import { generateYear } from "@/utils/date";
 
 const route = useRoute();
 const router = useRouter();
-
+const currentYear = new Date().getFullYear();
 const years = generateYear();
 
-const yearSelected = ref(route.query.year);
+const yearSelected = ref(route.query.year || currentYear.toString());
 
 const handleYearChange = (value: string) => {
   const query: any = {};

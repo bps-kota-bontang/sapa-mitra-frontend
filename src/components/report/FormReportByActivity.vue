@@ -28,7 +28,7 @@
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
         <FormReportPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index" :partner="partner"
-          @remove="removePartner(index)" />
+          :partners="partners" @remove="removePartner(index)" />
       </div>
 
       <template #footer>
@@ -67,7 +67,7 @@ import { getContractActivityVolume } from "@/api/contractApi";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-
+const currentYear = new Date().getFullYear();
 const formRef = ref<FormInstance>();
 const fileInput = ref<UploadInstance>();
 const rules = reactive<FormRules<any>>({
@@ -222,11 +222,18 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  outputs.value = await getOutputs(route.query.year?.toString());
-  partners.value = await getPartners(route.query.year?.toString());
-});
+// onMounted(async () => {
+//   outputs.value = await getOutputs(route.query.year?.toString());
+//   partners.value = await getPartners(route.query.year?.toString());
+// });
 
-watch(() => route.query.year?.toString(), getOutputs, { immediate: true });
+watch(
+  () => route.query.year?.toString(),
+  async (newYear) => {
+    outputs.value = await getOutputs(newYear || currentYear.toString());
+    partners.value = await getPartners(newYear || currentYear.toString());
+  },
+  { immediate: true }
+);
 
 </script>

@@ -6,7 +6,7 @@
       trigger: 'change',
     }">
       <el-select v-model="props.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
-        <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id" >
+        <el-option v-for="output in props.outputs" :key="output._id" :label="output.name" :value="output._id" >
           <span style="float: left">{{ output.name }}</span>
           <span
             style="
@@ -44,15 +44,10 @@ import { formatNumber, formatParserNumber } from "@/utils/currency";
 const props: any = defineProps({
   output: Object,
   index: Number,
+  outputs: Object,
 });
-
-const outputs = ref<any[]>([]);
 
 const getProp = (key: string) => {
   return `outputs[${props.index}].${key}`;
 };
-
-onMounted(async () => {
-  outputs.value = await getOutputs();
-});
 </script>

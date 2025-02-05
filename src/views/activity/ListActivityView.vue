@@ -33,7 +33,8 @@
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
         :filter-method="filterCategory" column-key="category" />
       <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
-      <el-table-column label="Tahun" prop="year" :filters="generateYear()" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
+        column-key="year" />
       <el-table-column align="center" label="Status" prop="isSpecial" :filters="[
         { text: 'Khusus', value: true },
         { text: 'Biasa', value: false },
@@ -170,6 +171,10 @@ const handleFilterChange = (newFilters: any) => {
   if (newFilters.isSpecial) {
     filter.value.isSpecial = newFilters.isSpecial
   }
+
+  if (newFilters.year) {
+    filter.value.year = newFilters.year
+  }
 }
 
 const filterTeam = (value: string, row: any) => {
@@ -182,6 +187,10 @@ const filterIsSpecial = (value: boolean, row: any) => {
 
 const filterCategory = (value: string, row: any) => {
   return row.category == value
+};
+
+const filterYear = (value: string, row: any) => {
+  return row.year == value
 };
 
 const categoryFormatter = (row: any) => {

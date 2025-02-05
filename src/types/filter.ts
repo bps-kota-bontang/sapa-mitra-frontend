@@ -7,13 +7,23 @@ export type Filter = {
   isSpecial?: boolean[];
   hasSpecial?: boolean[];
   total?: boolean[];
+  year?: string[];
 };
 
-type FilterType = "activity" | "contract";
+type FilterType = "activity" | "contract" | "output" | "partner";
 
 const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
-  contract: { team: [], period: [], status: [], safe: [], total: [], hasSpecial: [] },
+  contract: {
+    team: [],
+    period: [],
+    status: [],
+    safe: [],
+    total: [],
+    hasSpecial: [],
+  },
   activity: { team: [], category: [], isSpecial: [] },
+  output: { year: [] },
+  partner: { year: [] },
 };
 
 const deepClone = <T>(obj: T): T => {
@@ -22,4 +32,4 @@ const deepClone = <T>(obj: T): T => {
 
 export const createInitialFilter = (type: FilterType): Filter => {
   return deepClone(initialFilterConfig[type]);
-}
+};

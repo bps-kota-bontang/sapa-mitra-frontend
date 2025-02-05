@@ -28,7 +28,7 @@
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
         <FormReportOutputItem v-for="(output, index) in form.outputs" :key="index" :index="index" :output="output"
-          @remove="removeOutput(index)" />
+          :outputs="outputs" @remove="removeOutput(index)" />
       </div>
 
       <template #footer><el-button @click="addOutput">Tambah Output</el-button>
@@ -49,9 +49,10 @@ import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createReport } from "@/api/reportApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { useRoute } from "vue-router";
+import { getOutputs } from "@/api/outputApi";
 
 const route = useRoute();
-
+const currentYear = new Date().getFullYear();
 const formRef = ref<FormInstance>();
 
 const rules = reactive<FormRules<any>>({
@@ -85,7 +86,7 @@ const initialState = {
     },
   ],
 };
-
+const outputs = ref<any[]>([]);
 const partners = ref<any[]>([]);
 let feedback = ref({
   title: "",
@@ -161,9 +162,17 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  partners.value = await getPartners(route.query.year?.toString());
-});
+// onMounted(async () => {
+//   partners.value = await getPartners(route.query.year?.toString());
+// });
 
-watch(() => route.query.year?.toString(), getPartners, { immediate: true });
+watch(
+  () => route.query.year?.toString(),
+  async (newYear) => {
+    partners.value = await getPartners(newYear || currentYear.toString());
+    outputs.value = await getOutputs(newYear || currentYear.toString());
+  },
+  { immediate: true }
+);
+
 </script>

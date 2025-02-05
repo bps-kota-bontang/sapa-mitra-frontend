@@ -6,15 +6,13 @@
       trigger: 'change',
     }">
       <el-select v-model="props.partner.partnerId" placeholder="Pilih Nama Mitra" clearable filterable>
-        <el-option v-for="partner in partners" :key="partner._id" :label="partner.name" :value="partner._id" >
+        <el-option v-for="partner in props.partners" :key="partner._id" :label="partner.name" :value="partner._id">
           <span style="float: left">{{ partner.name }}</span>
-          <span
-            style="
+          <span style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            "
-          >
+            ">
             {{ partner.address }}
           </span>
         </el-option>
@@ -44,15 +42,10 @@ import { formatNumber, formatParserNumber } from "@/utils/currency";
 const props: any = defineProps({
   partner: Object,
   index: Number,
+  partners: Object,
 });
-
-const partners = ref<any[]>([]);
 
 const getProp = (key: string) => {
   return `partners[${props.index}].${key}`;
 };
-
-onMounted(async () => {
-  partners.value = await getPartners();
-});
 </script>

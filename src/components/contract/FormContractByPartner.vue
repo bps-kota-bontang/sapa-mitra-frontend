@@ -52,7 +52,7 @@ import { getActivities } from "@/api/activityApi";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-
+const currentYear = new Date().getFullYear();
 const formRef = ref<FormInstance>();
 
 const rules = reactive<FormRules<any>>({
@@ -175,11 +175,18 @@ const showNotification = async (title: string, message: string, type: string) =>
   } as any);
 }
 
-onMounted(async () => {
-  partners.value = await getPartners(route.query.year?.toString());
-  activities.value = await getActivities(route.query.year?.toString());
-});
+// onMounted(async () => {
+//   partners.value = await getPartners(route.query.year?.toString());
+//   activities.value = await getActivities(route.query.year?.toString());
+// });
 
-watch(() => route.query.year?.toString(), getActivities, { immediate: true });
+watch(
+  () => route.query.year?.toString(),
+  async (newYear) => {
+    partners.value = await getPartners(newYear || currentYear.toString());
+    activities.value = await getActivities(newYear || currentYear.toString());
+  },
+  { immediate: true }
+);
 
 </script>
