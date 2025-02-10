@@ -28,14 +28,15 @@
       <el-menu-item index="/bast">Daftar BAST</el-menu-item>
       <el-menu-item v-if="!['KEPALA'].includes(user.position)" index="/bast/buat">Buat BAST</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="3" v-if="['TU'].includes(user.team)">
+    <el-sub-menu index="3">
       <template #title>
         <el-icon>
           <Guide />
         </el-icon>Kegiatan
       </template>
       <el-menu-item index="/kegiatan">Daftar Kegiatan</el-menu-item>
-      <el-menu-item index="/kegiatan/tambah">Tambah Kegiatan</el-menu-item>
+      <el-menu-item index="/kegiatan/tambah" v-if="['TU'].includes(user.team)">Tambah
+        Kegiatan</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="4">
       <template #title>
