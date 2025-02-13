@@ -30,13 +30,13 @@
       <el-table-column type="expand">
         <template #default="props">
           <div class="container-activity">
-            <el-table :data="props.row.activities" border>
+            <el-table :data="props.row.activities.filter((activity: any) => filterActivities(activity))" border>
               <el-table-column label="Kode" prop="code" />
               <el-table-column label="Name" prop="name" />
               <el-table-column label="Tanggal" :formatter="dateFormatter" />
               <el-table-column label="Volume" prop="volume" />
-              <el-table-column label="Rate" prop="rate" />
-              <el-table-column label="Total" prop="total" />
+              <el-table-column label="Rate" prop="rate" :formatter="rateActivityFormatter" />
+              <el-table-column label="Total" prop="total" :formatter="totalActivityFormatter" />
               <el-table-column label="Team" prop="createdBy" />
               <el-table-column label="Khusus" prop="isSpecial" :formatter="isSpecialFormatter" />
               <el-table-column label="Status" prop="status" />
@@ -83,7 +83,7 @@
       <el-table-column label="Periode" sortable prop="period" column-key="period" :filters="periods"
         :filter-method="filterPeriod" />
       <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter"
-        :filters="activities" :filter-method="filterActivity" />
+        column-key="activityIds" :filters="activities" :filter-method="filterActivity" />
       <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
         <template #default="scope">
           <el-tag v-if="!teamFormatter(scope.row).includes('-')" style="margin-right: 5px" type="primary"
@@ -245,6 +245,14 @@ const paginatedData = computed(() => {
     });
   }
 
+  if (filter.value.activityIds?.length) {
+    paginatedData = paginatedData.filter((item) => {
+      return item.activities.some((activity) => {
+        return filter.value.activityIds?.includes(activity._id);
+      });
+    });
+  }
+
   if (filter.value.status?.length) {
     paginatedData = paginatedData.filter((item) => {
       const totalActivities = item.activities.length;
@@ -315,6 +323,12 @@ const paginatedData = computed(() => {
   return paginatedData.slice(start, end);
 });
 
+const filterActivities = (activity: any) => {
+  const matchActivity = !filter.value.activityIds || filter.value.activityIds.includes(activity._id);
+
+  return matchActivity;
+};
+
 const handleFilterChange = (newFilters: any) => {
   if (newFilters.period) {
     filter.value.period = newFilters.period
@@ -338,6 +352,10 @@ const handleFilterChange = (newFilters: any) => {
 
   if (newFilters.hasSpecial) {
     filter.value.hasSpecial = newFilters.hasSpecial
+  }
+
+  if (newFilters.activityIds) {
+    filter.value.activityIds = newFilters.activityIds
   }
 }
 
@@ -396,6 +414,7 @@ const clearFilter = () => {
   search.value = ""
   periodSelected.value = null;
   filter.value = {
+    activityIds: [],
     team: [],
     period: [],
     status: [],
@@ -514,6 +533,14 @@ const statusText = (row: any) => {
   } else {
     return "Sebagian";
   }
+};
+
+const rateActivityFormatter = (row: any) => {
+  return `Rp ${formatCurrency(row.rate)}`;
+};
+
+const totalActivityFormatter = (row: any) => {
+  return `Rp ${formatCurrency(row.total)}`;
 };
 
 const limitFormatter = (row: any) => {

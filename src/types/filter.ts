@@ -1,4 +1,5 @@
 export type Filter = {
+  activityIds?: string[];
   period?: string[];
   team?: string[];
   status?: string[];
