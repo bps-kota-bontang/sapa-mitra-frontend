@@ -82,7 +82,8 @@
       <el-table-column label="No SPK" prop="number" />
       <el-table-column label="Periode" sortable prop="period" column-key="period" :filters="periods"
         :filter-method="filterPeriod" />
-      <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter" />
+      <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter"
+        :filters="activities" :filter-method="filterActivity" />
       <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
         <template #default="scope">
           <el-tag v-if="!teamFormatter(scope.row).includes('-')" style="margin-right: 5px" type="primary"
@@ -120,7 +121,7 @@
         { text: 'Tidak Ada', value: false },
       ]" :filter-method="filterHasSpecial">
         <template #default="scope">
-          <el-tag  effect="dark">{{ scope.row.hasSpecial ? 'Ada' : 'Tidak Ada' }}</el-tag>
+          <el-tag effect="dark">{{ scope.row.hasSpecial ? 'Ada' : 'Tidak Ada' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable label="Batas" column-key="safe" prop="isExceeded" :filters="[
@@ -128,8 +129,11 @@
         { text: 'Tidak Aman', value: false },
       ]" :filter-method="filterSafe">
         <template #default="scope">
-          <el-tag :type="scope.row.hasSpecial ? ( scope.row.activities.length == 1 ? 'success' : 'danger') : ( scope.row.isExceeded ? 'danger' : 'success')" effect="dark">{{
-            scope.row.hasSpecial ? ( scope.row.activities.length == 1 ? 'Aman' : 'Tidak Aman') : ( scope.row.isExceeded ? 'Tidak Aman' : 'Aman') 
+          <el-tag
+            :type="scope.row.hasSpecial ? (scope.row.activities.length == 1 ? 'success' : 'danger') : (scope.row.isExceeded ? 'danger' : 'success')"
+            effect="dark">{{
+              scope.row.hasSpecial ? (scope.row.activities.length == 1 ? 'Aman' : 'Tidak Aman') : (scope.row.isExceeded
+                ? 'Tidak Aman' : 'Aman')
             }}</el-tag>
         </template>
       </el-table-column>
@@ -159,7 +163,7 @@
     </el-table>
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
-        :page-sizes="[10, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
+        :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
         @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
@@ -220,6 +224,10 @@ const editedContractId = ref<string | null>(null);
 const editedActivityId = ref<string | null>(null);
 const showDialogFormEdit = ref(false);
 const showDialogFormContractEdit = ref(false);
+const activities = ref<{
+  "text": string;
+  "value": string;
+}[]>([]);
 
 const paginatedData = computed(() => {
   let paginatedData: Contract[] = contracts.value
@@ -278,16 +286,16 @@ const paginatedData = computed(() => {
   if (filter.value.safe?.length) {
 
     paginatedData = paginatedData.filter((item) => {
-      const isSafe = item.hasSpecial ? ( item.activities.length == 1 ? true : false) : ( item.isExceeded ? false : true);
+      const isSafe = item.hasSpecial ? (item.activities.length == 1 ? true : false) : (item.isExceeded ? false : true);
 
       return filter.value.safe?.includes(isSafe)
     });
   }
 
   if (filter.value.hasSpecial?.length) {
-    
+
     paginatedData = paginatedData.filter((item) => {
-      
+
       return filter.value.hasSpecial?.includes(item.hasSpecial)
     });
   }
@@ -413,6 +421,12 @@ const filterPeriod = (value: string, row: any) => {
   return row.period === value;
 };
 
+const filterActivity = (value: string, row: any) => {
+  const activities = row.activities.map((item: any) => item._id);
+
+  return [...new Set(activities)].includes(value);
+};
+
 const filterTeam = (value: string, row: any) => {
   const teams = row.activities.map((item: any) => item.createdBy);
 
@@ -420,7 +434,7 @@ const filterTeam = (value: string, row: any) => {
 };
 
 const filterSafe = (value: boolean, row: any) => {
-  const isSafe = row.hasSpecial ? ( row.activities.length == 1 ? true : false) : ( row.isExceeded ? false : true);
+  const isSafe = row.hasSpecial ? (row.activities.length == 1 ? true : false) : (row.isExceeded ? false : true);
 
   return isSafe === value;
 };
@@ -614,11 +628,24 @@ const fetchData = async (period: any, showLoading: boolean = true) => {
   if (showLoading) {
     loading.value = true;
     contracts.value = [];
+    activities.value = [];
     error.value = "";
   }
 
   try {
-    contracts.value = await getContracts(period);
+    const data = await getContracts(period);
+    contracts.value = data;
+    const uniqueActivities = new Map<string, { text: string; value: string }>();
+
+    data.forEach((contract: Contract) => {
+      contract.activities.forEach((activity: any) => {
+        uniqueActivities.set(activity._id, { text: activity.name, value: activity._id });
+      });
+    });
+
+    activities.value = Array.from(uniqueActivities.values());
+
+
   } catch (e) {
     if (e instanceof Error) {
       error.value = e.message;

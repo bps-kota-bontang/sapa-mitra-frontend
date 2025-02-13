@@ -72,7 +72,7 @@
 
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
-        :page-sizes="[10, 25, 50, 100]" v-model:page-size="pageSize" :current-page="currentPage"
+        :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
         @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
