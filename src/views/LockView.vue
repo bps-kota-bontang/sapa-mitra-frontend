@@ -31,7 +31,6 @@ import { ElNotification, ElTable } from "element-plus";
 
 import { getStatuses, updateStatusContract, updateStatusOutput } from "@/api/statusApi";
 import type { Status } from "@/types/status";
-import { generatePeriods } from "@/utils/date";
 
 const statusesTableRef = ref<InstanceType<typeof ElTable>>();
 const search = ref("");
@@ -41,8 +40,6 @@ const error = ref("");
 const pageSize = ref(10)
 const currentPage = ref(1);
 const total = computed(() => filterOutputs.value.length);
-
-const periods = generatePeriods();
 
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -86,12 +83,7 @@ const fetchData = async () => {
   error.value = "";
 
   try {
-    const data = await getStatuses(); // Ambil data dari API
-    statuses.value = periods.map(({ value }, index) => {
-      const existingStatus = data.find((s: any) => s.period === value);
-      return existingStatus ?? { period: value, contract: false, output: false, index: index + 1 };
-    });
-
+    statuses.value = await getStatuses(); // Ambil data dari API
   } catch (e) {
     if (e instanceof Error) {
       error.value = e.message;
