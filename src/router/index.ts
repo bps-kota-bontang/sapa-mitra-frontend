@@ -13,6 +13,7 @@ import DashboardView from "@/views/DashboardView.vue";
 import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
 import SettingView from "@/views/setting/SettingView.vue";
+import LockView from "@/views/LockView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,21 @@ const router = createRouter({
       component: ConfigurationView,
       meta: {
         title: "Konfigurasi",
+        layout: "LayoutDashboard",
+        requiresAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        const user = useUserStore();
+        if (!["TU"].includes(user.team)) next({ name: "unauthorized" });
+        else next();
+      },
+    },
+    {
+      path: "/kunci",
+      name: "lock",
+      component: LockView,
+      meta: {
+        title: "Kunci",
         layout: "LayoutDashboard",
         requiresAuth: true,
       },

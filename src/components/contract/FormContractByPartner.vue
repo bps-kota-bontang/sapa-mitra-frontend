@@ -128,7 +128,7 @@ const submit = async (formEl: FormInstance | undefined) => {
       const { data, message } = await createContract(payload);
       await showNotification("Success", message, "success")
 
-      const hasSpecial = data.activities.some(activity => activity.isSpecial);
+      const hasSpecial = data.activities.some((activity: { isSpecial: any; }) => activity.isSpecial);
 
       if (data.isExceeded && !hasSpecial) {
         ElNotification({

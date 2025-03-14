@@ -180,8 +180,8 @@ const submit = async (formEl: FormInstance | undefined) => {
       await showNotification("Success", message, "success");
 
       for await (const contract of data) {
-        
-        const hasSpecial = contract.activities.some(activity => activity.isSpecial);
+
+        const hasSpecial = contract.activities.some((activity: { isSpecial: any; }) => activity.isSpecial);
 
         if (contract.isExceeded && !hasSpecial) {
           ElNotification({

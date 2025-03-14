@@ -56,6 +56,11 @@
       <el-menu-item index="/mitra">Daftar Mitra</el-menu-item>
       <el-menu-item index="/mitra/tambah">Tambah Mitra</el-menu-item>
     </el-sub-menu>
+    <el-menu-item index="/kunci" v-if="['TU'].includes(user.team)">
+      <el-icon>
+       <Key />
+      </el-icon>Kunci
+    </el-menu-item>
     <el-menu-item index="/pengguna" v-if="['TU', 'IPDS'].includes(user.team)"><el-icon>
         <User />
       </el-icon>Pengguna</el-menu-item>
@@ -106,7 +111,8 @@ import {
   User,
   Setting,
   VideoPlay,
-  Service
+  Service,
+  Key
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 const app = import.meta.env.VITE_APP_TITLE;

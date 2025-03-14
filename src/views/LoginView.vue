@@ -52,7 +52,7 @@ const initialState = {
   password: "",
 };
 
-const onlySSO = ref(true);
+const onlySSO = ref(false);
 
 const rules = reactive<FormRules<any>>({
   email: [
