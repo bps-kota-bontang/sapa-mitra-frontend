@@ -51,6 +51,15 @@
       <el-table-column label="No BAST" prop="number" />
       <el-table-column label="Periode" sortable prop="contract.period" :filters="periods"
         :filter-method="filterPeriod" />
+
+      <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
+        <template #default="scope">
+          <el-tag v-if="!teamFormatter(scope.row).includes('-')" style="margin-right: 5px" type="primary"
+            v-for="item in teamFormatter(scope.row)" effect="dark" :key="item">{{ item }}</el-tag>
+          <el-text v-else>-</el-text>
+        </template>
+      </el-table-column>
+
       <el-table-column label="Output" sortable :sort-by="sortOutput" :formatter="outputFormatter" />
 
       <el-table-column align="right">
@@ -78,7 +87,8 @@
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="expandData()">Tampilkan Rincian</el-button>
-        <el-button @click="downloadSelection()" type="success">Unduh Kertas Kerja</el-button>
+        <el-button @click="downloadSelection()" type="success" v-if="['TU'].includes(user.team)">Unduh Kertas
+          Kerja</el-button>
       </div>
     </div>
   </div>
@@ -92,6 +102,7 @@ import { getReports, deleteReport, deleteReportOutput, printReports, printReport
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
 import { generatePeriods } from "@/utils/date";
+import { teams } from "@/utils/constant";
 
 const user = useUserStore();
 const router = useRouter();
@@ -172,6 +183,23 @@ const expandData = () => {
 const filterPeriod = (value: string, row: any) => {
   return row.contract.period === value;
 };
+
+const filterTeam = (value: string, row: any) => {
+  const teams = row.outputs.map((item: any) => item.activity.team);
+
+  return [...new Set(teams)].includes(value);
+};
+
+const teamFormatter = (row: any): any[] => {
+  const teams = row.outputs.map((item: any) => item.activity.team);
+
+  if (teams.length == 0) {
+    return [...new Set(["-"])];
+  }
+
+  return [...new Set(teams)];
+};
+
 
 const createReport = () => {
   router.push({ name: "createReport" });

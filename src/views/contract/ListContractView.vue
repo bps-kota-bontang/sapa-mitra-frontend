@@ -100,7 +100,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
@@ -112,7 +112,7 @@
             <el-text>{{ totalFormatter(scope.row) }}</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
-              }}</el-text>
+            }}</el-text>
           </el-space>
         </template>
       </el-table-column>
@@ -169,7 +169,8 @@
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="expandData()">Tampilkan Rincian</el-button>
-        <el-button @click="downloadSelection()" type="success">Unduh Kertas Kerja</el-button>
+        <el-button @click="downloadSelection()" type="success" v-if="['TU'].includes(user.team)">Unduh Kertas
+          Kerja</el-button>
       </div>
     </div>
 
