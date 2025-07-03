@@ -27,8 +27,8 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormTrainingPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index" :partner="partner"
-          :partners="partners" @remove="removePartner(index)" />
+        <FormTrainingPartnerItem v-for="(partner, index) in form.partners" :key="index" :index="index"
+          :partner="partner" :partners="partners" @remove="removePartner(index)" />
       </div>
 
       <template #footer>
@@ -62,8 +62,7 @@ import { ElNotification, type FormInstance, type FormRules, type UploadFile, typ
 import { getOutputs } from "@/api/outputApi";
 import { generatePeriods } from "@/utils/date";
 import { downloadPartners, getPartners } from "@/api/partnerApi";
-import { downloadTemplatePartner } from "@/api/reportApi";
-import { getContractActivityCost, getContractActivityVolume, updateContractActivityCost } from "@/api/contractApi";
+import { getContractActivityCost, downloadTemplatePartnerCost, updateContractActivityCost } from "@/api/contractApi";
 import { useRoute } from "vue-router";
 import { getActivities } from "@/api/activityApi";
 
@@ -123,7 +122,7 @@ const downloadMasterPartner = () => {
 }
 
 const downloadTemplateImportPartner = () => {
-  downloadTemplatePartner()
+  downloadTemplatePartnerCost()
 }
 
 const syncPartner = async () => {
