@@ -97,6 +97,35 @@ export const getContractActivityVolume = async (
   return result.data;
 };
 
+export const getContractActivityCost = async (
+  activityId: string,
+  period: string
+) => {
+  const auth = useAuthStore();
+
+  const query = {
+    activityId: activityId,
+    period: period,
+  };
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/activity/cost?` + new URLSearchParams(query),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
 export const printContracts = async (payload: any) => {
   const auth = useAuthStore();
 
@@ -405,6 +434,26 @@ export const updateContract = async (id: string, payload: any) => {
   const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/contracts/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};
+
+export const updateContractActivityCost = async (payload: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/activity/cost`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${auth.token}`,

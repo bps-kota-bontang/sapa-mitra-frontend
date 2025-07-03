@@ -28,7 +28,12 @@
       <el-menu-item index="/bast">Daftar BAST</el-menu-item>
       <el-menu-item v-if="!['KEPALA'].includes(user.position)" index="/bast/buat">Buat BAST</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="3">
+    <el-menu-item index="/pelatihan" v-if="['TU'].includes(user.team)">
+      <el-icon>
+        <Money />
+      </el-icon>Biaya Pelatihan
+    </el-menu-item>
+    <el-sub-menu index="4">
       <template #title>
         <el-icon>
           <Guide />
@@ -38,7 +43,7 @@
       <el-menu-item index="/kegiatan/tambah" v-if="['TU'].includes(user.team)">Tambah
         Kegiatan</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="4">
+    <el-sub-menu index="5">
       <template #title>
         <el-icon>
           <Memo />
@@ -47,7 +52,7 @@
       <el-menu-item index="/output">Daftar Output</el-menu-item>
       <el-menu-item index="/output/tambah">Tambah Output</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="5" v-if="['TU', 'IPDS'].includes(user.team)">
+    <el-sub-menu index="6" v-if="['TU', 'IPDS'].includes(user.team)">
       <template #title>
         <el-icon>
           <User />
@@ -58,7 +63,7 @@
     </el-sub-menu>
     <el-menu-item index="/kunci" v-if="['TU'].includes(user.team)">
       <el-icon>
-       <Key />
+        <Key />
       </el-icon>Kunci
     </el-menu-item>
     <el-menu-item index="/pengguna" v-if="['TU', 'IPDS'].includes(user.team)"><el-icon>
@@ -69,7 +74,7 @@
         <Setting />
       </el-icon>Konfigurasi
     </el-menu-item>
-    <el-sub-menu index="6">
+    <el-sub-menu index="7">
       <template #title>
         <el-icon>
           <VideoPlay />
@@ -85,7 +90,7 @@
         <a href="http://s.bps.go.id/Tutorial-Verifikasi-SPK-SAPAMITRA" target="_blank">Tutorial Verifikasi SPK</a>
       </el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="7">
+    <el-sub-menu index="8">
       <template #title>
         <el-icon>
           <Service />
@@ -112,7 +117,8 @@ import {
   Setting,
   VideoPlay,
   Service,
-  Key
+  Key,
+  Money
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 const app = import.meta.env.VITE_APP_TITLE;

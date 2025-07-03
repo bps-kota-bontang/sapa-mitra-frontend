@@ -59,6 +59,8 @@ declare module 'vue' {
     FormReportByPartner: typeof import('./src/components/report/FormReportByPartner.vue')['default']
     FormReportOutputItem: typeof import('./src/components/report/FormReportOutputItem.vue')['default']
     FormReportPartnerItem: typeof import('./src/components/report/FormReportPartnerItem.vue')['default']
+    FormTrainingByActivity: typeof import('./src/components/training/FormTrainingByActivity.vue')['default']
+    FormTrainingPartnerItem: typeof import('./src/components/training/FormTrainingPartnerItem.vue')['default']
     Header: typeof import('./src/components/header/Header.vue')['default']
     IconBPS: typeof import('./src/components/icons/IconBPS.vue')['default']
     NoAccess: typeof import('./src/components/illustration/NoAccess.vue')['default']
