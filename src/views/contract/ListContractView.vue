@@ -44,33 +44,37 @@
 
               <el-table-column label="Aksi">
                 <template #default="scope">
-                  <el-button v-if="
-                    scope.row.status == 'UNVERIFIED' &&
-                    user.position == 'KETUA' &&
-                    (user.team == scope.row.createdBy || user.team == 'TU')
-                  " size="small" @click="handleEdit(props.row._id, scope.row._id)">
-                    Edit
-                  </el-button>
-                  <el-button v-if="
-                    scope.row.status == 'VERIFIED' &&
-                    user.position == 'KETUA' &&
-                    (user.team == scope.row.createdBy || user.team == 'TU')
-                  " size="small" type="warning" @click="handleCancelActivity(props.row._id, scope.row._id)">
-                    Batal
-                  </el-button>
-                  <el-button v-if="
-                    scope.row.status == 'UNVERIFIED' &&
-                    user.position == 'KETUA' &&
-                    (user.team == scope.row.createdBy || user.team == 'TU') &&
-                    (!props.row.isExceeded || props.row.hasSpecial) &&
-                    ((props.row.hasSpecial && props.row.activities.length == 1) || (!props.row.hasSpecial))
-                  " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
-                    Verifikasi
-                  </el-button>
-                  <el-button v-if="user.team == scope.row.createdBy || (user.position == 'KETUA' && user.team == 'TU')"
-                    size="small" type="danger" @click="handleDeleteActivity(props.row._id, scope.row._id)">
-                    Hapus
-                  </el-button>
+                  <div style="display: flex; flex-wrap: wrap; gap: 12px; flex-direction: column;"
+                    class="responsive-buttons">
+                    <el-button v-if="
+                      scope.row.status == 'UNVERIFIED' &&
+                      user.position == 'KETUA' &&
+                      (user.team == scope.row.createdBy || user.team == 'TU')
+                    " size="small" @click="handleEdit(props.row._id, scope.row._id)">
+                      Edit
+                    </el-button>
+                    <el-button v-if="
+                      scope.row.status == 'VERIFIED' &&
+                      user.position == 'KETUA' &&
+                      (user.team == scope.row.createdBy || user.team == 'TU')
+                    " size="small" type="warning" @click="handleCancelActivity(props.row._id, scope.row._id)">
+                      Batal
+                    </el-button>
+                    <el-button v-if="
+                      scope.row.status == 'UNVERIFIED' &&
+                      user.position == 'KETUA' &&
+                      (user.team == scope.row.createdBy || user.team == 'TU') &&
+                      (!props.row.isExceeded || props.row.hasSpecial) &&
+                      ((props.row.hasSpecial && props.row.activities.length == 1) || (!props.row.hasSpecial))
+                    " size="small" type="primary" @click="handleVerifyActivity(props.row._id, scope.row._id)">
+                      Verifikasi
+                    </el-button>
+                    <el-button
+                      v-if="user.team == scope.row.createdBy || (user.position == 'KETUA' && user.team == 'TU')"
+                      size="small" type="danger" @click="handleDeleteActivity(props.row._id, scope.row._id)">
+                      Hapus
+                    </el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -719,7 +723,7 @@ watch(
 );
 </script>
 
-<style>
+<style scoped>
 .el-table .danger-row {
   --el-table-tr-bg-color: var(--el-color-danger-light-9);
 }
@@ -734,5 +738,11 @@ watch(
 
 .container-activity {
   margin: 10px;
+}
+
+@media (min-width: 768px) {
+  .responsive-buttons {
+    flex-direction: row;
+  }
 }
 </style>
