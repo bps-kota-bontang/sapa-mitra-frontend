@@ -12,14 +12,7 @@
 
     </div>
     <el-divider />
-    <el-tabs type="border-card">
-      <!-- <el-tab-pane lazy label="Satu Mitra Banyak Output">
-        <FormReportByPartner />
-      </el-tab-pane> -->
-      <el-tab-pane lazy label="Satu Output Banyak Mitra">
-        <FormTrainingByActivity />
-      </el-tab-pane>
-    </el-tabs>
+    <FormTrainingByActivity />
   </div>
 </template>
 
