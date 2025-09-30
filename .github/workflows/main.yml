@@ -24,7 +24,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           BUILD_HASH=$(git rev-parse --short HEAD)
-          docker --no-cache build --build-arg BUILD_HASH=$BUILD_HASH -t sapa-mitra-frontend -f Dockerfile.production .
+          docker build --no-cache --build-arg BUILD_HASH=$BUILD_HASH -t sapa-mitra-frontend -f Dockerfile.production .
           docker tag sapa-mitra-frontend ghcr.io/bps-kota-bontang/sapa-mitra-frontend:latest
       - name: Push to GitHub Container Registry (GHCR)
         run: |
