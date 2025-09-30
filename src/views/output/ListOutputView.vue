@@ -29,6 +29,7 @@
       <el-table-column label="Nama Kegiatan" sortable prop="activity.name" />
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="Satuan" prop="unit" />
+      <el-table-column label="Tim" prop="activity.team" :filters="teams" :filter-method="filterTeam" column-key="team" />
       <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
         column-key="year" />
 
@@ -69,6 +70,7 @@ import { BASE_URL } from "@/api/api";
 import { ElNotification, ElTable } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
+import { teams } from "@/utils/constant";
 import { createInitialFilter, type Filter } from "@/types/filter";
 
 const router = useRouter();
@@ -150,6 +152,10 @@ const handleFilterChange = (newFilters: any) => {
     filter.value.year = newFilters.year
   }
 }
+
+const filterTeam = (value: string, row: any) => {
+  return row.activity.team == value
+};
 
 const filterYear = (value: string, row: any) => {
   return row.year == value
