@@ -33,6 +33,11 @@
         <Money />
       </el-icon>Biaya Pelatihan
     </el-menu-item>
+    <el-menu-item index="/rekapitulasi">
+      <el-icon>
+        <CircleCheck />
+      </el-icon>Rekapitulasi
+    </el-menu-item>
     <el-sub-menu index="4">
       <template #title>
         <el-icon>
@@ -52,14 +57,14 @@
       <el-menu-item index="/output">Daftar Output</el-menu-item>
       <el-menu-item index="/output/tambah">Tambah Output</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="6" v-if="['TU', 'IPDS'].includes(user.team)">
+    <el-sub-menu index="6">
       <template #title>
         <el-icon>
           <User />
         </el-icon>Mitra
       </template>
       <el-menu-item index="/mitra">Daftar Mitra</el-menu-item>
-      <el-menu-item index="/mitra/tambah">Tambah Mitra</el-menu-item>
+      <el-menu-item index="/mitra/tambah" v-if="['TU', 'IPDS'].includes(user.team)">Tambah Mitra</el-menu-item>
     </el-sub-menu>
     <el-menu-item index="/kunci" v-if="['TU'].includes(user.team)">
       <el-icon>
@@ -118,7 +123,8 @@ import {
   VideoPlay,
   Service,
   Key,
-  Money
+  Money,
+  CircleCheck
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 const app = import.meta.env.VITE_APP_TITLE;

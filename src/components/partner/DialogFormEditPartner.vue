@@ -10,6 +10,9 @@
             <el-form-item required label="Alamat" prop="address">
                 <el-input v-model="form.address" placeholder="Masukkan Alamat Mitra" />
             </el-form-item>
+            <el-form-item required label="Nomor Rekening" prop="accountNumber">
+                <el-input v-model="form.accountNumber" placeholder="Masukkan Nomor Rekening" />
+            </el-form-item>
             <el-form-item required label="Tahun Mitra" prop="year">
                 <el-input v-model="form.year" placeholder="Masukkan Tahun Mitra" />
             </el-form-item>
@@ -34,6 +37,7 @@ const initialState = {
     name: "",
     nik: "",
     address: "",
+    accountNumber: "",
     year: "",
 };
 
@@ -57,6 +61,13 @@ const rules = reactive<FormRules<any>>({
         {
             required: true,
             message: "Alamat Mitra perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    accountNumber: [
+        {
+            required: true,
+            message: "Nomor Rekening perlu terisi",
             trigger: "blur",
         },
     ],
@@ -129,6 +140,7 @@ watch(() => props.id, async (newId) => {
         form.name = data.name;
         form.nik = data.nik;
         form.address = data.address;
+        form.accountNumber = data.accountNumber;
         form.year = data.year;
     }
 }, { immediate: true });

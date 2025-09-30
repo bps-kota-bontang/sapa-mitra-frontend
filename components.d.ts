@@ -55,6 +55,8 @@ declare module 'vue' {
     FormContractByActivity: typeof import('./src/components/contract/FormContractByActivity.vue')['default']
     FormContractByPartner: typeof import('./src/components/contract/FormContractByPartner.vue')['default']
     FormContractPartnerItem: typeof import('./src/components/contract/FormContractPartnerItem.vue')['default']
+    FormRecapByActivity: typeof import('./src/components/recap/FormRecapByActivity.vue')['default']
+    FormRecapPartnerItem: typeof import('./src/components/recap/FormRecapPartnerItem.vue')['default']
     FormReportByActivity: typeof import('./src/components/report/FormReportByActivity.vue')['default']
     FormReportByPartner: typeof import('./src/components/report/FormReportByPartner.vue')['default']
     FormReportOutputItem: typeof import('./src/components/report/FormReportOutputItem.vue')['default']

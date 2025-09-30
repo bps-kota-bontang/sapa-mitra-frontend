@@ -14,7 +14,8 @@ import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
 import SettingView from "@/views/setting/SettingView.vue";
 import LockView from "@/views/LockView.vue";
-import trainingRoutes from "./trainingRoute";
+import trainingRoutes from "@/router/trainingRoute";
+import recapRoutes from "@/router/recapRoute";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,6 +74,7 @@ const router = createRouter({
     ...contractRoutes,
     ...reportRoutes,
     ...trainingRoutes,
+    ...recapRoutes,
     ...activityRoutes,
     ...outputRoutes,
     ...partnerRoutes,

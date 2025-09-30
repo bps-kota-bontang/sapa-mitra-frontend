@@ -1,12 +1,43 @@
 <template>
-    <el-dialog v-model="props.isShow" title="Ubah Kegiatan" width="500" :before-close="handleClose">
+    <el-dialog v-model="props.isShow" title="Ubah Kegiatan" width="500" :before-close="handleClose" fullscreen>
         <el-form :model="form" ref="formRef" label-width="auto" label-position="top" :rules="rules" v-loading="loading">
+            <el-form-item required label="Nama Kegiatan Utama" prop="main">
+                <el-input v-model="form.main" placeholder="Masukkan Nama Kegiatan Utama" />
+            </el-form-item>
             <el-form-item required label="Nama Kegiatan" prop="name">
                 <el-input v-model="form.name" placeholder="Masukkan Nama Kegiatan" />
             </el-form-item>
             <el-form-item required label="Kode Kegiatan" prop="code">
                 <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
             </el-form-item>
+            <el-form-item required label="Program" prop="pok.program">
+                <el-input v-model="form.pok.program" placeholder="Masukkan Program" />
+            </el-form-item>
+            <el-form-item required label="Kegiatan" prop="pok.activity">
+                <el-input v-model="form.pok.activity" placeholder="Masukkan Kegiatan" />
+            </el-form-item>
+
+            <el-form-item required label="KRO" prop="pok.kro">
+                <el-input v-model="form.pok.kro" placeholder="Masukkan KRO" />
+            </el-form-item>
+
+            <el-form-item required label="RO" prop="pok.ro">
+                <el-input v-model="form.pok.ro" placeholder="Masukkan RO" />
+            </el-form-item>
+
+            <el-form-item required label="Komponen" prop="pok.component">
+                <el-input v-model="form.pok.component" placeholder="Masukkan Komponen" />
+            </el-form-item>
+
+            <el-form-item required label="Sub Komponen" prop="pok.subComponent">
+                <el-input v-model="form.pok.subComponent" placeholder="Masukkan Sub Komponen" />
+            </el-form-item>
+
+            <el-form-item required label="Akun" prop="pok.account">
+                <el-input v-model="form.pok.account" placeholder="Masukkan Akun" />
+            </el-form-item>
+
+
             <el-form-item required label="Satuan" prop="unit">
                 <el-input v-model="form.unit" placeholder="Masukkan Satuan Kegiatan" />
             </el-form-item>
@@ -46,11 +77,21 @@ import { ElNotification, type FormInstance, type FormRules } from "element-plus"
 import { activityCategories, teams } from "@/utils/constant";
 
 const initialState = {
+    main: "",
     name: "",
     code: "",
     unit: "",
     category: "",
     team: "",
+    pok: {
+        program: "",
+        activity: "",
+        kro: "",
+        ro: "",
+        component: "",
+        subComponent: "",
+        account: "",
+    },
     year: "",
     isSpecial: false
 };
@@ -96,6 +137,62 @@ const rules = reactive<FormRules<any>>({
             required: true,
             message: "Tahun perlu terisi",
             trigger: "change",
+        },
+    ],
+    main: [
+        {
+            required: true,
+            message: "Nama kegiatan utama perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.program": [
+        {
+            required: true,
+            message: "Nama program perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.activity": [
+        {
+            required: true,
+            message: "Nama kegiatan perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.kro": [
+        {
+            required: true,
+            message: "KRO perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.ro": [
+        {
+            required: true,
+            message: "RO perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.component": [
+        {
+            required: true,
+            message: "Komponen perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.subComponent": [
+        {
+            required: true,
+            message: "Sub komponen perlu terisi",
+            trigger: "blur",
+        },
+    ],
+    "pok.account": [
+        {
+            required: true,
+            message: "Akun perlu terisi",
+            trigger: "blur",
         },
     ],
 });
@@ -157,6 +254,7 @@ const update = async (formEl: FormInstance | undefined) => {
 watch(() => props.id, async (newId) => {
     if (newId) {
         const data = await getActivity(props.id);
+        form.main = data.main;
         form.name = data.name;
         form.code = data.code;
         form.unit = data.unit;
@@ -164,6 +262,9 @@ watch(() => props.id, async (newId) => {
         form.team = data.team;
         form.year = data.year;
         form.isSpecial = data.isSpecial;
+        if (data.pok) {
+            form.pok = data.pok;
+        }
     }
 }, { immediate: true });
 

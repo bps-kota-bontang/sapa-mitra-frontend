@@ -126,6 +126,35 @@ export const getContractActivityCost = async (
   return result.data;
 };
 
+export const getContractActivityAccount = async (
+  activityId: string,
+  period: string
+) => {
+  const auth = useAuthStore();
+
+  const query = {
+    activityId: activityId,
+    period: period,
+  };
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/activity/account?` + new URLSearchParams(query),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
 export const printContracts = async (payload: any) => {
   const auth = useAuthStore();
 
@@ -498,4 +527,64 @@ export const updateContractActivityCost = async (payload: any) => {
   }
 
   return result;
+};
+
+export const updateContractActivityRecap = async (payload: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/activity/recap`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};
+
+export const downloadRecapActivity = async (payload: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/contracts/activity/recap`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const result: any = await response.json();
+    throw new Error(result.message);
+  }
+
+  const blob = await response.blob();
+
+  const contentDisposition = response.headers.get("Content-Disposition");
+  let filename = `Rekap - ${new Date().valueOf()}.pdf`;
+
+  if (contentDisposition) {
+    const matches = contentDisposition.match(/filename="(.+)"/);
+    if (matches && matches[1]) {
+      filename = matches[1];
+    }
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.style.display = "none";
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 };
