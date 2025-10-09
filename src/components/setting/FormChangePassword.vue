@@ -27,8 +27,6 @@ import { updatePassword } from "@/api/userApi";
 const formRef = ref<FormInstance>();
 
 const validatePassword = (rule: any, value: any, callback: any) => {
-    console.log(value)
-    console.log(form.newPassword)
     if (value !== form.newPassword) {
         callback(new Error("Konfirmasi password tidak sama"))
     } else {

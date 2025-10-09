@@ -38,32 +38,13 @@ export const printReports = async (payload: any) => {
     body: JSON.stringify(payload),
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    const result: any = await response.json();
     throw new Error(result.message);
   }
 
-  const blob = await response.blob();
-  const contentDisposition = response.headers.get("Content-Disposition");
-  let filename = `BAST - ${new Date().valueOf()}.pdf`;
-
-  if (contentDisposition) {
-    const matches = contentDisposition.match(/filename="(.+)"/);
-    if (matches && matches[1]) {
-      filename = matches[1];
-    }
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  return result;
 };
 
 export const printReport = async (id: string, number: string, name: string) => {
@@ -77,32 +58,13 @@ export const printReport = async (id: string, number: string, name: string) => {
     },
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    const result: any = await response.json();
     throw new Error(result.message);
   }
 
-  const blob = await response.blob();
-  const contentDisposition = response.headers.get("Content-Disposition");
-  let filename = `${number}_${name}.pdf`;
-
-  if (contentDisposition) {
-    const matches = contentDisposition.match(/filename="(.+)"/);
-    if (matches && matches[1]) {
-      filename = matches[1];
-    }
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  return result;
 };
 
 export const createReport = async (payload: any, by: string = "partner") => {

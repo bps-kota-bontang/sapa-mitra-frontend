@@ -207,6 +207,10 @@ import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
 import { createInitialFilter } from "@/types/filter";
+import Handlebars, { type HelperOptions } from "handlebars";
+import html2pdf from "html2pdf.js";
+import contractTemplate from "@/templates/contract.html?raw";
+import { PDFDocument } from "pdf-lib";
 
 const user = useUserStore();
 const router = useRouter();
@@ -407,7 +411,98 @@ const downloadSelection = () => {
 };
 
 const print = () => {
-  executeOperation(() => printContracts(contractsSelected.value), false);
+  executeOperation(async () => {
+    try {
+      loading.value = true;
+
+      const { data: payloads } = await printContracts(contractsSelected.value);
+
+      if (!payloads || payloads.length === 0) {
+        ElNotification({
+          title: "Error",
+          message: "Tidak ada data untuk dicetak",
+          type: "error",
+        });
+        return;
+      }
+
+      Handlebars.registerHelper("cleanRegion", (region: string) =>
+        region.replace(/^(Kota|Kabupaten)\s+/i, "")
+      );
+
+      const processedPayloads = payloads.map((item: any) => ({
+        ...item,
+        groupedActivities: chunkArray(item.activities, 5),
+      }));
+
+      const template = Handlebars.compile(contractTemplate);
+
+
+      const pdfBlobs: Blob[] = [];
+
+      for (let i = 0; i < processedPayloads.length; i++) {
+        const html = template(processedPayloads[i]);
+
+        const options = {
+          margin: 20,
+          image: { type: "jpeg", quality: 1 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollY: 0,
+            windowWidth: document.body.scrollWidth,
+            windowHeight: document.body.scrollHeight,
+          },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait",
+          },
+        };
+
+        // generate PDF blob (tidak langsung disimpan)
+        const pdfBlob = await html2pdf().set(options).from(html).outputPdf("blob");
+        pdfBlobs.push(pdfBlob);
+      }
+
+      const mergedPdf = await PDFDocument.create();
+
+      for (const blob of pdfBlobs) {
+        const arrayBuffer = await blob.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach((page, index) => {
+          if (index != copiedPages.length - 1) {
+            mergedPdf.addPage(page)
+          }
+        });
+      }
+
+      const mergedPdfBytes = await mergedPdf.save();
+      const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      // buat link download otomatis
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `SPK_${new Date().toISOString()}.pdf`;
+      link.click();
+
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+
+      ElNotification({
+        title: "Error",
+        message: err.message || "Gagal membuat PDF",
+        type: "error",
+      });
+    } finally {
+      loading.value = false;
+    }
+
+
+
+  }, false);
 };
 
 const handleEditContract = (id: string) => {
@@ -645,7 +740,66 @@ const handleDeleteContract = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  executeOperation(() => printContract(row._id, row.number, row.partner.name), false);
+  executeOperation(async () => {
+    try {
+      loading.value = true;
+
+      const { data: payload } = await printContract(row._id, row.number, row.partner.name)
+      if (!payload) {
+        ElNotification({
+          title: "Error",
+          message: "Tidak ada data untuk dicetak",
+          type: "error",
+        });
+        return;
+      }
+
+      Handlebars.registerHelper("cleanRegion", (region: string) =>
+        region.replace(/^(Kota|Kabupaten)\s+/i, "")
+      );
+
+      const groupedActivities = chunkArray(payload.activities, 5);
+
+      // Gabungkan ke payload baru agar bisa dipakai di template
+      const newPayload = {
+        ...payload,
+        groupedActivities,
+      };
+
+      const template = Handlebars.compile(contractTemplate);
+      const compiledHtml = template(newPayload);
+
+      const options = {
+        margin: 20,
+        image: { type: "jpeg", quality: 1 },
+        filename: `SPK_${payload.partner.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
+        html2canvas: {
+          scale: 2,               // hasil lebih tajam
+          useCORS: true,          // izinkan gambar eksternal
+          scrollY: 0,             // cegah pemotongan akibat scroll
+          windowWidth: document.body.scrollWidth,  // pastikan seluruh lebar ikut
+          windowHeight: document.body.scrollHeight // pastikan seluruh tinggi ikut
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+        },
+      };
+
+
+      await html2pdf().set(options).from(compiledHtml).save();
+    } catch (err: any) {
+      console.error(err);
+      ElNotification({
+        title: "Error",
+        message: err.message || "Gagal membuat PDF",
+        type: "error",
+      });
+    } finally {
+      loading.value = false;
+    }
+  }, false);
 };
 
 const isSelecetable = (row: any, index: number) => {
@@ -709,6 +863,14 @@ watch(
 );
 
 watch(() => route.query.period, fetchData, { immediate: true });
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
 
 watch(
   () => periodSelected.value,

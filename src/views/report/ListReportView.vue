@@ -103,6 +103,10 @@ import { useUserStore } from "@/stores/user";
 import { ElNotification, type ElTable } from "element-plus";
 import { generatePeriods } from "@/utils/date";
 import { teams } from "@/utils/constant";
+import reportTemplate from "@/templates/report.html?raw";
+import Handlebars from "handlebars";
+import html2pdf from "html2pdf.js";
+import { PDFDocument } from "pdf-lib";
 
 const user = useUserStore();
 const router = useRouter();
@@ -153,7 +157,85 @@ const handleSelection = (value: any[]) => {
 };
 
 const print = () => {
-  executeOperation(() => printReports(reportsSelected.value), false);
+  executeOperation(async () => {
+    try {
+      loading.value = true;
+      const { data: payloads } = await printReports(reportsSelected.value);
+      if (!payloads || payloads.length === 0) {
+        ElNotification({
+          title: "Error",
+          message: "Tidak ada data untuk dicetak",
+          type: "error",
+        });
+        return;
+      }
+
+      Handlebars.registerHelper("cleanRegion", function (region) {
+        return region.replace(/^(Kota|Kabupaten)\s+/i, "");
+      });
+      const template = Handlebars.compile(reportTemplate);
+
+      const pdfBlobs: Blob[] = [];
+
+      for (let i = 0; i < payloads.length; i++) {
+        const html = template(payloads[i]);
+
+        const options = {
+          margin: 20,
+          image: { type: "jpeg", quality: 1 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollY: 0,
+            windowWidth: document.body.scrollWidth,
+            windowHeight: document.body.scrollHeight,
+          },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait",
+          },
+        };
+
+        // generate PDF blob (tidak langsung disimpan)
+        const pdfBlob = await html2pdf().set(options).from(html).outputPdf("blob");
+
+        pdfBlobs.push(pdfBlob);
+      }
+
+      const mergedPdf = await PDFDocument.create();
+
+      for (const blob of pdfBlobs) {
+        const arrayBuffer = await blob.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach((page, index) => mergedPdf.addPage(page));
+      }
+
+      const mergedPdfBytes = await mergedPdf.save();
+      const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      // buat link download otomatis
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `BAST_${new Date().toISOString()}.pdf`;
+      link.click();
+
+      URL.revokeObjectURL(url);
+
+
+    } catch (err: any) {
+      console.error(err);
+      ElNotification({
+        title: "Error",
+        message: err.message || "Gagal membuat PDF",
+        type: "error",
+      });
+    } finally {
+      loading.value = false;
+    }
+  }, false);
 };
 
 const clearFilter = () => {
@@ -229,7 +311,45 @@ const handleDeleteReport = (id: string) => {
 };
 
 const handlePrint = (index: number, row: any) => {
-  executeOperation(() => printReport(row._id, row.number, row.partner.name), false);
+  executeOperation(async () => {
+    try {
+      loading.value = true;
+
+      const { data: payload } = await printReport(row._id, row.number, row.partner.name)
+      if (!payload) {
+        ElNotification({
+          title: "Error",
+          message: "Tidak ada data untuk dicetak",
+          type: "error",
+        });
+        return;
+      }
+
+      Handlebars.registerHelper("cleanRegion", function (region) {
+        return region.replace(/^(Kota|Kabupaten)\s+/i, "");
+      });
+      const template = Handlebars.compile(reportTemplate);
+      const compiledHtml = template(payload);
+
+      const options = {
+        margin: 20,
+        image: { type: "jpeg", quality: 1 },
+        filename: `BAST_${payload.partner.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      await html2pdf().set(options).from(compiledHtml).save();
+    } catch (err: any) {
+      console.error(err);
+      ElNotification({
+        title: "Error",
+        message: err.message || "Gagal membuat PDF",
+        type: "error",
+      });
+    } finally {
+      loading.value = false;
+    }
+  }, false);
 };
 
 const fetchData = async (period: any, showLoading: boolean = true) => {

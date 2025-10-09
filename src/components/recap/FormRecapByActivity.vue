@@ -57,6 +57,9 @@ import { downloadPartners, getPartners } from "@/api/partnerApi";
 import { downloadRecapActivity, downloadTemplatePartnerCost, getContractActivityAccount, updateContractActivityRecap } from "@/api/contractApi";
 import { useRoute } from "vue-router";
 import { getActivities } from "@/api/activityApi";
+import Handlebars from "handlebars";
+import html2pdf from "html2pdf.js";
+import recapTemplate from "@/templates/recap.html?raw";
 
 const route = useRoute();
 const currentYear = new Date().getFullYear();
@@ -125,9 +128,44 @@ const downloadTemplateImportPartner = () => {
   downloadTemplatePartnerCost()
 }
 
-const downloadRecapByActivity = () => {
-  downloadRecapActivity(form)
-}
+
+const downloadRecapByActivity = async () => {
+  try {
+    loading.value = true;
+
+    const { data: payload } = await downloadRecapActivity(form);
+    if (!payload) {
+      ElNotification({
+        title: "Error",
+        message: "Tidak ada data untuk dicetak",
+        type: "error",
+      });
+      return;
+    }
+
+    const template = Handlebars.compile(recapTemplate);
+    const compiledHtml = template(payload);
+
+    const options = {
+      margin: 20,
+      image: { quality: 1 },
+      filename: `Rekapitulasi_${payload.activity?.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+
+    await html2pdf().set(options).from(compiledHtml).save();
+  } catch (err: any) {
+    console.error(err);
+    ElNotification({
+      title: "Error",
+      message: err.message || "Gagal membuat PDF",
+      type: "error",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
 
 const syncPartner = async () => {
   const result = await getContractActivityAccount(form.activity.activityId, form.contract.period);

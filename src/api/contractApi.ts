@@ -167,23 +167,13 @@ export const printContracts = async (payload: any) => {
     body: JSON.stringify(payload),
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    const result: any = await response.json();
     throw new Error(result.message);
   }
 
-  const blob = await response.blob();
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = `SPK - ${new Date().valueOf()}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  return result;
 };
 
 export const printContract = async (
@@ -201,33 +191,13 @@ export const printContract = async (
     },
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    const result: any = await response.json();
     throw new Error(result.message);
   }
 
-  const blob = await response.blob();
-
-  const contentDisposition = response.headers.get("Content-Disposition");
-  let filename = `${number}_${name}.pdf`;
-
-  if (contentDisposition) {
-    const matches = contentDisposition.match(/filename="(.+)"/);
-    if (matches && matches[1]) {
-      filename = matches[1];
-    }
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  return result;
 };
 
 export const createContract = async (payload: any, by: string = "partner") => {
@@ -560,31 +530,11 @@ export const downloadRecapActivity = async (payload: any) => {
     body: JSON.stringify(payload),
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    const result: any = await response.json();
     throw new Error(result.message);
   }
 
-  const blob = await response.blob();
-
-  const contentDisposition = response.headers.get("Content-Disposition");
-  let filename = `Rekap - ${new Date().valueOf()}.pdf`;
-
-  if (contentDisposition) {
-    const matches = contentDisposition.match(/filename="(.+)"/);
-    if (matches && matches[1]) {
-      filename = matches[1];
-    }
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  return result;
 };
