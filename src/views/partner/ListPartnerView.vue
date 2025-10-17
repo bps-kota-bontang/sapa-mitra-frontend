@@ -28,6 +28,10 @@
       <el-table-column label="Nama" sortable prop="name" />
       <el-table-column label="NIK" prop="nik" />
       <el-table-column label="Alamat" prop="address" />
+      <el-table-column label="Nomor Rekening" prop="accountNumber" :filters="[
+        { text: 'Ada', value: true },
+        { text: 'Tidak Ada', value: false },
+      ]" :filter-method="filterAccountNumber" />
       <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
         column-key="year" />
 
@@ -152,6 +156,15 @@ const handleFilterChange = (newFilters: any) => {
 
 const filterYear = (value: string, row: any) => {
   return row.year == value
+};
+
+const filterAccountNumber = (value: boolean, row: any) => {
+  console.log(value, row);
+  if (value) {
+    return row.accountNumber && row.accountNumber.trim() !== "";
+  } else {
+    return !row.accountNumber || row.accountNumber.trim() === "";
+  }
 };
 
 const deleteSelection = () => {

@@ -119,7 +119,7 @@ export const createPartner = async (payload: any) => {
   return result;
 };
 
-export const downloadPartners = async () => {
+export const downloadPartners = async (year: number) => {
   const auth = useAuthStore();
 
   const response = await fetch(`${BASE_URL}/v1/partners/download`, {
@@ -128,6 +128,7 @@ export const downloadPartners = async () => {
       Authorization: `Bearer ${auth.token}`,
       "Content-Type": "application/json",
     },
+    body: JSON.stringify({ year: year }),
   });
 
   if (!response.ok) {

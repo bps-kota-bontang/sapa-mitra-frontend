@@ -241,7 +241,8 @@ const removePartner = (index: number) => {
 };
 
 const downloadMasterPartner = () => {
-  downloadPartners()
+  const year = route.query.year?.toString() || currentYear.toString();
+  downloadPartners(Number(year));
 }
 
 const downloadTemplateImportPartner = () => {
