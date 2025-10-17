@@ -35,6 +35,25 @@
       <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
       <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
         column-key="year" />
+      <el-table-column label="POK" prop="pok" :filters="[
+        {
+          text: 'Lengkap',
+          value: true
+        },
+        {
+          text: 'Belum Lengkap',
+          value: false
+        }
+      ]" :filter-method="filterPok" column-key="pok">
+        <template #default="scope">
+          <div v-if="scope.row.pok">
+            <el-tag effect="dark">Lengkap</el-tag>
+          </div>
+          <div v-else>
+            <el-tag effect="dark" type="danger">Belum Lengkap</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="Status" prop="isSpecial" :filters="[
         { text: 'Khusus', value: true },
         { text: 'Biasa', value: false },
@@ -191,6 +210,10 @@ const filterCategory = (value: string, row: any) => {
 
 const filterYear = (value: string, row: any) => {
   return row.year == value
+};
+
+const filterPok = (value: boolean, row: any) => {
+  return Boolean(row.pok) == value
 };
 
 const categoryFormatter = (row: any) => {
