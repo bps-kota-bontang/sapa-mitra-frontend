@@ -148,7 +148,7 @@ const downloadRecapByActivity = async () => {
     const compiledHtml = template(payload);
 
     const options = {
-      margin: 20,
+      margin: 10,
       image: { quality: 1 },
       filename: `Rekapitulasi_${payload.activity?.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
