@@ -26,15 +26,6 @@ const activityRoutes = [
         meta: {
           title: "Tambah Kegiatan",
         },
-        beforeEnter: (
-          to: RouteLocationNormalized,
-          from: RouteLocationNormalized,
-          next: NavigationGuardNext
-        ) => {
-          const user = useUserStore();
-          if (!["TU"].includes(user.team)) next({ name: "unauthorized" });
-          else next();
-        },
       },
     ],
   },

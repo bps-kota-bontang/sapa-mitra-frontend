@@ -45,7 +45,7 @@
         </el-icon>Kegiatan
       </template>
       <el-menu-item index="/kegiatan">Daftar Kegiatan</el-menu-item>
-      <el-menu-item index="/kegiatan/tambah" v-if="['TU'].includes(user.team)">Tambah
+      <el-menu-item index="/kegiatan/tambah">Tambah
         Kegiatan</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="5">
