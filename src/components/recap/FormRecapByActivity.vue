@@ -149,9 +149,16 @@ const downloadRecapByActivity = async () => {
 
     const options = {
       margin: 10,
-      image: { quality: 1 },
+      image: { type: "jpeg", quality: 1 },
       filename: `Rekapitulasi_${payload.activity?.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      html2canvas: {
+        scale: 2,               // hasil lebih tajam
+        useCORS: true,          // izinkan gambar eksternal
+        scrollY: 0,             // cegah pemotongan akibat scroll
+        windowWidth: document.body.scrollWidth,  // pastikan seluruh lebar ikut
+        windowHeight: document.body.scrollHeight // pastikan seluruh tinggi ikut
+      },
     };
 
     await html2pdf().set(options).from(compiledHtml).save();
