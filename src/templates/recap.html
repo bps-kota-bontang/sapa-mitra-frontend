@@ -119,7 +119,7 @@
                     <th>Jumlah yang diterima (Rp)</th>
                     <th>Nomor Rekening</th>
                 </tr>
-                <tr style="font-size: 9px; font-weight: normal;">
+                <tr style="font-size: 9px; font-weight: normal; justify-content: center; text-align: center;">
                     <td>(1)</td>
                     <td>(2)</td>
                     <td>(3)</td>
@@ -133,14 +133,14 @@
             <tbody>
                 {{#each partners}}
                 <tr style="font-size: 12px; font-weight: normal;">
-                    <td>{{number}}</td>
+                    <td class="text-center">{{number}}</td>
                     <td class="text-left">{{name}}</td>
-                    <td>{{rate}}</td>
-                    <td>{{volume}}</td>
-                    <td>{{total}}</td>
-                    <td>{{tax}}</td>
-                    <td>{{grandTotal}}</td>
-                    <td>{{accountNumber}}</td>
+                    <td class="text-center">{{rate}}</td>
+                    <td class="text-center">{{volume}}</td>
+                    <td class="text-center">{{total}}</td>
+                    <td class="text-center">{{tax}}</td>
+                    <td class="text-center">{{grandTotal}}</td>
+                    <td class="text-center">{{accountNumber}}</td>
                 </tr>
                 {{/each}}
             </tbody>
@@ -149,10 +149,10 @@
                     <td colspan="3" class="text-left">
                         Jumlah: {{grandTotal.spell}} Rupiah
                     </td>
-                    <td><strong>{{grandTotal.volume}}</strong></td>
-                    <td><strong>{{grandTotal.nominal}}</strong></td>
-                    <td><strong>{{grandTotal.tax}}</strong></td>
-                    <td><strong>{{grandTotal.nominal}}</strong></td>
+                    <td class="text-center"><strong>{{grandTotal.volume}}</strong></td>
+                    <td class="text-center"><strong>{{grandTotal.nominal}}</strong></td>
+                    <td class="text-center"><strong>{{grandTotal.tax}}</strong></td>
+                    <td class="text-center"><strong>{{grandTotal.nominal}}</strong></td>
                     <td class="disabled"></td>
                 </tr>
             </tfoot>
