@@ -21,6 +21,13 @@
                         placeholder="Pilih Tanggal Selesai" />
                 </el-col>
             </el-form-item>
+            <el-form-item required label="Kode Kegiatan" :rules="{
+                required: true,
+                message: 'Kode Kegiatan perlu terisi',
+                trigger: 'blur',
+            }">
+                <el-input v-model="form.code" placeholder="Masukkan Kode Kegiatan" />
+            </el-form-item>
             <el-form-item required label="Volume" :rules="{
                 required: true,
                 message: 'Volume perlu terisi',
@@ -59,6 +66,7 @@ import { formatParserNumber, formatNumber } from "@/utils/currency";
 const initialState = {
     startDate: "",
     endDate: "",
+    code: "",
     volume: "",
     rate: ""
 };
@@ -76,6 +84,13 @@ const rules = reactive<FormRules<any>>({
             required: true,
             message: 'Tanggal selesai perlu terisi',
             trigger: 'change',
+        },
+    ],
+    code: [
+        {
+            required: true,
+            message: 'Kode Kegiatan perlu terisi',
+            trigger: 'blur',
         },
     ],
     volume: [
@@ -153,6 +168,7 @@ watch(() => props.isShow, async (isShow) => {
         const data = await getContractActivity(props.contractId, props.activityId);
         form.startDate = data.startDate
         form.endDate = data.endDate
+        form.code = data.code
         form.volume = data.volume
         form.rate = data.rate
     }
