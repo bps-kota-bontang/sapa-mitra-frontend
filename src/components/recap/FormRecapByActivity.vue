@@ -41,6 +41,7 @@
       <el-button @click="submit(formRef)" type="primary">Simpan</el-button>
       <el-button @click="reset(formRef)">Bersihkan</el-button>
       <el-button @click="downloadRecapByActivity()" type="success">Cetak</el-button>
+      <el-button @click="generateRecapCsv()" type="warning">Generate CSV</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -167,6 +168,80 @@ const downloadRecapByActivity = async () => {
     ElNotification({
       title: "Error",
       message: err.message || "Gagal membuat PDF",
+      type: "error",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+const generateRecapCsv = async () => {
+  try {
+    loading.value = true;
+
+    const { data: payload } = await downloadRecapActivity(form);
+    if (!payload) {
+      ElNotification({
+        title: "Error",
+        message: "Tidak ada data untuk digenerate",
+        type: "error",
+      });
+      return;
+    }
+
+    const rows = payload.csv?.length
+      ? payload.csv.map((item: any) => ({
+        NO: item.no,
+        NAMA_SUPPLIER: item.supplierName,
+        NAMA_PEMILIK_REKENING: item.accountOwnerName,
+        NO_REKENING: item.accountNumber,
+        JUMLAH_UANG: item.amount,
+      }))
+      : (payload.partners || []).map((item: any, index: number) => ({
+        NO: index + 1,
+        NAMA_SUPPLIER: "PARA MITRA BPS KOTA BONTANG (BSM)",
+        NAMA_PEMILIK_REKENING: item.name,
+        NO_REKENING: item.accountNumber,
+        JUMLAH_UANG: Number(String(item.grandTotal).replace(/[^0-9]/g, "")) || 0,
+      }));
+
+    if (rows.length === 0) {
+      ElNotification({
+        title: "Error",
+        message: "Tidak ada data untuk digenerate",
+        type: "error",
+      });
+      return;
+    }
+
+    const csv = Papa.unparse(rows, {
+      delimiter: "|",
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `Rekapitulasi_${payload.activity?.name}_${payload.period?.month} ${payload.period?.year}.csv`;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    ElNotification({
+      title: "Success",
+      message: "CSV berhasil digenerate",
+      type: "success",
+    });
+  } catch (err: any) {
+    console.error(err);
+    ElNotification({
+      title: "Error",
+      message: err.message || "Gagal generate CSV",
       type: "error",
     });
   } finally {
