@@ -187,7 +187,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
 import {
@@ -253,38 +253,15 @@ const ensureHandlebarsHelpers = () => {
   cleanRegionHelperRegistered = true;
 };
 
-let pdfRenderHost: HTMLDivElement | null = null;
-
-const getPdfRenderHost = () => {
-  if (pdfRenderHost) return pdfRenderHost;
-
-  const host = document.createElement("div");
-  host.style.position = "fixed";
-  host.style.left = "-100000px";
-  host.style.top = "0";
-  host.style.width = "794px";
-  host.style.pointerEvents = "none";
-  host.style.opacity = "0";
-  host.setAttribute("aria-hidden", "true");
-
-  document.body.appendChild(host);
-  pdfRenderHost = host;
-
-  return host;
+const buildDocumentHtml = (styleTags: string, body: string) => {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8" />${styleTags}</head><body>${body}</body></html>`;
 };
-
-onBeforeUnmount(() => {
-  if (pdfRenderHost) {
-    pdfRenderHost.remove();
-    pdfRenderHost = null;
-  }
-});
 
 const splitContractHtmlSections = (compiledHtml: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(compiledHtml, "text/html");
   const appendix = doc.getElementById("contract-appendix");
-  const styleTags = Array.from(doc.head.querySelectorAll("style, link[rel='stylesheet']"))
+  const styleTags = Array.from(doc.head.querySelectorAll("style"))
     .map((node) => node.outerHTML)
     .join("");
 
@@ -315,10 +292,7 @@ const toPdfBlob = async (
   htmlContent: string,
   orientation: "portrait" | "landscape"
 ) => {
-  const host = getPdfRenderHost();
-  const renderContainer = document.createElement("div");
-  renderContainer.innerHTML = `${styleTags}${htmlContent}`;
-  host.appendChild(renderContainer);
+  const htmlDocument = buildDocumentHtml(styleTags, htmlContent);
 
   const options = {
     margin: 20,
@@ -336,11 +310,7 @@ const toPdfBlob = async (
     },
   };
 
-  try {
-    return await html2pdf().set(options).from(renderContainer).outputPdf("blob");
-  } finally {
-    renderContainer.remove();
-  }
+  return await html2pdf().set(options).from(htmlDocument).outputPdf("blob");
 };
 
 const appendPdfBlobToDocument = async (target: PDFDocument, blob: Blob) => {
