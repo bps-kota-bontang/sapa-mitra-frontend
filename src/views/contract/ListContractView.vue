@@ -500,7 +500,7 @@ const print = () => {
 
       const processedPayloads = payloads.map((item: any) => ({
         ...item,
-        groupedActivities: chunkArray(item.activities, 5),
+        groupedActivities: chunkArray(item.activities, 4),
       }));
 
       const template = Handlebars.compile(contractTemplate);
@@ -801,7 +801,7 @@ const handlePrint = (index: number, row: any) => {
         region.replace(/^(Kota|Kabupaten)\s+/i, "")
       );
 
-      const groupedActivities = chunkArray(payload.activities, 5);
+      const groupedActivities = chunkArray(payload.activities, 4);
 
       // Gabungkan ke payload baru agar bisa dipakai di template
       const newPayload = {
