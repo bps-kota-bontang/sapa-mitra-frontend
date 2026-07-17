@@ -105,7 +105,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
@@ -117,7 +117,7 @@
             <el-text>{{ totalFormatter(scope.row) }}</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
-              }}</el-text>
+            }}</el-text>
           </el-space>
         </template>
       </el-table-column>
@@ -187,7 +187,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
 import {
@@ -239,14 +239,54 @@ const activities = ref<{
   "value": string;
 }[]>([]);
 
-const buildDocumentHtml = (head: string, body: string) => {
-  return `<!DOCTYPE html><html><head>${head}</head><body>${body}</body></html>`;
+const contractTemplateCompiler = Handlebars.compile(contractTemplate);
+
+let cleanRegionHelperRegistered = false;
+
+const ensureHandlebarsHelpers = () => {
+  if (cleanRegionHelperRegistered) return;
+
+  Handlebars.registerHelper("cleanRegion", (region: string) =>
+    region.replace(/^(Kota|Kabupaten)\s+/i, "")
+  );
+
+  cleanRegionHelperRegistered = true;
 };
+
+let pdfRenderHost: HTMLDivElement | null = null;
+
+const getPdfRenderHost = () => {
+  if (pdfRenderHost) return pdfRenderHost;
+
+  const host = document.createElement("div");
+  host.style.position = "fixed";
+  host.style.left = "-100000px";
+  host.style.top = "0";
+  host.style.width = "794px";
+  host.style.pointerEvents = "none";
+  host.style.opacity = "0";
+  host.setAttribute("aria-hidden", "true");
+
+  document.body.appendChild(host);
+  pdfRenderHost = host;
+
+  return host;
+};
+
+onBeforeUnmount(() => {
+  if (pdfRenderHost) {
+    pdfRenderHost.remove();
+    pdfRenderHost = null;
+  }
+});
 
 const splitContractHtmlSections = (compiledHtml: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(compiledHtml, "text/html");
   const appendix = doc.getElementById("contract-appendix");
+  const styleTags = Array.from(doc.head.querySelectorAll("style, link[rel='stylesheet']"))
+    .map((node) => node.outerHTML)
+    .join("");
 
   let appendixHtml: string | null = null;
   if (appendix) {
@@ -261,25 +301,33 @@ const splitContractHtmlSections = (compiledHtml: string) => {
       appendix.removeAttribute("style");
     }
 
-    appendixHtml = buildDocumentHtml(doc.head.innerHTML, appendix.outerHTML);
+    appendixHtml = appendix.outerHTML;
     appendix.remove();
   }
 
-  const mainHtml = buildDocumentHtml(doc.head.innerHTML, doc.body.innerHTML);
+  const mainHtml = doc.body.innerHTML;
 
-  return { mainHtml, appendixHtml };
+  return { styleTags, mainHtml, appendixHtml };
 };
 
-const toPdfBlob = async (html: string, orientation: "portrait" | "landscape") => {
+const toPdfBlob = async (
+  styleTags: string,
+  htmlContent: string,
+  orientation: "portrait" | "landscape"
+) => {
+  const host = getPdfRenderHost();
+  const renderContainer = document.createElement("div");
+  renderContainer.innerHTML = `${styleTags}${htmlContent}`;
+  host.appendChild(renderContainer);
+
   const options = {
     margin: 20,
     image: { type: "jpeg" as const, quality: 1 },
     html2canvas: {
-      scale: 2,
+      scale: Math.min(window.devicePixelRatio || 1, 1.5),
       useCORS: true,
       scrollY: 0,
-      windowWidth: document.body.scrollWidth,
-      windowHeight: document.body.scrollHeight,
+      backgroundColor: "#ffffff",
     },
     jsPDF: {
       unit: "mm" as const,
@@ -288,20 +336,51 @@ const toPdfBlob = async (html: string, orientation: "portrait" | "landscape") =>
     },
   };
 
-  return await html2pdf().set(options).from(html).outputPdf("blob");
+  try {
+    return await html2pdf().set(options).from(renderContainer).outputPdf("blob");
+  } finally {
+    renderContainer.remove();
+  }
 };
 
-const mergePdfBlobs = async (blobs: Blob[]) => {
+const appendPdfBlobToDocument = async (target: PDFDocument, blob: Blob) => {
+  const arrayBuffer = await blob.arrayBuffer();
+  const pdf = await PDFDocument.load(arrayBuffer);
+  const copiedPages = await target.copyPages(pdf, pdf.getPageIndices());
+
+  copiedPages.forEach((page) => {
+    target.addPage(page);
+  });
+};
+
+const yieldToUi = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+const buildMergedContractPdfBytes = async (payloads: any[]) => {
+  ensureHandlebarsHelpers();
+
   const mergedPdf = await PDFDocument.create();
 
-  for (const blob of blobs) {
-    const arrayBuffer = await blob.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+  for (let i = 0; i < payloads.length; i++) {
+    const payload = {
+      ...payloads[i],
+      groupedActivities: chunkArray(payloads[i].activities, 4),
+    };
 
-    copiedPages.forEach((page) => {
-      mergedPdf.addPage(page);
-    });
+    const html = contractTemplateCompiler(payload);
+    const { styleTags, mainHtml, appendixHtml } = splitContractHtmlSections(html);
+
+    const portraitBlob = await toPdfBlob(styleTags, mainHtml, "portrait");
+    await appendPdfBlobToDocument(mergedPdf, portraitBlob);
+
+    if (appendixHtml) {
+      const landscapeBlob = await toPdfBlob(styleTags, appendixHtml, "landscape");
+      await appendPdfBlobToDocument(mergedPdf, landscapeBlob);
+    }
+
+    // Long-running batch print can block the UI heavily without a periodic yield.
+    if ((i + 1) % 15 === 0) {
+      await yieldToUi();
+    }
   }
 
   return await mergedPdf.save();
@@ -494,34 +573,7 @@ const print = () => {
         return;
       }
 
-      Handlebars.registerHelper("cleanRegion", (region: string) =>
-        region.replace(/^(Kota|Kabupaten)\s+/i, "")
-      );
-
-      const processedPayloads = payloads.map((item: any) => ({
-        ...item,
-        groupedActivities: chunkArray(item.activities, 4),
-      }));
-
-      const template = Handlebars.compile(contractTemplate);
-
-
-      const pdfBlobs: Blob[] = [];
-
-      for (let i = 0; i < processedPayloads.length; i++) {
-        const html = template(processedPayloads[i]);
-        const { mainHtml, appendixHtml } = splitContractHtmlSections(html);
-
-        const portraitBlob = await toPdfBlob(mainHtml, "portrait");
-        pdfBlobs.push(portraitBlob);
-
-        if (appendixHtml) {
-          const landscapeBlob = await toPdfBlob(appendixHtml, "landscape");
-          pdfBlobs.push(landscapeBlob);
-        }
-      }
-
-      const mergedPdfBytes = await mergePdfBlobs(pdfBlobs);
+      const mergedPdfBytes = await buildMergedContractPdfBytes(payloads);
       const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
@@ -798,33 +850,7 @@ const handlePrint = (index: number, row: any) => {
         return;
       }
 
-      Handlebars.registerHelper("cleanRegion", (region: string) =>
-        region.replace(/^(Kota|Kabupaten)\s+/i, "")
-      );
-
-      const groupedActivities = chunkArray(payload.activities, 4);
-
-      // Gabungkan ke payload baru agar bisa dipakai di template
-      const newPayload = {
-        ...payload,
-        groupedActivities,
-      };
-
-      const template = Handlebars.compile(contractTemplate);
-      const compiledHtml = template(newPayload);
-
-      const { mainHtml, appendixHtml } = splitContractHtmlSections(compiledHtml);
-
-      const pdfBlobs: Blob[] = [];
-      const portraitBlob = await toPdfBlob(mainHtml, "portrait");
-      pdfBlobs.push(portraitBlob);
-
-      if (appendixHtml) {
-        const landscapeBlob = await toPdfBlob(appendixHtml, "landscape");
-        pdfBlobs.push(landscapeBlob);
-      }
-
-      const mergedPdfBytes = await mergePdfBlobs(pdfBlobs);
+      const mergedPdfBytes = await buildMergedContractPdfBytes([payload]);
       const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
