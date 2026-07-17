@@ -68,7 +68,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Download, Plus, Upload } from "@element-plus/icons-vue";
 import { getPartners, deletePartner, deletePartners, downloadPartnerTemplate } from "@/api/partnerApi";
 import { BASE_URL } from "@/api/api";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
 import { createInitialFilter, type Filter } from "@/types/filter";
@@ -82,7 +82,7 @@ const headers = ref({
 });
 const uploadUrl = ref(`${BASE_URL}/v1/partners/upload`);
 const initialFilter = createInitialFilter("partner");
-const partnersTableRef = ref<InstanceType<typeof ElTable>>();
+const partnersTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const partners = ref<any[]>([]);

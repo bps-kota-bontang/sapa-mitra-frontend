@@ -150,9 +150,13 @@ const downloadRecapByActivity = async () => {
 
     const options = {
       margin: 10,
-      image: { type: "jpeg", quality: 1 },
+      image: { type: "jpeg" as const, quality: 1 },
       filename: `Rekapitulasi_${payload.activity?.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      jsPDF: {
+        unit: "mm" as const,
+        format: "a4" as const,
+        orientation: "portrait" as const,
+      },
       html2canvas: {
         scale: 2,               // hasil lebih tajam
         useCORS: true,          // izinkan gambar eksternal

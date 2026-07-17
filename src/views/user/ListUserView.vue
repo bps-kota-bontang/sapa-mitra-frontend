@@ -42,12 +42,12 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { downloadUserTemplate, getUsers } from "@/api/userApi";
 import { Upload, Download } from "@element-plus/icons-vue";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { BASE_URL } from "@/api/api";
 
-const usersTableRef = ref<InstanceType<typeof ElTable>>();
+const usersTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const users = ref<any[]>([]);

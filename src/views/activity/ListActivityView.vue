@@ -101,7 +101,7 @@ import { Download, Plus, Upload } from "@element-plus/icons-vue";
 import { getActivities, deleteActivity, deleteActivities, downloadActivities, downloadActivityTemplate } from "@/api/activityApi";
 import { BASE_URL } from "@/api/api";
 import { useAuthStore } from "@/stores/auth";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { teams, activityCategories } from "@/utils/constant";
 import { createInitialFilter, type Filter } from "@/types/filter";
 import type { Activity } from "@/types/activity";
@@ -117,7 +117,7 @@ const headers = ref({
 });
 const uploadUrl = ref(`${BASE_URL}/v1/activities/upload`);
 
-const activitiesTableRef = ref<InstanceType<typeof ElTable>>();
+const activitiesTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const activities = ref<any[]>([]);

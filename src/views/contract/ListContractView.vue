@@ -202,7 +202,7 @@ import {
 } from "@/api/contractApi";
 import { formatDate, generatePeriods } from "@/utils/date";
 import { useUserStore } from "@/stores/user";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
@@ -218,7 +218,7 @@ const route = useRoute();
 
 const initialFilter = createInitialFilter("contract");
 
-const contractsTableRef = ref<InstanceType<typeof ElTable>>();
+const contractsTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const contracts = ref<Contract[]>([]);
@@ -573,7 +573,8 @@ const clearSelection = () => {
 
 const expandData = () => {
   if (contractsTableRef.value) {
-    contractsTableRef.value.data.forEach((row: any) => {
+    const tableData = (contractsTableRef.value.data ?? []) as any[];
+    tableData.forEach((row: any) => {
       contractsTableRef.value!.toggleRowExpansion(row, undefined);
     });
   }

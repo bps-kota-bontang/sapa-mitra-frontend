@@ -100,7 +100,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Printer, Plus } from "@element-plus/icons-vue";
 import { getReports, deleteReport, deleteReportOutput, printReports, printReport, downloadReports } from "@/api/reportApi";
 import { useUserStore } from "@/stores/user";
-import { ElNotification, type ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { generatePeriods } from "@/utils/date";
 import { teams } from "@/utils/constant";
 import reportTemplate from "@/templates/report.html?raw";
@@ -112,7 +112,7 @@ const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
-const reportsTableRef = ref<InstanceType<typeof ElTable>>();
+const reportsTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const reports = ref<any[]>([]);
@@ -182,7 +182,7 @@ const print = () => {
 
         const options = {
           margin: 20,
-          image: { type: "jpeg", quality: 1 },
+          image: { type: "jpeg" as const, quality: 1 },
           html2canvas: {
             scale: 2,
             useCORS: true,
@@ -191,9 +191,9 @@ const print = () => {
             windowHeight: document.body.scrollHeight,
           },
           jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
+            unit: "mm" as const,
+            format: "a4" as const,
+            orientation: "portrait" as const,
           },
         };
 
@@ -255,7 +255,8 @@ const downloadSelection = () => {
 
 const expandData = () => {
   if (reportsTableRef.value) {
-    reportsTableRef.value.data.forEach((row: any) => {
+    const tableData = reportsTableRef.value.data as any[];
+    tableData.forEach((row: any) => {
       reportsTableRef.value!.toggleRowExpansion(row, undefined);
     });
   }
@@ -333,10 +334,14 @@ const handlePrint = (index: number, row: any) => {
 
       const options = {
         margin: 20,
-        image: { type: "jpeg", quality: 1 },
+        image: { type: "jpeg" as const, quality: 1 },
         filename: `BAST_${payload.partner.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
+        jsPDF: {
+          unit: "mm" as const,
+          format: "a4" as const,
+          orientation: "portrait" as const,
+        },
+      }
 
       await html2pdf().set(options).from(compiledHtml).save();
     } catch (err: any) {

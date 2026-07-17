@@ -67,7 +67,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Download, Plus, Upload } from "@element-plus/icons-vue";
 import { getOutputs, deleteOutput, deleteOutputs, downloadOutputTemplate, downloadOutputs } from "@/api/outputApi";
 import { BASE_URL } from "@/api/api";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
 import { teams } from "@/utils/constant";
@@ -82,7 +82,7 @@ const headers = ref({
 });
 const uploadUrl = ref(`${BASE_URL}/v1/outputs/upload`);
 const initialFilter = createInitialFilter("output");
-const outputsTableRef = ref<InstanceType<typeof ElTable>>();
+const outputsTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const outputs = ref<any[]>([]);

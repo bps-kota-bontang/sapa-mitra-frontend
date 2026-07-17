@@ -27,12 +27,12 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
-import { ElNotification, ElTable } from "element-plus";
+import { ElNotification, type TableInstance } from "element-plus";
 
 import { getStatuses, updateStatusContract, updateStatusOutput } from "@/api/statusApi";
 import type { Status } from "@/types/status";
 
-const statusesTableRef = ref<InstanceType<typeof ElTable>>();
+const statusesTableRef = ref<TableInstance | null>(null);
 const search = ref("");
 const loading = ref(false);
 const statuses = ref<Status[]>([]);
