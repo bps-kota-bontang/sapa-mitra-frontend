@@ -208,7 +208,7 @@ import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
 import { createInitialFilter } from "@/types/filter";
 import Handlebars, { type HelperOptions } from "handlebars";
-import html2pdf from "html2pdf.js";
+import html2pdf from "html2pdf.js/src";
 import contractTemplate from "@/templates/contract.html?raw";
 import { PDFDocument } from "pdf-lib";
 

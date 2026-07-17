@@ -1,4 +1,3 @@
-import CreateTrainingView from "@/views/training/CreateTrainingView.vue";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import { useUserStore } from "@/stores/user";
 
@@ -13,7 +12,7 @@ const trainingRoutes = [
       {
         path: "",
         name: "createTraining",
-        component: CreateTrainingView,
+        component: () => import("@/views/training/CreateTrainingView.vue"),
         meta: {
           title: "Buat Biaya Pelatihan",
         },

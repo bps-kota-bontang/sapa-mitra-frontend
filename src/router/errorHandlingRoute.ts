@@ -1,11 +1,8 @@
-import UnauthorizedView from '@/views/UnauthorizedView.vue'
-import NotFoundView from '@/views/NotFoundView.vue'
-
 const errorHandlingRoutes = [
     {
         path: '/tidak-diizinkan',
         name: 'unauthorized',
-        component: UnauthorizedView,
+        component: () => import('@/views/UnauthorizedView.vue'),
         meta: {
             title: "Tidak ada akses",
             layout: 'LayoutDashboard',
@@ -15,7 +12,7 @@ const errorHandlingRoutes = [
     {
         path: '/:pathMatch(.*)*',
         name: 'notFound',
-        component: NotFoundView,
+        component: () => import('@/views/NotFoundView.vue'),
         meta: {
             title: "Halaman tidak ditemukan"
         }

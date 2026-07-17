@@ -1,12 +1,11 @@
 import { useUserStore } from '@/stores/user';
-import ListUserView from '@/views/user/ListUserView.vue';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 
 const userRoutes = [
     {
         path: '/pengguna',
         name: 'listUser',
-        component: ListUserView,
+        component: () => import('@/views/user/ListUserView.vue'),
         meta: {
             title: "Daftar Pengguna",
             layout: 'LayoutDashboard',

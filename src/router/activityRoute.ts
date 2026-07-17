@@ -1,5 +1,3 @@
-import ListActivityView from "@/views/activity/ListActivityView.vue";
-import AddActivityView from "@/views/activity/AddActivityView.vue";
 import { useUserStore } from "@/stores/user";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
@@ -14,7 +12,7 @@ const activityRoutes = [
       {
         path: "",
         name: "listActivity",
-        component: ListActivityView,
+        component: () => import("@/views/activity/ListActivityView.vue"),
         meta: {
           title: "Daftar Kegiatan",
         },
@@ -22,7 +20,7 @@ const activityRoutes = [
       {
         path: "tambah",
         name: "addActivity",
-        component: AddActivityView,
+        component: () => import("@/views/activity/AddActivityView.vue"),
         meta: {
           title: "Tambah Kegiatan",
         },

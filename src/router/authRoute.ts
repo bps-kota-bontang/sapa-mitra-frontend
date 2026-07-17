@@ -1,10 +1,8 @@
-import LoginView from '@/views/LoginView.vue';
-
 const authRoutes = [
     {
         path: '/masuk',
         name: 'login',
-        component: LoginView,
+        component: () => import('@/views/LoginView.vue'),
         meta: {
             title: "Masuk",
         }

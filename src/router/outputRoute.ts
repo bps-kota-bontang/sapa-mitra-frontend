@@ -1,5 +1,3 @@
-import ListOutputView from '@/views/output/ListOutputView.vue';
-import AddOutputView from '@/views/output/AddOutputView.vue';
 import { useUserStore } from '@/stores/user';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 
@@ -14,7 +12,7 @@ const outputRoutes = [
             {
                 path: '',
                 name: 'listOutput',
-                component: ListOutputView,
+                component: () => import('@/views/output/ListOutputView.vue'),
                 meta: {
                     title: "Daftar Output"
                 }
@@ -22,7 +20,7 @@ const outputRoutes = [
             {
                 path: 'tambah',
                 name: 'addOutput',
-                component: AddOutputView,
+                component: () => import('@/views/output/AddOutputView.vue'),
                 meta: {
                     title: "Tambah Output"
                 }

@@ -8,12 +8,8 @@ import outputRoutes from "@/router/outputRoute";
 import partnerRoutes from "@/router/partnerRoute";
 import userRoutes from "@/router/userRoute";
 import errorHandlingRoutes from "@/router/errorHandlingRoute";
-import ConfigurationView from "@/views/ConfigurationView.vue";
-import DashboardView from "@/views/DashboardView.vue";
 import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
-import SettingView from "@/views/setting/SettingView.vue";
-import LockView from "@/views/LockView.vue";
 import trainingRoutes from "@/router/trainingRoute";
 import recapRoutes from "@/router/recapRoute";
 
@@ -23,7 +19,7 @@ const router = createRouter({
     {
       path: "",
       name: "dashboard",
-      component: DashboardView,
+      component: () => import("@/views/DashboardView.vue"),
       meta: {
         title: "Dasbor",
         layout: "LayoutDashboard",
@@ -33,7 +29,7 @@ const router = createRouter({
     {
       path: "/konfigurasi",
       name: "configuration",
-      component: ConfigurationView,
+      component: () => import("@/views/ConfigurationView.vue"),
       meta: {
         title: "Konfigurasi",
         layout: "LayoutDashboard",
@@ -48,7 +44,7 @@ const router = createRouter({
     {
       path: "/kunci",
       name: "lock",
-      component: LockView,
+      component: () => import("@/views/LockView.vue"),
       meta: {
         title: "Kunci",
         layout: "LayoutDashboard",
@@ -63,7 +59,7 @@ const router = createRouter({
     {
       path: "/pengaturan",
       name: "setting",
-      component: SettingView,
+      component: () => import("@/views/setting/SettingView.vue"),
       meta: {
         title: "Pengaturan",
         layout: "LayoutDashboard",

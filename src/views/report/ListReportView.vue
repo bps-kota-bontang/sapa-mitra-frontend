@@ -105,7 +105,7 @@ import { generatePeriods } from "@/utils/date";
 import { teams } from "@/utils/constant";
 import reportTemplate from "@/templates/report.html?raw";
 import Handlebars from "handlebars";
-import html2pdf from "html2pdf.js";
+import html2pdf from "html2pdf.js/src";
 import { PDFDocument } from "pdf-lib";
 
 const user = useUserStore();

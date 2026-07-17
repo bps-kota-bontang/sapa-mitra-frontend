@@ -1,5 +1,3 @@
-import ListPartnerView from '@/views/partner/ListPartnerView.vue';
-import AddPartnerView from '@/views/partner/AddPartnerView.vue';
 import { useUserStore } from '@/stores/user';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 
@@ -19,7 +17,7 @@ const partnerRoutes = [
             {
                 path: '',
                 name: 'listPartner',
-                component: ListPartnerView,
+                component: () => import('@/views/partner/ListPartnerView.vue'),
                 meta: {
                     title: "Daftar Mitra"
                 }
@@ -28,7 +26,7 @@ const partnerRoutes = [
             {
                 path: 'tambah',
                 name: 'addPartner',
-                component: AddPartnerView,
+                component: () => import('@/views/partner/AddPartnerView.vue'),
                 meta: {
                     title: "Tambah Mitra"
                 }

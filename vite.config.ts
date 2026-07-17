@@ -23,14 +23,51 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      onwarn(warning, warn) {
+        if (
+          warning.code === "INVALID_ANNOTATION" &&
+          typeof warning.message === "string" &&
+          warning.message.includes("contains an annotation that Rollup cannot interpret")
+        ) {
+          return;
+        }
+
+        warn(warning);
+      },
       output: {
         manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return id
-              .toString()
-              .split("node_modules/")[1]
-              .split("/")[0]
-              .toString();
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("node_modules/vue/") || id.includes("node_modules/vue-router/") || id.includes("node_modules/pinia/")) {
+            return "framework";
+          }
+
+          if (id.includes("node_modules/html2pdf.js/src/")) {
+            return "pdf-html2pdf";
+          }
+
+          if (id.includes("node_modules/html2canvas/")) {
+            return "pdf-html2canvas";
+          }
+
+          if (id.includes("node_modules/jspdf/")) {
+            return "pdf-jspdf";
+          }
+
+          if (id.includes("node_modules/pdf-lib/")) {
+            return "pdf-lib";
+          }
+
+          if (id.includes("node_modules/pako/")) {
+            return "pdf-pako";
+          }
+
+          if (id.includes("node_modules/dompurify/")) {
+            return "pdf-dompurify";
+          }
+
+          if (id.includes("node_modules/chart.js/") || id.includes("node_modules/vue-chartjs/") || id.includes("node_modules/@kurkle/")) {
+            return "charts";
           }
         },
       },

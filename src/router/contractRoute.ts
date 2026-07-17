@@ -1,5 +1,3 @@
-import ListContractView from "@/views/contract/ListContractView.vue";
-import CreateContractView from "@/views/contract/CreateContractView.vue";
 import { useUserStore } from "@/stores/user";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
@@ -14,7 +12,7 @@ const contractRoutes = [
       {
         path: "",
         name: "listContract",
-        component: ListContractView,
+        component: () => import("@/views/contract/ListContractView.vue"),
         meta: {
           title: "Daftar SPK",
         },
@@ -22,7 +20,7 @@ const contractRoutes = [
       {
         path: "buat",
         name: "createContract",
-        component: CreateContractView,
+        component: () => import("@/views/contract/CreateContractView.vue"),
         meta: {
           title: "Buat SPK",
         },

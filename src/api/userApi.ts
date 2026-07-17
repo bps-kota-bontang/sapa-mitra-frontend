@@ -1,7 +1,6 @@
 import { useUserStore } from "@/stores/user";
 import { BASE_URL } from "./api";
 import { useAuthStore } from "@/stores/auth";
-import { JsxEmit } from "typescript";
 
 export const getUsers = async () => {
   const auth = useAuthStore();

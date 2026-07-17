@@ -1,6 +1,5 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import { useUserStore } from "@/stores/user";
-import CreateRecapView from "@/views/recap/CreateRecapView.vue";
 
 const recapRoutes = [
   {
@@ -13,7 +12,7 @@ const recapRoutes = [
       {
         path: "",
         name: "createRecap",
-        component: CreateRecapView,
+        component: () => import("@/views/recap/CreateRecapView.vue"),
         meta: {
           title: "Rekapitulasi",
         },

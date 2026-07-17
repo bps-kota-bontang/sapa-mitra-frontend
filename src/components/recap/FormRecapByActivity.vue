@@ -59,7 +59,7 @@ import { downloadRecapActivity, downloadTemplatePartnerCost, getContractActivity
 import { useRoute } from "vue-router";
 import { getActivities } from "@/api/activityApi";
 import Handlebars from "handlebars";
-import html2pdf from "html2pdf.js";
+import html2pdf from "html2pdf.js/src";
 import recapTemplate from "@/templates/recap.html?raw";
 
 const route = useRoute();
