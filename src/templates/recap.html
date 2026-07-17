@@ -107,7 +107,7 @@
     <br>
     <div>
 
-        <table class="bordered-table">
+        <table class="bordered-table" border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid #444;">
             <thead>
                 <tr style="font-size: 12px; font-weight: normal;">
                     <th>No</th>
@@ -133,26 +133,26 @@
             <tbody>
                 {{#each partners}}
                 <tr style="font-size: 12px; font-weight: normal;">
-                    <td class="text-center">{{number}}</td>
-                    <td class="text-left">{{name}}</td>
-                    <td class="text-center">{{rate}}</td>
-                    <td class="text-center">{{volume}}</td>
-                    <td class="text-center">{{total}}</td>
-                    <td class="text-center">{{tax}}</td>
-                    <td class="text-center">{{grandTotal}}</td>
-                    <td class="text-center">{{accountNumber}}</td>
+                    <td style="text-align: center;">{{number}}</td>
+                    <td style="text-align: left;">{{name}}</td>
+                    <td style="text-align: center;">{{rate}}</td>
+                    <td style="text-align: center;">{{volume}}</td>
+                    <td style="text-align: center;">{{total}}</td>
+                    <td style="text-align: center;">{{tax}}</td>
+                    <td style="text-align: center;">{{grandTotal}}</td>
+                    <td style="text-align: center;">{{accountNumber}}</td>
                 </tr>
                 {{/each}}
             </tbody>
             <tfoot>
                 <tr style="font-size: 12px; font-weight: normal;">
-                    <td colspan="3" class="text-left">
+                    <td colspan="3" style="text-align: left;">
                         Jumlah: {{grandTotal.spell}} Rupiah
                     </td>
-                    <td class="text-center"><strong>{{grandTotal.volume}}</strong></td>
-                    <td class="text-center"><strong>{{grandTotal.nominal}}</strong></td>
-                    <td class="text-center"><strong>{{grandTotal.tax}}</strong></td>
-                    <td class="text-center"><strong>{{grandTotal.nominal}}</strong></td>
+                    <td style="text-align: center;"><strong>{{grandTotal.volume}}</strong></td>
+                    <td style="text-align: center;"><strong>{{grandTotal.nominal}}</strong></td>
+                    <td style="text-align: center;"><strong>{{grandTotal.tax}}</strong></td>
+                    <td style="text-align: center;"><strong>{{grandTotal.nominal}}</strong></td>
                     <td class="disabled"></td>
                 </tr>
             </tfoot>
