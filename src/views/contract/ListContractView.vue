@@ -680,19 +680,19 @@ const statusText = (row: any) => {
 };
 
 const rateActivityFormatter = (row: any) => {
-  return `Rp ${formatCurrency(row.rate)}`;
+  return `Rp${formatCurrency(row.rate)}`;
 };
 
 const totalActivityFormatter = (row: any) => {
-  return `Rp ${formatCurrency(row.total)}`;
+  return `Rp${formatCurrency(row.total)}`;
 };
 
 const costActivityFormatter = (row: any) => {
-  return `Rp ${formatCurrency(row.cost)}`;
+  return `Rp${formatCurrency(row.cost)}`;
 };
 
 const limitFormatter = (row: any) => {
-  return `Rp ${formatCurrency(row.limit)}`;
+  return `Rp${formatCurrency(row.limit)}`;
 };
 
 const totalFormatter = (row: any, raw: boolean = false) => {
@@ -704,7 +704,7 @@ const totalFormatter = (row: any, raw: boolean = false) => {
     );
   }
 
-  return `Rp ${formatCurrency(total)}`;
+  return `Rp${formatCurrency(total)}`;
 };
 
 const hasErrorTotal = (row: any) => {
