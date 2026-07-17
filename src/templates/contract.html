@@ -234,7 +234,7 @@
 
     </div>
 
-    <div style="page-break-before: always;">
+    <div>
         <p style="text-align: center;"><strong>Pasal 11</strong></p>
         <ol>
             <li style="text-align: justify;">Apabila terjadi Keadaan Kahar, yang meliputi bencana alam, bencana non
@@ -282,7 +282,7 @@
 
 
 
-    <div style="page-break-before: always;">
+    <div>
         <p style="text-align: center;"><strong>Pasal 13</strong></p>
         <ol>
             <li style="text-align: justify;">Segala perselisihan atau perbedaan pendapat yang mungkin timbul sebagai
@@ -336,7 +336,7 @@
     </div>
 
 
-    <div style="page-break-before: always;">
+    <div id="contract-appendix" style="page-break-before: always;">
         <p style="text-align: left; padding-left: 280px; text-transform: uppercase;">
             LAMPIRAN<br />
             PERJANJIAN KERJA MITRA STATISTIK BADAN PUSAT STATISTIK {{cleanRegion region}}<br />
@@ -349,8 +349,17 @@
 
         {{!-- MULAI TABLE GROUPING --}}
         {{#each groupedActivities}}
-        <div class="page-break">
-            <table class="bordered-table" border="1" cellspacing="0" cellpadding="6" style="margin-bottom: 16px; width: 100%; border-collapse: collapse; border: 1px solid black;">
+        <div {{#unless @last}}style="page-break-after: always;"{{/unless}}>
+            <table class="bordered-table" border="1" cellspacing="0" cellpadding="6" style="margin-bottom: 16px; width: 100%; border-collapse: collapse; border: 1px solid black; table-layout: fixed;">
+                <colgroup>
+                    <col style="width: 26%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 8%;" />
+                    <col style="width: 18%;" />
+                    <col style="width: 12%;" />
+                    <col style="width: 12%;" />
+                    <col style="width: 18%;" />
+                </colgroup>
                 <thead>
                     <tr>
                         <td rowspan="2" style="text-align: center;">Uraian Tugas</td>

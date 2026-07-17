@@ -239,6 +239,74 @@ const activities = ref<{
   "value": string;
 }[]>([]);
 
+const buildDocumentHtml = (head: string, body: string) => {
+  return `<!DOCTYPE html><html><head>${head}</head><body>${body}</body></html>`;
+};
+
+const splitContractHtmlSections = (compiledHtml: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(compiledHtml, "text/html");
+  const appendix = doc.getElementById("contract-appendix");
+
+  let appendixHtml: string | null = null;
+  if (appendix) {
+    const appendixStyle = appendix.getAttribute("style") || "";
+    const sanitizedStyle = appendixStyle
+      .replace(/page-break-before\s*:\s*always;?/gi, "")
+      .trim();
+
+    if (sanitizedStyle) {
+      appendix.setAttribute("style", sanitizedStyle);
+    } else {
+      appendix.removeAttribute("style");
+    }
+
+    appendixHtml = buildDocumentHtml(doc.head.innerHTML, appendix.outerHTML);
+    appendix.remove();
+  }
+
+  const mainHtml = buildDocumentHtml(doc.head.innerHTML, doc.body.innerHTML);
+
+  return { mainHtml, appendixHtml };
+};
+
+const toPdfBlob = async (html: string, orientation: "portrait" | "landscape") => {
+  const options = {
+    margin: 20,
+    image: { type: "jpeg" as const, quality: 1 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      scrollY: 0,
+      windowWidth: document.body.scrollWidth,
+      windowHeight: document.body.scrollHeight,
+    },
+    jsPDF: {
+      unit: "mm" as const,
+      format: "a4" as const,
+      orientation,
+    },
+  };
+
+  return await html2pdf().set(options).from(html).outputPdf("blob");
+};
+
+const mergePdfBlobs = async (blobs: Blob[]) => {
+  const mergedPdf = await PDFDocument.create();
+
+  for (const blob of blobs) {
+    const arrayBuffer = await blob.arrayBuffer();
+    const pdf = await PDFDocument.load(arrayBuffer);
+    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+
+    copiedPages.forEach((page) => {
+      mergedPdf.addPage(page);
+    });
+  }
+
+  return await mergedPdf.save();
+};
+
 const paginatedData = computed(() => {
   let paginatedData: Contract[] = contracts.value
   if (filter.value.period?.length) {
@@ -442,43 +510,18 @@ const print = () => {
 
       for (let i = 0; i < processedPayloads.length; i++) {
         const html = template(processedPayloads[i]);
+        const { mainHtml, appendixHtml } = splitContractHtmlSections(html);
 
-        const options = {
-          margin: 20,
-          image: { type: "jpeg", quality: 1 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            scrollY: 0,
-            windowWidth: document.body.scrollWidth,
-            windowHeight: document.body.scrollHeight,
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
-          },
-        };
+        const portraitBlob = await toPdfBlob(mainHtml, "portrait");
+        pdfBlobs.push(portraitBlob);
 
-        // generate PDF blob (tidak langsung disimpan)
-        const pdfBlob = await html2pdf().set(options).from(html).outputPdf("blob");
-        pdfBlobs.push(pdfBlob);
+        if (appendixHtml) {
+          const landscapeBlob = await toPdfBlob(appendixHtml, "landscape");
+          pdfBlobs.push(landscapeBlob);
+        }
       }
 
-      const mergedPdf = await PDFDocument.create();
-
-      for (const blob of pdfBlobs) {
-        const arrayBuffer = await blob.arrayBuffer();
-        const pdf = await PDFDocument.load(arrayBuffer);
-        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        copiedPages.forEach((page, index) => {
-          if (index != copiedPages.length - 1) {
-            mergedPdf.addPage(page)
-          }
-        });
-      }
-
-      const mergedPdfBytes = await mergedPdf.save();
+      const mergedPdfBytes = await mergePdfBlobs(pdfBlobs);
       const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
@@ -769,26 +812,27 @@ const handlePrint = (index: number, row: any) => {
       const template = Handlebars.compile(contractTemplate);
       const compiledHtml = template(newPayload);
 
-      const options = {
-        margin: 20,
-        image: { type: "jpeg", quality: 1 },
-        filename: `SPK_${payload.partner.name}_${payload.period?.month} ${payload.period?.year}.pdf`,
-        html2canvas: {
-          scale: 2,               // hasil lebih tajam
-          useCORS: true,          // izinkan gambar eksternal
-          scrollY: 0,             // cegah pemotongan akibat scroll
-          windowWidth: document.body.scrollWidth,  // pastikan seluruh lebar ikut
-          windowHeight: document.body.scrollHeight // pastikan seluruh tinggi ikut
-        },
-        jsPDF: {
-          unit: "mm",
-          format: "a4",
-          orientation: "portrait",
-        },
-      };
+      const { mainHtml, appendixHtml } = splitContractHtmlSections(compiledHtml);
 
+      const pdfBlobs: Blob[] = [];
+      const portraitBlob = await toPdfBlob(mainHtml, "portrait");
+      pdfBlobs.push(portraitBlob);
 
-      await html2pdf().set(options).from(compiledHtml).save();
+      if (appendixHtml) {
+        const landscapeBlob = await toPdfBlob(appendixHtml, "landscape");
+        pdfBlobs.push(landscapeBlob);
+      }
+
+      const mergedPdfBytes = await mergePdfBlobs(pdfBlobs);
+      const blob = new Blob([new Uint8Array(mergedPdfBytes)], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `SPK_${payload.partner.name}_${payload.period?.month} ${payload.period?.year}.pdf`;
+      link.click();
+
+      URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error(err);
       ElNotification({
