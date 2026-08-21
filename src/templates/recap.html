@@ -5,60 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekapitulasi Honor {{activity.name}}</title>
-    <style>
-        .bordered-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            /* seragam ukuran */
-        }
-
-        .bordered-table th,
-        .bordered-table td {
-            border: 1px solid #444;
-            /* lebih gelap sedikit biar kontras */
-            padding: 6px 8px;
-            /* agak lega */
-            text-align: center;
-        }
-
-        .bordered-table th {
-            background-color: #c1c1c1;
-            font-weight: bold;
-        }
-
-        .bordered-table tbody tr:nth-child(even) {
-            background-color: #fafafa;
-            /* striping */
-        }
-
-        .bordered-table tfoot td {
-            font-weight: bold;
-            background-color: #e6e3e3;
-        }
-
-        .bordered-table .text-left {
-            text-align: left;
-        }
-
-        /* Cegah satu baris partner terpotong di tengah saat pindah halaman */
-        .bordered-table tr {
-            page-break-inside: avoid;
-            break-inside: avoid;
-        }
-
-        /* Pemisah antar chunk 18 baris -> paksa halaman baru */
-        .page-break {
-            page-break-after: always;
-            break-after: page;
-            height: 0;
-        }
-
-        /* Setiap tabel chunk jangan terpotong dari header-nya */
-        .bordered-table thead {
-            display: table-header-group;
-        }
-    </style>
 </head>
 
 <body>
@@ -125,65 +71,64 @@
     <br>
     <div>
         {{#each partnerPages}}
-        <table class="bordered-table">
-            <thead>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead style="display: table-header-group;">
                 <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Honor per {{../activity.unit}}</th>
-                    <th>Banyaknya {{../activity.unit}}</th>
-                    <th>Jumlah Bruto (Rp)</th>
-                    <th>Potongan PPh 21 (Rp)</th>
-                    <th>Jumlah yang diterima (Rp)</th>
-                    <th>Nomor Rekening</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">No</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Nama</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Honor per {{../activity.unit}}</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Banyaknya {{../activity.unit}}</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Jumlah Bruto (Rp)</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Potongan PPh 21 (Rp)</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Jumlah yang diterima (Rp)</th>
+                    <th style="border: 1px solid #444; padding: 6px 8px; text-align: center; background-color: #c1c1c1; font-weight: bold;">Nomor Rekening</th>
                 </tr>
                 <tr style="font-size: 9px; font-weight: normal;">
-                    <td>(1)</td>
-                    <td>(2)</td>
-                    <td>(3)</td>
-                    <td>(4)</td>
-                    <td>(5)</td>
-                    <td>(6)</td>
-                    <td>(7)</td>
-                    <td>(8)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(1)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(2)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(3)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(4)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(5)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(6)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(7)</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">(8)</td>
                 </tr>
             </thead>
             <tbody>
                 {{#each this}}
-                <tr>
-                    <td>{{number}}</td>
-                    <td class="text-left">{{name}}</td>
-                    <td>{{rate}}</td>
-                    <td>{{volume}}</td>
-                    <td>{{total}}</td>
-                    <td>{{tax}}</td>
-                    <td>{{grandTotal}}</td>
-                    <td>{{accountNumber}}</td>
+                <tr style="page-break-inside: avoid; break-inside: avoid;">
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{number}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: left;">{{name}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{rate}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{volume}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{total}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{tax}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{grandTotal}}</td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center;">{{accountNumber}}</td>
                 </tr>
                 {{/each}}
             </tbody>
             {{#if @last}}
             <tfoot>
                 <tr>
-                    <td colspan="3" class="text-left">
+                    <td colspan="3" style="border: 1px solid #444; padding: 6px 8px; text-align: left; font-weight: bold; background-color: #e6e3e3;">
                         Jumlah: {{../grandTotal.spell}} Rupiah
                     </td>
-                    <td><strong>{{../grandTotal.volume}}</strong></td>
-                    <td><strong>{{../grandTotal.nominal}}</strong></td>
-                    <td><strong>{{../grandTotal.tax}}</strong></td>
-                    <td><strong>{{../grandTotal.nominal}}</strong></td>
-                    <td class="disabled"></td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center; font-weight: bold; background-color: #e6e3e3;"><strong>{{../grandTotal.volume}}</strong></td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center; font-weight: bold; background-color: #e6e3e3;"><strong>{{../grandTotal.nominal}}</strong></td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center; font-weight: bold; background-color: #e6e3e3;"><strong>{{../grandTotal.tax}}</strong></td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center; font-weight: bold; background-color: #e6e3e3;"><strong>{{../grandTotal.nominal}}</strong></td>
+                    <td style="border: 1px solid #444; padding: 6px 8px; text-align: center; font-weight: bold; background-color: #e6e3e3;"></td>
                 </tr>
             </tfoot>
             {{/if}}
         </table>
         {{#unless @last}}
-        <div class="page-break"></div>
+        <div style="page-break-after: always; break-after: page; height: 0;"></div>
         {{/unless}}
         {{/each}}
     </div>
-    <br>
-    <div>
+    <div style="page-break-inside: avoid; break-inside: avoid;">
         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
             <tbody>
                 <tr style="height: 20px;">

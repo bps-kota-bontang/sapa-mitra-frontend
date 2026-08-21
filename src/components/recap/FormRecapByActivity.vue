@@ -145,7 +145,7 @@ const downloadRecapByActivity = async () => {
       return;
     }
 
-    const partnerPages = chunkArray(payload.partners, 18);
+    const partnerPages = chunkArray(payload.partners, 15);
 
     // Gabungkan ke payload baru agar bisa dipakai di template
     const newPayload = {
