@@ -145,8 +145,16 @@ const downloadRecapByActivity = async () => {
       return;
     }
 
+    const partnerPages = chunkArray(payload.partners, 18);
+
+    // Gabungkan ke payload baru agar bisa dipakai di template
+    const newPayload = {
+      ...payload,
+      partnerPages,
+    };
+
     const template = Handlebars.compile(recapTemplate);
-    const compiledHtml = template(payload);
+    const compiledHtml = template(newPayload);
 
     const options = {
       margin: 10,
@@ -178,6 +186,15 @@ const downloadRecapByActivity = async () => {
     loading.value = false;
   }
 };
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
 
 const generateRecapCsv = async () => {
   try {

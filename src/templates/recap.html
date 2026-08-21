@@ -40,6 +40,24 @@
         .bordered-table .text-left {
             text-align: left;
         }
+
+        /* Cegah satu baris partner terpotong di tengah saat pindah halaman */
+        .bordered-table tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* Pemisah antar chunk 18 baris -> paksa halaman baru */
+        .page-break {
+            page-break-after: always;
+            break-after: page;
+            height: 0;
+        }
+
+        /* Setiap tabel chunk jangan terpotong dari header-nya */
+        .bordered-table thead {
+            display: table-header-group;
+        }
     </style>
 </head>
 
@@ -106,20 +124,20 @@
     </div>
     <br>
     <div>
-
-        <table class="bordered-table" border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid #444;">
+        {{#each partnerPages}}
+        <table class="bordered-table">
             <thead>
-                <tr style="font-size: 12px; font-weight: normal;">
+                <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Honor per {{activity.unit}}</th>
-                    <th>Banyaknya {{activity.unit}}</th>
+                    <th>Honor per {{../activity.unit}}</th>
+                    <th>Banyaknya {{../activity.unit}}</th>
                     <th>Jumlah Bruto (Rp)</th>
                     <th>Potongan PPh 21 (Rp)</th>
                     <th>Jumlah yang diterima (Rp)</th>
                     <th>Nomor Rekening</th>
                 </tr>
-                <tr style="font-size: 9px; font-weight: normal; justify-content: center; text-align: center;">
+                <tr style="font-size: 9px; font-weight: normal;">
                     <td>(1)</td>
                     <td>(2)</td>
                     <td>(3)</td>
@@ -131,32 +149,38 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each partners}}
-                <tr style="font-size: 12px; font-weight: normal;">
-                    <td style="text-align: center;">{{number}}</td>
-                    <td style="text-align: left;">{{name}}</td>
-                    <td style="text-align: center;">{{rate}}</td>
-                    <td style="text-align: center;">{{volume}}</td>
-                    <td style="text-align: center;">{{total}}</td>
-                    <td style="text-align: center;">{{tax}}</td>
-                    <td style="text-align: center;">{{grandTotal}}</td>
-                    <td style="text-align: center;">{{accountNumber}}</td>
+                {{#each this}}
+                <tr>
+                    <td>{{number}}</td>
+                    <td class="text-left">{{name}}</td>
+                    <td>{{rate}}</td>
+                    <td>{{volume}}</td>
+                    <td>{{total}}</td>
+                    <td>{{tax}}</td>
+                    <td>{{grandTotal}}</td>
+                    <td>{{accountNumber}}</td>
                 </tr>
                 {{/each}}
             </tbody>
+            {{#if @last}}
             <tfoot>
-                <tr style="font-size: 12px; font-weight: normal;">
-                    <td colspan="3" style="text-align: left;">
-                        Jumlah: {{grandTotal.spell}} Rupiah
+                <tr>
+                    <td colspan="3" class="text-left">
+                        Jumlah: {{../grandTotal.spell}} Rupiah
                     </td>
-                    <td style="text-align: center;"><strong>{{grandTotal.volume}}</strong></td>
-                    <td style="text-align: center;"><strong>{{grandTotal.nominal}}</strong></td>
-                    <td style="text-align: center;"><strong>{{grandTotal.tax}}</strong></td>
-                    <td style="text-align: center;"><strong>{{grandTotal.nominal}}</strong></td>
+                    <td><strong>{{../grandTotal.volume}}</strong></td>
+                    <td><strong>{{../grandTotal.nominal}}</strong></td>
+                    <td><strong>{{../grandTotal.tax}}</strong></td>
+                    <td><strong>{{../grandTotal.nominal}}</strong></td>
                     <td class="disabled"></td>
                 </tr>
             </tfoot>
+            {{/if}}
         </table>
+        {{#unless @last}}
+        <div class="page-break"></div>
+        {{/unless}}
+        {{/each}}
     </div>
     <br>
     <div>
