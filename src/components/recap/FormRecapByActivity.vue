@@ -145,7 +145,7 @@ const downloadRecapByActivity = async () => {
       return;
     }
 
-    const partnerPages = chunkArray(payload.partners, 15);
+   const partnerPages = chunkPartners(payload.partners, 15, 25);
 
     // Gabungkan ke payload baru agar bisa dipakai di template
     const newPayload = {
@@ -187,12 +187,20 @@ const downloadRecapByActivity = async () => {
   }
 };
 
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
+function chunkPartners(array: any[], firstPageSize = 15, restPageSize = 25) {
+  const pages: any[][] = [];
+  if (array.length === 0) return pages;
+
+  let i = 0;
+  pages.push(array.slice(0, firstPageSize));
+  i = firstPageSize;
+
+  while (i < array.length) {
+    pages.push(array.slice(i, i + restPageSize));
+    i += restPageSize;
   }
-  return chunks;
+
+  return pages;
 }
 
 
