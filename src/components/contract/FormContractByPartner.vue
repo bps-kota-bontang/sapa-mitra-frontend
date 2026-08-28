@@ -86,6 +86,7 @@ const initialState = {
       endDate: "",
       volume: "",
       rate: "",
+      hasTelecom: false,
     },
   ],
 };
@@ -158,6 +159,7 @@ const addActivity = () => {
     endDate: "",
     volume: "",
     rate: "",
+    hasTelecom: false,
   });
 };
 

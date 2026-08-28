@@ -38,6 +38,7 @@
               <el-table-column label="Rate" prop="rate" :formatter="rateActivityFormatter" />
               <el-table-column label="Total" prop="total" :formatter="totalActivityFormatter" />
               <el-table-column label="Biaya Pelatihan" prop="cost" :formatter="costActivityFormatter" />
+              <el-table-column label="Paket Data/Pulsa" prop="hasTelecom" :formatter="hasTelecomFormatter" />
               <el-table-column label="Team" prop="createdBy" />
               <el-table-column label="Khusus" prop="isSpecial" :formatter="isSpecialFormatter" />
               <el-table-column label="Status" prop="status" />
@@ -105,7 +106,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
@@ -117,7 +118,7 @@
             <el-text>{{ totalFormatter(scope.row) }}</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
-            }}</el-text>
+              }}</el-text>
           </el-space>
         </template>
       </el-table-column>
@@ -759,6 +760,10 @@ const dateFormatter = (row: any) => {
 
 const isSpecialFormatter = (row: any) => {
   return row.isSpecial ? "Ya" : "Tidak";
+};
+
+const hasTelecomFormatter = (row: any) => {
+  return row.hasTelecom ? "Ya" : "Tidak";
 };
 
 const contractStatus = ({ row, rowIndex }: { row: any; rowIndex: number }) => {

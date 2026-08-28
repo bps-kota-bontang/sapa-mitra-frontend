@@ -46,6 +46,14 @@
       <el-input v-model="props.activity.rate" :formatter="formatNumber" :parser="formatParserNumber"
         placeholder="Masukkan Rate" />
     </el-form-item>
+    <el-form-item required label="Paket Data/Pulsa" :prop="getProp('hasTelecom')" :rules="{
+      required: true,
+      message: 'Telekomunikasi perlu terisi',
+      trigger: 'change',
+    }">
+      <el-switch v-model="props.activity.hasTelecom" active-value="true" inactive-value="false" active-text="Ya"
+        inactive-text="Tidak" />
+    </el-form-item>
     <template #footer>
       <el-button type="danger" @click="$emit('remove')">Hapus Kegiatan</el-button>
     </template>
@@ -55,6 +63,7 @@
 <script lang="ts" setup>
 import { formatParserNumber, formatNumber } from "@/utils/currency";
 import { formatPeriodDate } from "@/utils/date";
+import { ElFormItem } from "element-plus";
 
 const props: any = defineProps({
   activity: Object,

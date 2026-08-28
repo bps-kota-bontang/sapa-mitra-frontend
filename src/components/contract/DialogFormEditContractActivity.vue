@@ -44,6 +44,14 @@
                 <el-input v-model="form.rate" :formatter="formatNumber" :parser="formatParserNumber"
                     placeholder="Masukkan Rate" />
             </el-form-item>
+            <el-form-item required label="Paket Data/Pulsa" :rules="{
+                required: true,
+                message: 'Telekomunikasi perlu terisi',
+                trigger: 'change',
+            }">
+                <el-switch v-model="form.hasTelecom" active-text="Ya" inactive-text="Tidak" active-value="true"
+                    inactive-value="false" />
+            </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -68,7 +76,8 @@ const initialState = {
     endDate: "",
     code: "",
     volume: "",
-    rate: ""
+    rate: "",
+    hasTelecom: false,
 };
 
 const rules = reactive<FormRules<any>>({
@@ -105,6 +114,13 @@ const rules = reactive<FormRules<any>>({
             required: true,
             message: 'Rate perlu terisi',
             trigger: 'blur',
+        },
+    ],
+    hasTelecom: [
+        {
+            required: true,
+            message: 'Telekomunikasi perlu terisi',
+            trigger: 'change',
         },
     ],
 });
@@ -171,6 +187,7 @@ watch(() => props.isShow, async (isShow) => {
         form.code = data.code
         form.volume = data.volume
         form.rate = data.rate
+        form.hasTelecom = data.hasTelecom
     }
 }, { immediate: true });
 

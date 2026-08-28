@@ -38,6 +38,11 @@
         placeholder="Masukkan Rate" />
     </el-form-item>
 
+    <el-form-item required label="Paket Data/Pulsa" prop="activity.hasTelecom">
+      <el-switch v-model="form.activity.hasTelecom" active-value="true" inactive-value="false" active-text="Ya"
+        inactive-text="Tidak" />
+    </el-form-item>
+
     <el-card shadow="never">
       <template #header>
         <div class="card-header">
@@ -115,6 +120,13 @@ const rules = reactive<FormRules<any>>({
       trigger: "blur",
     },
   ],
+  "activity.hasTelecom": [
+    {
+      required: true,
+      message: "Telekomunikasi perlu terisi",
+      trigger: "change",
+    },
+  ],
   "contract.period": [
     {
       required: true,
@@ -130,6 +142,7 @@ const initialState = {
     startDate: "",
     endDate: "",
     rate: "",
+    hasTelecom: false,
   },
   contract: {
     period: "",
