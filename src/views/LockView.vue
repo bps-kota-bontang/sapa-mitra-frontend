@@ -20,7 +20,7 @@
     <div style="display: flex;  gap: 20px;">
       <el-pagination layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@ import { ElNotification, type TableInstance } from "element-plus";
 
 import { getStatuses, updateStatusContract, updateStatusOutput } from "@/api/statusApi";
 import type { Status } from "@/types/status";
+import { usePagerCount } from "@/utils/pagination";
 
 const statusesTableRef = ref<TableInstance | null>(null);
 const search = ref("");
@@ -38,6 +39,7 @@ const loading = ref(false);
 const statuses = ref<Status[]>([]);
 const error = ref("");
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 const total = computed(() => filterOutputs.value.length);
 

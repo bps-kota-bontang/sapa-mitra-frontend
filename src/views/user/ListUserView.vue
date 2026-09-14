@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="display: flex; justify-content: space-between;">
+    <div class="list-toolbar">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center; gap:10px">
+      <div class="list-toolbar-actions">
         <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
             style="margin-right: 8px">
             <Download />
@@ -33,7 +33,7 @@
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
     </div>
   </div>
 </template>
@@ -46,6 +46,7 @@ import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { BASE_URL } from "@/api/api";
+import { usePagerCount } from "@/utils/pagination";
 
 const usersTableRef = ref<TableInstance | null>(null);
 const search = ref("");
@@ -60,6 +61,7 @@ const headers = ref({
 });
 const uploadUrl = ref(`${BASE_URL}/v1/users/upload`);
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 
 const total = computed(() => filterUsers.value.length);

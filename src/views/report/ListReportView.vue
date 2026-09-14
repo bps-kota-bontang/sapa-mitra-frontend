@@ -1,15 +1,15 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="display: flex; justify-content: space-between">
-      <div style="display: flex; align-items: center; gap:20px">
+    <div class="contract-toolbar">
+      <div class="period-controls">
         <span>Periode</span>
-        <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
+        <el-select v-model="periodSelected" class="period-select" placeholder="Select" clearable style="width: 244px">
           <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
-        <el-button @click="fetchData(route.query.period)">Muat Ulang</el-button>
+        <el-button class="reload-button" @click="fetchData(periodSelected)">Muat Ulang</el-button>
       </div>
 
-      <div style="display: flex; align-items: center">
+      <div class="contract-actions">
         <el-button size="large" round @click="print()" v-if="['TU'].includes(user.team)"><el-icon :size="20"
             style="margin-right: 8px">
             <Printer />
@@ -67,14 +67,12 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
-          <el-button size="small" v-if="['TU'].includes(user.team)" type="primary"
-            @click="handlePrint(scope.$index, scope.row)">
-            Cetak
-          </el-button>
-          <el-button v-if="['TU'].includes(user.team)" size="small" type="danger"
-            @click="handleDeleteReport(scope.row._id)">
-            Hapus
-          </el-button>
+          <div class="row-actions">
+            <el-button size="small" v-if="['TU'].includes(user.team)" type="primary"
+              @click="handlePrint(scope.$index, scope.row)">Cetak</el-button>
+            <el-button v-if="['TU'].includes(user.team)" size="small" type="danger"
+              @click="handleDeleteReport(scope.row._id)">Hapus</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -82,7 +80,7 @@
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
@@ -102,6 +100,7 @@ import { getReports, deleteReport, deleteReportOutput, printReports, printReport
 import { useUserStore } from "@/stores/user";
 import { ElNotification, type TableInstance } from "element-plus";
 import { generatePeriods } from "@/utils/date";
+import { usePagerCount } from "@/utils/pagination";
 import { teams } from "@/utils/constant";
 import reportTemplate from "@/templates/report.html?raw";
 import Handlebars from "handlebars";
@@ -121,6 +120,7 @@ const reportsSelected = ref<any[]>([]);
 const periodSelected = ref(route.query.period);
 const expand = ref(false);
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 
 const total = computed(() => filterReports.value.length);

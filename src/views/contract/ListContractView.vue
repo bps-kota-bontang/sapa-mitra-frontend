@@ -1,15 +1,15 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="display: flex; justify-content: space-between">
-      <div style="display: flex; align-items: center; gap:20px">
+    <div class="contract-toolbar">
+      <div class="period-controls">
         <span>Periode</span>
-        <el-select v-model="periodSelected" placeholder="Select" clearable style="width: 240px">
+        <el-select v-model="periodSelected" class="period-select" placeholder="Select" clearable>
           <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
         </el-select>
-        <el-button @click="fetchData(route.query.period)">Muat Ulang</el-button>
+        <el-button class="reload-button" @click="fetchData(periodSelected)">Muat Ulang</el-button>
       </div>
 
-      <div style="display: flex; align-items: center">
+      <div class="contract-actions">
         <el-button size="large" round @click="print()" v-if="['TU'].includes(user.team)"><el-icon :size="20"
             style="margin-right: 8px">
             <Printer />
@@ -106,7 +106,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-            }}</el-tag>
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
@@ -118,7 +118,7 @@
             <el-text>{{ totalFormatter(scope.row) }}</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
-            }}</el-text>
+              }}</el-text>
           </el-space>
         </template>
       </el-table-column>
@@ -149,6 +149,7 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
+          <div class="row-actions">
           <el-button v-if="
             statusText(scope.row) != 'Lengkap' &&
             user.position == 'KETUA' &&
@@ -164,13 +165,14 @@
             @click="handleDeleteContract(scope.row._id)">
             Hapus
           </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()" v-if="['TU'].includes(user.team)">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
@@ -186,6 +188,71 @@
   <DialogFormEditContractActivity @close-dialog="handleCloseDialogFormEdit" :contractId="editedContractId"
     :activityId="editedActivityId" :isShow="showDialogFormEdit" />
 </template>
+
+<style scoped>
+.contract-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.period-controls,
+.contract-actions,
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.period-select {
+  width: 240px;
+}
+
+.row-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .contract-toolbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .period-controls,
+  .contract-actions {
+    width: 100%;
+  }
+
+  .period-controls {
+    flex-wrap: wrap;
+  }
+
+  .period-select {
+    flex: 1 1 160px;
+    min-width: 0;
+  }
+
+  .reload-button {
+    flex: 0 0 auto;
+  }
+
+  .contract-actions .el-button {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  .row-actions {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .row-actions .el-button {
+    margin-left: 0;
+  }
+}
+</style>
 
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
@@ -207,6 +274,7 @@ import { ElNotification, type TableInstance } from "element-plus";
 import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
+import { usePagerCount } from "@/utils/pagination";
 import { createInitialFilter } from "@/types/filter";
 import Handlebars, { type HelperOptions } from "handlebars";
 import html2pdf from "html2pdf.js/src";
@@ -228,6 +296,7 @@ const contractsSelected = ref<any[]>([]);
 const periodSelected = ref(route.query.period);
 const expand = ref(false);
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 const filter = ref(initialFilter);
 const total = ref(0);

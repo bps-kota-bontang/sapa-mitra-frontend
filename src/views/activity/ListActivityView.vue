@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="display: flex; justify-content: space-between;">
+    <div class="list-toolbar">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center; gap:10px">
+      <div class="list-toolbar-actions">
         <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
             style="margin-right: 8px">
             <Download />
@@ -68,19 +68,17 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
-            Edit
-          </el-button>
-          <el-button size="small" type="danger" @click="handleDeleteActivity(scope.row._id)">
-            Hapus
-          </el-button>
+          <div class="row-actions">
+            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+            <el-button size="small" type="danger" @click="handleDeleteActivity(scope.row._id)">Hapus</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
         <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
@@ -106,6 +104,7 @@ import { teams, activityCategories } from "@/utils/constant";
 import { createInitialFilter, type Filter } from "@/types/filter";
 import type { Activity } from "@/types/activity";
 import { generateYear } from "@/utils/date";
+import { usePagerCount } from "@/utils/pagination";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -127,6 +126,7 @@ const editedActivityId = ref(null);
 const showDialogFormEdit = ref(false);
 const filter = ref<Filter>(initialFilter);
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 const total = ref(0);
 

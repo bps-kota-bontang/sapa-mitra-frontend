@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="display: flex; justify-content: space-between">
+    <div class="list-toolbar">
       <div style="display: flex; align-items: center"></div>
-      <div style="display: flex; align-items: center; gap:10px">
+      <div class="list-toolbar-actions">
         <el-button type="success" size="large" round @click="downloadTemplate()"><el-icon :size="20"
             style="margin-right: 8px">
             <Download />
@@ -40,19 +40,17 @@
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
-            Edit
-          </el-button>
-          <el-button size="small" type="danger" @click="handleDeletePartner(scope.row._id)">
-            Hapus
-          </el-button>
+          <div class="row-actions">
+            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+            <el-button size="small" type="danger" @click="handleDeletePartner(scope.row._id)">Hapus</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
     <div style="display: flex;  gap: 20px;">
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
-        @current-change="handlePageChange" class="pagination" />
+        :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
@@ -71,6 +69,7 @@ import { BASE_URL } from "@/api/api";
 import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
+import { usePagerCount } from "@/utils/pagination";
 import { createInitialFilter, type Filter } from "@/types/filter";
 
 const router = useRouter();
@@ -92,6 +91,7 @@ const editedPartnerId = ref(null);
 const showDialogFormEdit = ref(false);
 const filter = ref<Filter>(initialFilter);
 const pageSize = ref(10)
+const pagerCount = usePagerCount();
 const currentPage = ref(1);
 
 const total = computed(() => filterPartners.value.length);

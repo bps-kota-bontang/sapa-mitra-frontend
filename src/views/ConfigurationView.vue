@@ -1,14 +1,7 @@
 <template>
-  <div style="display: flex; gap:30px">
-    <el-card style="
-      width: 480px;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-top: 10px;
-      padding-bottom: 5px;
-      border-radius: 30px;
-    ">
-      <el-text style="font-size: 22pt; font-weight: 500">Data Pejabat Pembuat Komitmen</el-text>
+  <div class="configuration-grid">
+    <el-card class="configuration-card">
+      <el-text class="configuration-title">Data Pejabat Pembuat Komitmen</el-text>
       <el-form @submit.prevent style="margin-top: 15px" :rules="rulesPpk" ref="formPpkRef" v-loading="loading"
         :model="formPpk" label-width="auto" label-position="top">
         <el-form-item label="Nama" required prop="name">
@@ -29,15 +22,8 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card style="
-      width: 480px;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-top: 10px;
-      padding-bottom: 5px;
-      border-radius: 30px;
-    ">
-      <el-text style="font-size: 22pt; font-weight: 500">Data Batas Atas Honor</el-text>
+    <el-card class="configuration-card">
+      <el-text class="configuration-title">Data Batas Atas Honor</el-text>
       <el-form @submit.prevent style="margin-top: 15px" :rules="rulesRate" ref="formRateRef" v-loading="loading"
         :model="formRate" label-width="auto" label-position="top">
         <el-form-item label="Pencacahan" required prop="enumeration">
@@ -63,6 +49,38 @@
     </el-card>
   </div>
 </template>
+
+<style scoped>
+.configuration-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 480px));
+  gap: 30px;
+  align-items: start;
+}
+
+.configuration-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px 5px;
+  border-radius: 30px;
+}
+
+.configuration-title {
+  font-size: 22pt;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .configuration-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .configuration-title {
+    font-size: 18pt;
+  }
+}
+</style>
 
 <script lang="ts" setup>
 import { ref, reactive, watch, onMounted } from "vue";

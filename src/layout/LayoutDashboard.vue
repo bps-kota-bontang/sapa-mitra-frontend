@@ -1,8 +1,12 @@
 <template>
   <el-container class="layout-container">
-    <el-aside :width="sidebarCollapsed ? '64px' : '250px'">
+    <el-aside
+      :class="{ 'is-mobile': isMobile, 'is-collapsed': sidebarCollapsed }"
+      :width="sidebarWidth"
+    >
       <Sidebar :collapsed="sidebarCollapsed"></Sidebar>
     </el-aside>
+    <div v-if="isMobile && !sidebarCollapsed" class="sidebar-backdrop" @click="closeSidebar"></div>
     <el-container>
       <el-header height="80px">
         <Header :sidebar-collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar"></Header>
@@ -18,13 +22,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
-const sidebarCollapsed = ref(false);
+const isMobile = ref(typeof window !== "undefined" && window.innerWidth <= 768);
+const sidebarCollapsed = ref(isMobile.value);
+const sidebarWidth = computed(() => {
+  if (isMobile.value) return sidebarCollapsed.value ? "0px" : "250px";
+  return sidebarCollapsed.value ? "64px" : "250px";
+});
 
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value;
 };
+
+const closeSidebar = () => {
+  sidebarCollapsed.value = true;
+};
+
+const handleResize = () => {
+  const mobile = window.innerWidth <= 768;
+  if (mobile !== isMobile.value) {
+    isMobile.value = mobile;
+    sidebarCollapsed.value = mobile;
+  }
+};
+
+onMounted(() => window.addEventListener("resize", handleResize));
+onUnmounted(() => window.removeEventListener("resize", handleResize));
 </script>
 
 <style scoped>
@@ -53,6 +77,15 @@ const toggleSidebar = () => {
   color: var(--el-text-color-primary);
   background: white;
   transition: width 0.2s ease;
+  overflow-x: hidden;
+  z-index: 5;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgb(0 0 0 / 30%);
 }
 
 .layout-container .el-main {
@@ -61,6 +94,30 @@ const toggleSidebar = () => {
   background-color: white;
   margin: 20px;
   position: relative;
+}
+
+@media (max-width: 768px) {
+  .layout-container .el-aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 4px 0 16px rgb(0 0 0 / 12%);
+  }
+
+  .layout-container .el-container {
+    min-width: 0;
+  }
+
+  .layout-container .el-main {
+    margin: 12px;
+    padding: 12px;
+  }
+
+  .layout-container .el-footer {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
 }
 
 </style>
