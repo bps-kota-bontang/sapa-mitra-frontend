@@ -334,7 +334,7 @@ const buildMergedContractPdfBytes = async (payloads: any[]) => {
   for (let i = 0; i < payloads.length; i++) {
     const payload = {
       ...payloads[i],
-      groupedActivities: chunkArray(payloads[i].activities, 3),
+      groupedActivities: chunkArray(payloads[i].activities, 4),
     };
 
     const html = contractTemplateCompiler(payload);
