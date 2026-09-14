@@ -1,11 +1,11 @@
 <template>
-  <div shadow="never" style="border-radius: 10px; margin: 20px">
+  <div class="sidebar-brand" :class="{ collapsed }">
     <div style="  display: flex; align-items: center; gap:10px;  ">
       <IconBPS style="width: 48px; height: 48px;" />
-      <el-text tag="b" size="large">{{ app }}</el-text>
+      <el-text v-if="!collapsed" tag="b" size="large">{{ app }}</el-text>
     </div>
   </div>
-  <el-menu style="border-right: none" :router="true" :default-active="$route.path">
+  <el-menu style="border-right: none" :router="true" :default-active="$route.path" :collapse="collapsed">
     <el-menu-item index="/"><el-icon>
         <House />
       </el-icon>Dasbor</el-menu-item>
@@ -127,11 +127,21 @@ import {
   CircleCheck
 } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
+defineProps<{ collapsed: boolean }>();
 const app = import.meta.env.VITE_APP_TITLE;
 const user = useUserStore();
 </script>
 
 <style>
+.sidebar-brand {
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.sidebar-brand.collapsed {
+  margin: 20px 8px;
+}
+
 .el-menu-item a {
   text-decoration: none;
   color: inherit;

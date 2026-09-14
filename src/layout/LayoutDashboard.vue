@@ -1,11 +1,11 @@
 <template>
   <el-container class="layout-container">
-    <el-aside>
-      <Sidebar></Sidebar>
+    <el-aside :width="sidebarCollapsed ? '64px' : '250px'">
+      <Sidebar :collapsed="sidebarCollapsed"></Sidebar>
     </el-aside>
     <el-container>
-      <el-header style="text-align: right" height="80px">
-        <Header></Header>
+      <el-header height="80px">
+        <Header :sidebar-collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar"></Header>
       </el-header>
       <el-main>
         <RouterView />
@@ -16,6 +16,16 @@
     </el-container>
   </el-container>
 </template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+
+const sidebarCollapsed = ref(false);
+
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value;
+};
+</script>
 
 <style scoped>
 .layout-container {
@@ -42,7 +52,7 @@
 .layout-container .el-aside {
   color: var(--el-text-color-primary);
   background: white;
-  width: 250px
+  transition: width 0.2s ease;
 }
 
 .layout-container .el-main {
@@ -53,11 +63,4 @@
   position: relative;
 }
 
-.layout-container .toolbar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  right: 20px;
-}
 </style>
