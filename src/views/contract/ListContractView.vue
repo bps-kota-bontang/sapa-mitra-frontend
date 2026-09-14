@@ -106,7 +106,7 @@
         <template #default="scope">
           <el-tag :type="statusType(scope.row)" effect="dark">{{
             statusText(scope.row)
-          }}</el-tag>
+            }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
@@ -118,7 +118,7 @@
             <el-text>{{ totalFormatter(scope.row) }}</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">Inkosisten</el-text>
             <el-text v-if="hasErrorTotal(scope.row)" tag="i" type="danger">{{ totalFormatter(scope.row, true)
-              }}</el-text>
+            }}</el-text>
           </el-space>
         </template>
       </el-table-column>
@@ -296,7 +296,7 @@ const toPdfBlob = async (
   const htmlDocument = buildDocumentHtml(styleTags, htmlContent);
 
   const options = {
-    margin: 20,
+    margin: [10, 20, 10, 20] as [number, number, number, number],
     image: { type: "jpeg" as const, quality: 1 },
     html2canvas: {
       scale: Math.min(window.devicePixelRatio || 1, 1.5),
@@ -334,7 +334,7 @@ const buildMergedContractPdfBytes = async (payloads: any[]) => {
   for (let i = 0; i < payloads.length; i++) {
     const payload = {
       ...payloads[i],
-      groupedActivities: chunkArray(payloads[i].activities, 4),
+      groupedActivities: chunkArray(payloads[i].activities, 3),
     };
 
     const html = contractTemplateCompiler(payload);
