@@ -7,12 +7,12 @@
             style="margin-right: 8px">
             <Download />
           </el-icon>Unduh Template</el-button>
-        <el-upload :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
+        <el-upload v-if="canManagePartners" :action="uploadUrl" :limit="1" accept="text/csv" :show-file-list="false" :on-success="handleSuccess"
           :on-error="handleError" :headers="headers">
           <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
               <Upload />
             </el-icon>Upload</el-button></el-upload>
-        <el-button type="primary" size="large" round @click="addPartner()"><el-icon :size="20"
+        <el-button v-if="canManagePartners" type="primary" size="large" round @click="addPartner()"><el-icon :size="20"
             style="margin-right: 8px">
             <Plus />
           </el-icon>Tambah</el-button>
@@ -22,7 +22,7 @@
     <el-table ref="partnersTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
       @filter-change="handleFilterChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
       @selection-change="handleSelection">
-      <el-table-column type="selection" />
+      <el-table-column v-if="canManagePartners" type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable prop="name" />
@@ -35,7 +35,7 @@
       <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
         column-key="year" />
 
-      <el-table-column align="right">
+      <el-table-column v-if="canManagePartners" align="right">
         <template #header>
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
@@ -51,7 +51,7 @@
       <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total"
         :page-sizes="[10, 25, 50, 100, 500, 1000]" v-model:page-size="pageSize" :current-page="currentPage"
         :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
-      <div>
+      <div v-if="canManagePartners">
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
       </div>
@@ -68,6 +68,7 @@ import { getPartners, deletePartner, deletePartners, downloadPartnerTemplate } f
 import { BASE_URL } from "@/api/api";
 import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 import { generateYear } from "@/utils/date";
 import { usePagerCount } from "@/utils/pagination";
 import { createInitialFilter, type Filter } from "@/types/filter";
@@ -75,6 +76,8 @@ import { createInitialFilter, type Filter } from "@/types/filter";
 const router = useRouter();
 const route = useRoute();
 const user = useAuthStore();
+const profile = useUserStore();
+const canManagePartners = computed(() => ["TU", "IPDS"].includes(profile.team));
 
 const headers = ref({
   Authorization: `Bearer ${user.token}`,

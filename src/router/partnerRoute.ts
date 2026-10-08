@@ -8,11 +8,6 @@ const partnerRoutes = [
             layout: 'LayoutDashboard',
             requiresAuth: true
         },
-        beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-            const user = useUserStore();
-            if (!["TU", "IPDS"].includes(user.team)) next({ "name": "unauthorized" })
-            else next();
-        },
         children: [
             {
                 path: '',
@@ -29,6 +24,11 @@ const partnerRoutes = [
                 component: () => import('@/views/partner/AddPartnerView.vue'),
                 meta: {
                     title: "Tambah Mitra"
+                },
+                beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+                    const user = useUserStore();
+                    if (!["TU", "IPDS"].includes(user.team)) next({ name: "unauthorized" });
+                    else next();
                 }
             }
         ]
