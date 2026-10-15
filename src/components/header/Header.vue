@@ -10,6 +10,7 @@
         :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         @click="emit('toggle-sidebar')"
       />
+      <AppBreadcrumb />
     </div>
     <div class="toolbar-user">
       <el-dropdown size="large" @command="handleCommand">
@@ -36,6 +37,7 @@ import { Expand, Fold, Setting } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
+import AppBreadcrumb from "@/components/header/AppBreadcrumb.vue";
 
 defineProps<{ sidebarCollapsed: boolean }>();
 const emit = defineEmits<{ (event: "toggle-sidebar"): void }>();
