@@ -12,6 +12,10 @@
           <el-button size="large" round><el-icon :size="20" style="margin-right: 8px">
               <Upload />
             </el-icon>Unggah</el-button></el-upload>
+        <el-button type="primary" size="large" round @click="addUser()"><el-icon :size="20"
+            style="margin-right: 8px">
+            <Plus />
+          </el-icon>Tambah</el-button>
       </div>
     </div>
 
@@ -28,6 +32,13 @@
         <template #header>
           <el-input v-model="search" size="small" placeholder="Type to search" />
         </template>
+        <template #default="scope">
+          <div class="row-actions">
+            <el-button size="small" @click="handleEdit(scope.row)">Edit</el-button>
+            <el-button size="small" type="danger" :disabled="scope.row._id === profile.id"
+              @click="handleDelete(scope.row)">Hapus</el-button>
+          </div>
+        </template>
       </el-table-column>
     </el-table>
     <div style="display: flex;  gap: 20px;">
@@ -36,14 +47,17 @@
         :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
     </div>
   </div>
+  <DialogFormEditUser @close-dialog="handleCloseDialogFormEdit" :user="editedUser" :isShow="showDialogFormEdit" />
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from "vue";
-import { downloadUserTemplate, getUsers } from "@/api/userApi";
-import { Upload, Download } from "@element-plus/icons-vue";
-import { ElNotification, type TableInstance } from "element-plus";
+import { downloadUserTemplate, getUsers, deleteUser } from "@/api/userApi";
+import { Upload, Download, Plus } from "@element-plus/icons-vue";
+import { ElMessageBox, ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
+import DialogFormEditUser from "@/components/user/DialogFormEditUser.vue";
 import { useRouter } from "vue-router";
 import { BASE_URL } from "@/api/api";
 import { usePagerCount } from "@/utils/pagination";
@@ -56,6 +70,9 @@ const error = ref("");
 
 const router = useRouter();
 const auth = useAuthStore();
+const profile = useUserStore();
+const editedUser = ref<any | null>(null);
+const showDialogFormEdit = ref(false);
 const headers = ref({
   Authorization: `Bearer ${auth.token}`,
 });
@@ -74,6 +91,38 @@ const paginatedData = computed(() => {
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
+};
+
+const addUser = () => {
+  router.push({ name: "addUser" });
+};
+
+const handleEdit = (row: any) => {
+  editedUser.value = row;
+  showDialogFormEdit.value = true;
+};
+
+const handleCloseDialogFormEdit = async (refetch: boolean = false) => {
+  editedUser.value = null;
+  showDialogFormEdit.value = false;
+  if (refetch) await fetchData();
+};
+
+const handleDelete = async (row: any) => {
+  try {
+    await ElMessageBox.confirm(`Hapus pengguna "${row.name}"?`, "Konfirmasi", {
+      type: "warning",
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal",
+    });
+  } catch {
+    return;
+  }
+
+  executeOperation(async () => {
+    const { message } = await deleteUser(row._id);
+    ElNotification({ title: "Success", message, type: "success" });
+  });
 };
 
 const teamFormatter = (row: any) => {

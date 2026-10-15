@@ -56,6 +56,33 @@ export const updatePassword = async (payload: any) => {
   return result;
 };
 
+const jsonRequest = async (path: string, method: string, payload?: any) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(`${BASE_URL}/v1/users${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+    body: payload ? JSON.stringify(payload) : undefined,
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};
+
+export const createUser = (payload: any) => jsonRequest("", "POST", payload);
+
+export const updateUser = (id: string, payload: any) =>
+  jsonRequest(`/${id}`, "PUT", payload);
+
+export const deleteUser = (id: string) => jsonRequest(`/${id}`, "DELETE");
+
 export const downloadUserTemplate = async () => {
   const auth = useAuthStore();
 

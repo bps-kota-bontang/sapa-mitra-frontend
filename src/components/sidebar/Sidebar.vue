@@ -71,9 +71,15 @@
         <Key />
       </el-icon><span>Kunci</span>
     </el-menu-item>
-    <el-menu-item index="/pengguna" v-if="['TU', 'IPDS'].includes(user.team)"><el-icon>
-        <User />
-      </el-icon><span>Pengguna</span></el-menu-item>
+    <el-sub-menu index="8" v-if="['TU', 'IPDS'].includes(user.team)">
+      <template #title>
+        <el-icon>
+          <User />
+        </el-icon><span>Pengguna</span>
+      </template>
+      <el-menu-item index="/pengguna">Daftar Pengguna</el-menu-item>
+      <el-menu-item index="/pengguna/tambah">Tambah Pengguna</el-menu-item>
+    </el-sub-menu>
     <el-menu-item index="/konfigurasi" v-if="['TU'].includes(user.team)">
       <el-icon>
         <Setting />
