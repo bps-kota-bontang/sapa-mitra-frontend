@@ -1,7 +1,13 @@
 <template>
   <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
+    <el-form-item required label="Tahun" prop="year">
+      <el-select v-model="form.year" placeholder="Pilih Tahun" @change="form.activity.activityId = ''">
+        <el-option v-for="item in years" :key="item.value" :label="item.text" :value="item.value" />
+      </el-select>
+    </el-form-item>
     <el-form-item required prop="activity.activityId" label="Nama Kegiatan">
-      <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
+      <el-select v-model="form.activity.activityId" :disabled="!form.year" placeholder="Pilih Nama Kegiatan" clearable
+        filterable>
         <el-option v-for="activity in activities" :key="activity._id" :label="activity.name" :value="activity._id" />
       </el-select>
     </el-form-item>
@@ -10,9 +16,6 @@
     </el-form-item>
     <el-form-item required label="Satuan" prop="unit">
       <el-input v-model="form.unit" placeholder="Masukkan Satuan Output" />
-    </el-form-item>
-    <el-form-item required label="Tahun" prop="year">
-      <el-input v-model="form.year" placeholder="Masukkan Tahun Output"  />
     </el-form-item>
 
     <el-form-item required style="margin-top: 20px">
@@ -23,11 +26,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, watch } from "vue";
 import { createOutput } from "@/api/outputApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getActivities } from "@/api/activityApi";
+import { generateYear } from "@/utils/date";
 
+const years = generateYear();
 const formRef = ref<FormInstance>();
 
 const rules = reactive<FormRules<any>>({
@@ -55,8 +60,8 @@ const rules = reactive<FormRules<any>>({
   year: [
     {
       required: true,
-      message: "Tahun output perlu terisi",
-      trigger: "blur",
+      message: "Tahun output perlu dipilih",
+      trigger: "change",
     },
   ],
 });
@@ -132,7 +137,10 @@ watch(
   },
   { immediate: true }
 );
-onMounted(async () => {
-  activities.value = await getActivities();
-});
+watch(
+  () => form.year,
+  async (year) => {
+    activities.value = year ? await getActivities(year) : [];
+  }
+);
 </script>

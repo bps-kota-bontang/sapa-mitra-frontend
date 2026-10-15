@@ -1,8 +1,14 @@
 <template>
     <el-dialog v-model="props.isShow" title="Ubah Output" width="500" :before-close="handleClose">
         <el-form :model="form" ref="formRef" label-width="auto" label-position="top" :rules="rules" v-loading="loading">
+            <el-form-item required label="Tahun Kegiatan" prop="year">
+                <el-select v-model="form.year" placeholder="Pilih Tahun" @change="form.activity.activityId = ''">
+                    <el-option v-for="item in years" :key="item.value" :label="item.text" :value="item.value" />
+                </el-select>
+            </el-form-item>
             <el-form-item required prop="activity.activityId" label="Nama Kegiatan">
-                <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
+                <el-select v-model="form.activity.activityId" :disabled="!form.year" placeholder="Pilih Nama Kegiatan"
+                    clearable filterable>
                     <el-option v-for="activity in activities" :key="activity._id" :label="activity.name"
                         :value="activity._id" />
                 </el-select>
@@ -12,9 +18,6 @@
             </el-form-item>
             <el-form-item required label="Satuan Output" prop="unit">
                 <el-input v-model="form.unit" placeholder="Masukkan Satuan Output" />
-            </el-form-item>
-            <el-form-item required label="Tahun Kegiatan" prop="year">
-                <el-input v-model="form.year" placeholder="Masukkan Tahun Output" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -29,10 +32,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { getOutput, updateOutput } from "@/api/outputApi";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { getActivities } from "@/api/activityApi";
+import { generateYear } from "@/utils/date";
 
 const initialState = {
     activity: {
@@ -68,8 +72,8 @@ const rules = reactive<FormRules<any>>({
     year: [
         {
             required: true,
-            message: "Tahun Output perlu terisi",
-            trigger: "blur",
+            message: "Tahun Output perlu dipilih",
+            trigger: "change",
         },
     ],
 });
@@ -83,6 +87,16 @@ const feedback = ref({
 });
 const emit = defineEmits(['closeDialog'])
 const activities = ref<any[]>([]);
+
+const years = computed(() => {
+    const list = generateYear();
+    const current = String(form.year);
+    // Output lama bisa bertahun di luar rentang opsi.
+    if (current && !list.some((item) => item.value === current)) {
+        list.push({ value: current, text: current });
+    }
+    return list;
+});
 
 const props: any = defineProps({
     id: String,
@@ -134,9 +148,15 @@ watch(() => props.id, async (newId) => {
         form.activity.activityId = data.activity._id;
         form.name = data.name;
         form.unit = data.unit;
-        form.year = data.year;
+        form.year = String(data.year);
+        activities.value = await getActivities(form.year);
     }
 }, { immediate: true });
+
+watch(() => form.year, async (year, oldYear) => {
+    // Pemuatan awal ditangani watcher id.
+    if (year && oldYear) activities.value = await getActivities(year);
+});
 
 watch(
     () => feedback.value,
@@ -151,8 +171,4 @@ watch(
     },
     { immediate: true }
 );
-onMounted(async () => {
-    activities.value = await getActivities();
-});
-
 </script>
