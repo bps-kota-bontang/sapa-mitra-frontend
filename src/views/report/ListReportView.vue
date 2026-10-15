@@ -23,6 +23,7 @@
 
     <el-divider />
     <el-table :default-expand-all="expand" ref="reportsTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
+      @filter-change="handleFilterChange" @sort-change="handleSortChange"
       style="width: 100%; flex: 1; margin-bottom: 20px;" @selection-change="handleSelection">
       <el-table-column type="selection" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
@@ -47,12 +48,11 @@
       </el-table-column>
 
       <el-table-column prop="index" width="50" label="No" />
-      <el-table-column label="Nama" sortable prop="partner.name" />
+      <el-table-column label="Nama" sortable="custom" prop="partner.name" />
       <el-table-column label="No BAST" prop="number" />
-      <el-table-column label="Periode" sortable prop="contract.period" :filters="periods"
-        :filter-method="filterPeriod" />
+      <el-table-column label="Periode" sortable="custom" prop="contract.period" column-key="period" :filters="periods" />
 
-      <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
+      <el-table-column label="Tim" :filters="teams" column-key="team">
         <template #default="scope">
           <el-tag v-if="!teamFormatter(scope.row).includes('-')" style="margin-right: 5px" type="primary"
             v-for="item in teamFormatter(scope.row)" effect="dark" :key="item">{{ item }}</el-tag>
@@ -60,7 +60,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Output" sortable :sort-by="sortOutput" :formatter="outputFormatter" />
+      <el-table-column label="Output" sortable="custom" column-key="outputs" :formatter="outputFormatter" />
 
       <el-table-column align="right">
         <template #header>
@@ -101,6 +101,7 @@ import { useUserStore } from "@/stores/user";
 import { ElNotification, type TableInstance } from "element-plus";
 import { generatePeriods } from "@/utils/date";
 import { usePagerCount } from "@/utils/pagination";
+import { createSortState, sortRows, toSortState } from "@/utils/sort";
 import { teams } from "@/utils/constant";
 import reportTemplate from "@/templates/report.html?raw";
 import Handlebars from "handlebars";
@@ -128,19 +129,46 @@ const total = computed(() => filterReports.value.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filterReports.value.slice(start, end);
+  return sortRows(filterReports.value, sortState.value, {
+    "partner.name": (r: any) => r.partner.name,
+    period: (r: any) => r.contract.period,
+    outputs: (r: any) => r.outputs.length,
+  }).slice(start, end);
 });
+
+const sortState = ref(createSortState());
+
+const handleSortChange = (e: any) => {
+  sortState.value = toSortState(e);
+  currentPage.value = 1;
+};
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
 };
 
+const columnFilter = ref<{ period?: string[]; team?: string[] }>({});
+
 const filterReports = computed(() => {
   return reports.value.filter(
     (data: any) =>
-      !search.value ||
-      data.partner.name.toLowerCase().includes(search.value.toLowerCase())
+      (!search.value ||
+        data.partner.name.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!columnFilter.value.period?.length ||
+        columnFilter.value.period.includes(data.contract.period)) &&
+      (!columnFilter.value.team?.length ||
+        data.outputs.some((item: any) => columnFilter.value.team?.includes(item.activity.team)))
   );
+});
+
+const handleFilterChange = (newFilters: any) => {
+  if (newFilters.period) columnFilter.value.period = newFilters.period;
+  if (newFilters.team) columnFilter.value.team = newFilters.team;
+  currentPage.value = 1;
+};
+
+watch(search, () => {
+  currentPage.value = 1;
 });
 
 
@@ -240,7 +268,11 @@ const print = () => {
 
 const clearFilter = () => {
   reportsTableRef.value!.clearFilter();
+  reportsTableRef.value!.clearSort();
+  sortState.value = createSortState();
   search.value = ""
+  columnFilter.value = {};
+  currentPage.value = 1;
   periodSelected.value = null;
 };
 
@@ -261,16 +293,6 @@ const expandData = () => {
     });
   }
 
-};
-
-const filterPeriod = (value: string, row: any) => {
-  return row.contract.period === value;
-};
-
-const filterTeam = (value: string, row: any) => {
-  const teams = row.outputs.map((item: any) => item.activity.team);
-
-  return [...new Set(teams)].includes(value);
 };
 
 const teamFormatter = (row: any): any[] => {

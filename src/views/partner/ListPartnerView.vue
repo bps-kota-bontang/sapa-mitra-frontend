@@ -20,20 +20,19 @@
     </div>
     <el-divider />
     <el-table ref="partnersTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
-      @filter-change="handleFilterChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
+      @filter-change="handleFilterChange" @sort-change="handleSortChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
       @selection-change="handleSelection">
       <el-table-column v-if="canManagePartners" type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
-      <el-table-column label="Nama" sortable prop="name" />
+      <el-table-column label="Nama" sortable="custom" prop="name" />
       <el-table-column label="NIK" prop="nik" />
       <el-table-column label="Alamat" prop="address" />
       <el-table-column label="Nomor Rekening" prop="accountNumber" :filters="[
         { text: 'Ada', value: true },
         { text: 'Tidak Ada', value: false },
-      ]" :filter-method="filterAccountNumber" />
-      <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
-        column-key="year" />
+      ]" column-key="accountNumber" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" column-key="year" />
 
       <el-table-column v-if="canManagePartners" align="right">
         <template #header>
@@ -53,6 +52,7 @@
         :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div v-if="canManagePartners">
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+        <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
       </div>
     </div>
@@ -71,6 +71,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import { generateYear } from "@/utils/date";
 import { usePagerCount } from "@/utils/pagination";
+import { createSortState, sortRows, toSortState } from "@/utils/sort";
 import { createInitialFilter, type Filter } from "@/types/filter";
 
 const router = useRouter();
@@ -102,8 +103,17 @@ const total = computed(() => filterPartners.value.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filterPartners.value.slice(start, end);
+  return sortRows(filterPartners.value, sortState.value, {
+    name: (r: any) => r.name,
+  }).slice(start, end);
 });
+
+const sortState = ref(createSortState());
+
+const handleSortChange = (e: any) => {
+  sortState.value = toSortState(e);
+  currentPage.value = 1;
+};
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
@@ -134,11 +144,18 @@ const handleSuccess = async (
 };
 
 const filterPartners = computed(() => {
-  return partners.value.filter(
-    (data: any) =>
-      !search.value ||
-      data.name.toLowerCase().includes(search.value.toLowerCase())
-  );
+  return partners.value.filter((data: any) => {
+    const hasAccount = !!data.accountNumber && data.accountNumber.trim() !== "";
+    return (
+      (!search.value || data.name.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!filter.value.year?.length || filter.value.year.includes(data.year)) &&
+      (!filter.value.accountNumber?.length || filter.value.accountNumber.includes(hasAccount))
+    );
+  });
+});
+
+watch(search, () => {
+  currentPage.value = 1;
 });
 
 const downloadTemplate = () => {
@@ -152,23 +169,10 @@ const handleSelection = (value: any[]) => {
 };
 
 const handleFilterChange = (newFilters: any) => {
-  if (newFilters.year) {
-    filter.value.year = newFilters.year
-  }
+  if (newFilters.year) filter.value.year = newFilters.year
+  if (newFilters.accountNumber) filter.value.accountNumber = newFilters.accountNumber
+  currentPage.value = 1
 }
-
-const filterYear = (value: string, row: any) => {
-  return row.year == value
-};
-
-const filterAccountNumber = (value: boolean, row: any) => {
-  console.log(value, row);
-  if (value) {
-    return row.accountNumber && row.accountNumber.trim() !== "";
-  } else {
-    return !row.accountNumber || row.accountNumber.trim() === "";
-  }
-};
 
 const deleteSelection = () => {
   executeOperation(() => deletePartners(partnersSelected.value));
@@ -176,6 +180,15 @@ const deleteSelection = () => {
 
 const clearSelection = () => {
   partnersTableRef.value!.clearSelection();
+};
+
+const clearFilter = () => {
+  partnersTableRef.value!.clearFilter();
+  partnersTableRef.value!.clearSort();
+  sortState.value = createSortState();
+  search.value = "";
+  filter.value = { year: [], accountNumber: [] };
+  currentPage.value = 1;
 };
 
 const addPartner = () => {

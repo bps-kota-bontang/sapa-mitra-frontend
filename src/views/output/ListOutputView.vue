@@ -20,18 +20,17 @@
 
     <el-divider />
     <el-table ref="outputsTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
-      @filter-change="handleFilterChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
+      @filter-change="handleFilterChange" @sort-change="handleSortChange" style="width: 100%; flex: 1; margin-bottom: 20px;"
       @selection-change="handleSelection">
 
       <el-table-column type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
-      <el-table-column label="Nama Kegiatan" sortable prop="activity.name" />
-      <el-table-column label="Nama" sortable prop="name" />
+      <el-table-column label="Nama Kegiatan" sortable="custom" prop="activity.name" />
+      <el-table-column label="Nama" sortable="custom" prop="name" />
       <el-table-column label="Satuan" prop="unit" />
-      <el-table-column label="Tim" prop="activity.team" :filters="teams" :filter-method="filterTeam" column-key="team" />
-      <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
-        column-key="year" />
+      <el-table-column label="Tim" prop="activity.team" :filters="teams" column-key="team" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" column-key="year" />
 
       <el-table-column align="right">
         <template #header>
@@ -51,6 +50,7 @@
         :pager-count="pagerCount" @current-change="handlePageChange" class="pagination" />
       <div>
         <el-button @click="clearSelection()">Bersihkan Pilihan</el-button>
+        <el-button @click="clearFilter()">Setel Ulang Penyaringan</el-button>
         <el-button @click="downloadSelection()" type="success">Unduh</el-button>
         <el-button @click="deleteSelection()" type="danger">Hapus</el-button>
       </div>
@@ -69,6 +69,7 @@ import { ElNotification, type TableInstance } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import { generateYear } from "@/utils/date";
 import { usePagerCount } from "@/utils/pagination";
+import { createSortState, sortRows, toSortState } from "@/utils/sort";
 import { teams } from "@/utils/constant";
 import { createInitialFilter, type Filter } from "@/types/filter";
 
@@ -98,8 +99,18 @@ const total = computed(() => filterOutputs.value.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filterOutputs.value.slice(start, end);
+  return sortRows(filterOutputs.value, sortState.value, {
+    "activity.name": (r: any) => r.activity.name,
+    name: (r: any) => r.name,
+  }).slice(start, end);
 });
+
+const sortState = ref(createSortState());
+
+const handleSortChange = (e: any) => {
+  sortState.value = toSortState(e);
+  currentPage.value = 1;
+};
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
@@ -136,9 +147,15 @@ const handleSuccess = async (
 const filterOutputs = computed(() => {
   return outputs.value.filter(
     (data: any) =>
-      !search.value ||
-      data.name.toLowerCase().includes(search.value.toLowerCase())
+      (!search.value ||
+        data.name.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!filter.value.team?.length || filter.value.team.includes(data.activity.team)) &&
+      (!filter.value.year?.length || filter.value.year.includes(data.year))
   );
+});
+
+watch(search, () => {
+  currentPage.value = 1;
 });
 
 const handleSelection = (value: any[]) => {
@@ -148,18 +165,10 @@ const handleSelection = (value: any[]) => {
 };
 
 const handleFilterChange = (newFilters: any) => {
-  if (newFilters.year) {
-    filter.value.year = newFilters.year
-  }
+  if (newFilters.year) filter.value.year = newFilters.year
+  if (newFilters.team) filter.value.team = newFilters.team
+  currentPage.value = 1
 }
-
-const filterTeam = (value: string, row: any) => {
-  return row.activity.team == value
-};
-
-const filterYear = (value: string, row: any) => {
-  return row.year == value
-};
 
 const downloadSelection = () => {
   executeOperation(() => downloadOutputs(outputsSelected.value));
@@ -171,6 +180,15 @@ const deleteSelection = () => {
 
 const clearSelection = () => {
   outputsTableRef.value!.clearSelection();
+};
+
+const clearFilter = () => {
+  outputsTableRef.value!.clearFilter();
+  outputsTableRef.value!.clearSort();
+  sortState.value = createSortState();
+  search.value = "";
+  filter.value = { year: [], team: [] };
+  currentPage.value = 1;
 };
 
 const addOutput = () => {

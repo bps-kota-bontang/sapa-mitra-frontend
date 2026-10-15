@@ -25,7 +25,7 @@
     <el-divider />
     <el-table :default-expand-all="expand" ref="contractsTableRef" v-loading="loading" :row-class-name="contractStatus"
       :data="paginatedData" row-key="_id" style="width: 100%; flex: 1; margin-bottom: 20px;"
-      @filter-change="handleFilterChange" @selection-change="handleSelection">
+      @filter-change="handleFilterChange" @sort-change="handleSortChange" @selection-change="handleSelection">
       <el-table-column type="selection" :selectable="isSelecetable" v-if="['TU'].includes(user.team)" />
       <el-table-column type="expand">
         <template #default="props">
@@ -84,11 +84,11 @@
       </el-table-column>
 
       <el-table-column prop="index" width="50" label="No" />
-      <el-table-column label="Nama" sortable prop="partner.name" />
+      <el-table-column label="Nama" sortable="custom" prop="partner.name" />
       <el-table-column label="No SPK" prop="number" />
-      <el-table-column label="Periode" sortable prop="period" column-key="period" :filters="periods"
+      <el-table-column label="Periode" sortable="custom" prop="period" column-key="period" :filters="periods"
         :filter-method="filterPeriod" />
-      <el-table-column label="Kegiatan" sortable :sort-by="sortActivity" :formatter="activityFormatter"
+      <el-table-column label="Kegiatan" sortable="custom" :formatter="activityFormatter"
         column-key="activityIds" :filters="activities" :filter-method="filterActivity" />
       <el-table-column label="Tim" :filters="teams" :filter-method="filterTeam" column-key="team">
         <template #default="scope">
@@ -98,7 +98,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column sortable :sort-by="sortStatus" column-key="status" label="Verifikasi" :filters="[
+      <el-table-column sortable="custom" column-key="status" label="Verifikasi" :filters="[
         { text: 'Lengkap', value: 'Lengkap' },
         { text: 'Sebagian', value: 'Sebagian' },
         { text: 'Belum', value: 'Belum' },
@@ -109,7 +109,7 @@
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column sortable :sort-by="sortTotal" label="Total" :filters="[
+      <el-table-column sortable="custom" label="Total" :filters="[
         { text: 'Konsisten', value: false },
         { text: 'Inkonsisten', value: true },
       ]" column-key="total">
@@ -130,7 +130,7 @@
           <el-tag effect="dark">{{ scope.row.hasSpecial ? 'Ada' : 'Tidak Ada' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Batas" column-key="safe" prop="isExceeded" :filters="[
+      <el-table-column sortable="custom" label="Batas" column-key="safe" prop="isExceeded" :filters="[
         { text: 'Aman', value: true },
         { text: 'Tidak Aman', value: false },
       ]" :filter-method="filterSafe">
@@ -143,7 +143,7 @@
             }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Batas Atas" prop="limit" :formatter="limitFormatter" />
+      <el-table-column sortable="custom" label="Batas Atas" column-key="limit" prop="limit" :formatter="limitFormatter" />
       <el-table-column align="right">
         <template #header>
           <el-input v-model="search" size="small" placeholder="Type to search" />
@@ -275,6 +275,7 @@ import { teams } from "@/utils/constant";
 import { formatCurrency } from "@/utils/currency";
 import type { Contract } from "@/types/contract";
 import { usePagerCount } from "@/utils/pagination";
+import { createSortState, sortRows, toSortState } from "@/utils/sort";
 import { createInitialFilter } from "@/types/filter";
 import Handlebars, { type HelperOptions } from "handlebars";
 import html2pdf from "html2pdf.js/src";
@@ -517,8 +518,23 @@ const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
 
-  return paginatedData.slice(start, end);
+  return sortRows(paginatedData, sortState.value, {
+    "partner.name": (r: any) => r.partner.name,
+    period: (r: any) => r.period,
+    activityIds: (r: any) => sortActivity(r, 0),
+    status: (r: any) => sortStatus(r, 0),
+    total: (r: any) => sortTotal(r, 0),
+    safe: (r: any) => r.isExceeded,
+    limit: (r: any) => r.limit,
+  }).slice(start, end);
 });
+
+const sortState = ref(createSortState());
+
+const handleSortChange = (e: any) => {
+  sortState.value = toSortState(e);
+  currentPage.value = 1;
+};
 
 const filterActivities = (activity: any) => {
   const matchActivity = !filter.value.activityIds || filter.value.activityIds.includes(activity._id);
@@ -554,7 +570,13 @@ const handleFilterChange = (newFilters: any) => {
   if (newFilters.activityIds) {
     filter.value.activityIds = newFilters.activityIds
   }
+
+  currentPage.value = 1
 }
+
+watch(search, () => {
+  currentPage.value = 1;
+});
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
@@ -647,6 +669,9 @@ const handleEditContract = (id: string) => {
 
 const clearFilter = () => {
   contractsTableRef.value!.clearFilter();
+  contractsTableRef.value!.clearSort();
+  sortState.value = createSortState();
+  currentPage.value = 1;
   search.value = ""
   periodSelected.value = null;
   filter.value = {
@@ -655,7 +680,8 @@ const clearFilter = () => {
     period: [],
     status: [],
     safe: [],
-    total: []
+    total: [],
+    hasSpecial: []
   }
 };
 

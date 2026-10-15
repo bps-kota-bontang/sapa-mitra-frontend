@@ -22,19 +22,19 @@
     <el-divider />
     <el-table ref="activitiesTableRef" v-loading="loading" :data="paginatedData" row-key="_id"
       style="width: 100%; flex: 1; margin-bottom: 20px;" @filter-change="handleFilterChange"
+      @sort-change="handleSortChange"
       @selection-change="handleSelection">
 
       <el-table-column type="selection" />
 
       <el-table-column prop="index" width="50" label="No" />
-      <el-table-column label="Nama" sortable prop="name" />
+      <el-table-column label="Nama" sortable="custom" prop="name" />
       <el-table-column label="Kode Kegiatan" prop="code" />
       <el-table-column label="Unit" prop="unit" />
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
-        :filter-method="filterCategory" column-key="category" />
-      <el-table-column label="Tim" prop="team" :filters="teams" :filter-method="filterTeam" column-key="team" />
-      <el-table-column label="Tahun" prop="year" :filters="generateYear()" :filter-method="filterYear"
-        column-key="year" />
+        column-key="category" />
+      <el-table-column label="Tim" prop="team" :filters="teams" column-key="team" />
+      <el-table-column label="Tahun" prop="year" :filters="generateYear()" column-key="year" />
       <el-table-column label="POK" prop="pok" :filters="[
         {
           text: 'Lengkap',
@@ -44,7 +44,7 @@
           text: 'Belum Lengkap',
           value: false
         }
-      ]" :filter-method="filterPok" column-key="pok">
+      ]" column-key="pok">
         <template #default="scope">
           <div v-if="scope.row.pok">
             <el-tag effect="dark">Lengkap</el-tag>
@@ -57,7 +57,7 @@
       <el-table-column align="center" label="Status" prop="isSpecial" :filters="[
         { text: 'Khusus', value: true },
         { text: 'Biasa', value: false },
-      ]" :filter-method="filterIsSpecial" column-key="isSpecial">
+      ]" column-key="isSpecial">
         <template #default="scope">
           <el-tag effect="dark">{{ scope.row.isSpecial ? "Khusus" : "Biasa" }}</el-tag>
         </template>
@@ -105,6 +105,7 @@ import { createInitialFilter, type Filter } from "@/types/filter";
 import type { Activity } from "@/types/activity";
 import { generateYear } from "@/utils/date";
 import { usePagerCount } from "@/utils/pagination";
+import { createSortState, sortRows, toSortState } from "@/utils/sort";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -159,11 +160,28 @@ const paginatedData = computed(() => {
     );
   }
 
+  if (filter.value.year?.length) {
+    paginatedData = paginatedData.filter((item: any) => filter.value.year?.includes(item.year));
+  }
+
+  if (filter.value.pok?.length) {
+    paginatedData = paginatedData.filter((item: any) => filter.value.pok?.includes(Boolean((item as any).pok)));
+  }
+
   total.value = paginatedData.length
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return paginatedData.slice(start, end);
+  return sortRows(paginatedData, sortState.value, {
+    name: (r: any) => r.name,
+  }).slice(start, end);
 });
+
+const sortState = ref(createSortState());
+
+const handleSortChange = (e: any) => {
+  sortState.value = toSortState(e);
+  currentPage.value = 1;
+};
 
 const handlePageChange = (page: number) => {
   currentPage.value = page;
@@ -171,11 +189,17 @@ const handlePageChange = (page: number) => {
 
 const clearFilter = () => {
   activitiesTableRef.value!.clearFilter();
+  activitiesTableRef.value!.clearSort();
+  sortState.value = createSortState();
   search.value = ""
   filter.value = {
     team: [],
-    category: []
+    category: [],
+    isSpecial: [],
+    year: [],
+    pok: []
   }
+  currentPage.value = 1
 };
 
 const handleFilterChange = (newFilters: any) => {
@@ -194,27 +218,17 @@ const handleFilterChange = (newFilters: any) => {
   if (newFilters.year) {
     filter.value.year = newFilters.year
   }
+
+  if (newFilters.pok) {
+    filter.value.pok = newFilters.pok
+  }
+
+  currentPage.value = 1
 }
 
-const filterTeam = (value: string, row: any) => {
-  return row.team == value
-};
-
-const filterIsSpecial = (value: boolean, row: any) => {
-  return row.isSpecial == value
-};
-
-const filterCategory = (value: string, row: any) => {
-  return row.category == value
-};
-
-const filterYear = (value: string, row: any) => {
-  return row.year == value
-};
-
-const filterPok = (value: boolean, row: any) => {
-  return Boolean(row.pok) == value
-};
+watch(search, () => {
+  currentPage.value = 1;
+});
 
 const categoryFormatter = (row: any) => {
   if (row.category == "ENUMERATION") return "Pencacahan";

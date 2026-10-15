@@ -9,6 +9,8 @@ export type Filter = {
   hasSpecial?: boolean[];
   total?: boolean[];
   year?: string[];
+  pok?: boolean[];
+  accountNumber?: boolean[];
 };
 
 type FilterType = "activity" | "contract" | "output" | "partner";
