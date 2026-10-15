@@ -56,6 +56,8 @@
 
       <template #footer>
         <div style="gap:10px; display: flex;">
+          <el-button type="warning" :disabled="!form.activity.activityId || !form.contract.period"
+            @click="syncContract()">Sinkronisasi Data SPK</el-button>
           <el-button type="primary" @click="addPartner">Tambah Mitra</el-button>
           <el-upload ref="fileInput" :limit="1" :show-file-list="false" action="#" accept="text/csv"
             :auto-upload="false" :on-change="handleFileChange">
@@ -69,7 +71,7 @@
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
-      <el-button @click="submit(formRef)" type="primary">Buat</el-button>
+      <el-button @click="submit(formRef)" type="primary">{{ isSynced ? 'Perbarui' : 'Buat' }}</el-button>
       <el-button @click="reset(formRef)">Bersihkan</el-button>
     </el-form-item>
   </el-form>
@@ -80,7 +82,7 @@ import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
 import { formatDateOriginal, formatPeriodDate, generatePeriods } from "@/utils/date";
-import { createContract, downloadTemplatePartner } from "@/api/contractApi";
+import { createContract, downloadTemplatePartner, getContractActivityDetail } from "@/api/contractApi";
 import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
 import { getActivities } from "@/api/activityApi";
 import { getPartners, downloadPartners } from "@/api/partnerApi";
@@ -158,7 +160,15 @@ const initialState = {
 const activities = ref<any[]>([]);
 const partners = ref<any[]>([]);
 const loading = ref(false);
+const isSynced = ref(false);
 const form = reactive({ ...initialState });
+
+watch(
+  () => [form.activity.activityId, form.contract.period],
+  () => {
+    isSynced.value = false;
+  }
+);
 
 const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -248,6 +258,48 @@ const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles
 
   fileInput.value?.clearFiles()
 }
+
+const syncContract = async () => {
+  loading.value = true;
+
+  try {
+    const data = await getContractActivityDetail(form.activity.activityId, form.contract.period);
+
+    form.activity.startDate = data.activity.startDate;
+    form.activity.endDate = data.activity.endDate;
+    form.activity.rate = String(data.activity.rate);
+    form.activity.hasTelecom = String(data.activity.hasTelecom) as any;
+    form.partners = data.partners.map((item: any) => ({
+      partnerId: item.partnerId,
+      volume: String(item.volume),
+    }));
+    isSynced.value = true;
+
+    showNotification("Success", "Data SPK berhasil disinkronkan, silakan ubah lalu simpan", "success");
+
+    if (!data.consistent) {
+      ElNotification({
+        title: "Warning",
+        message: "Rate, tanggal, atau paket data berbeda antar mitra. Nilai mitra pertama dipakai dan akan diterapkan ke semua mitra.",
+        type: "warning",
+        duration: 0,
+      });
+    }
+
+    if (data.partners.some((item: any) => item.status === "VERIFIED")) {
+      ElNotification({
+        title: "Warning",
+        message: "Sebagian SPK sudah diverifikasi; menyimpan perubahan akan mengembalikan statusnya menjadi belum diverifikasi.",
+        type: "warning",
+        duration: 0,
+      });
+    }
+  } catch (e) {
+    if (e instanceof Error) showNotification("Error", e.message, "error");
+  } finally {
+    loading.value = false;
+  }
+};
 
 const removePartner = (index: number) => {
   form.partners.splice(index, 1);

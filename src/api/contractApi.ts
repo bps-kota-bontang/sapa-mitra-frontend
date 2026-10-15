@@ -68,6 +68,31 @@ export const getContractStatistic = async (year: string = "") => {
   return result.data;
 };
 
+export const getContractActivityDetail = async (
+  activityId: string,
+  period: string
+) => {
+  const auth = useAuthStore();
+
+  const response = await fetch(
+    `${BASE_URL}/v1/contracts/activity/detail?` +
+      new URLSearchParams({ activityId, period }),
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
+
 export const getContractActivityVolume = async (
   outputId: string,
   period: string
