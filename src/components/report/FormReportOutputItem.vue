@@ -1,12 +1,21 @@
 <template>
   <el-card shadow="never" style="width: 350px">
+    <el-form-item required label="Kegiatan">
+      <el-select v-model="props.output.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable
+        @change="props.output.outputId = ''">
+        <el-option v-for="activity in activityOptions" :key="activity._id" :label="activity.name"
+          :value="activity._id" />
+      </el-select>
+    </el-form-item>
+
     <el-form-item required :prop="getProp('outputId')" label="Output" :rules="{
       required: true,
       message: 'Nama Output perlu terisi',
       trigger: 'change',
     }">
-      <el-select v-model="props.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
-        <el-option v-for="output in props.outputs" :key="output._id" :label="output.name" :value="output._id" >
+      <el-select v-model="props.output.outputId" :disabled="!props.output.activityId" placeholder="Pilih Nama Output"
+        clearable filterable>
+        <el-option v-for="output in filteredOutputs" :key="output._id" :label="output.name" :value="output._id" >
           <span style="float: left">{{ output.name }}</span>
           <span
             style="
@@ -15,7 +24,7 @@
               font-size: 13px;
             "
           >
-            {{ output.activity.name }}
+            {{ output.unit }}
           </span>
         </el-option>
       </el-select>
@@ -37,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, toRefs } from "vue";
+import { ref, onMounted, toRefs, computed } from "vue";
 import { getOutputs } from "@/api/outputApi";
 import { formatNumber, formatParserNumber } from "@/utils/currency";
 
@@ -50,4 +59,19 @@ const props: any = defineProps({
 const getProp = (key: string) => {
   return `outputs[${props.index}].${key}`;
 };
+
+// Kegiatan diturunkan dari output agar hanya kegiatan yang punya output yang tampil.
+const activityOptions = computed(() => {
+  const map = new Map<string, any>();
+
+  (props.outputs ?? []).forEach((output: any) => {
+    map.set(String(output.activity._id), { _id: String(output.activity._id), name: output.activity.name });
+  });
+
+  return [...map.values()];
+});
+
+const filteredOutputs = computed(() =>
+  (props.outputs ?? []).filter((output: any) => String(output.activity._id) === props.output.activityId)
+);
 </script>

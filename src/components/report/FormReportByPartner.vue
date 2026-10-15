@@ -81,6 +81,7 @@ const initialState = {
   },
   outputs: [
     {
+      activityId: "",
       outputId: "",
       total: "",
     },
@@ -113,7 +114,10 @@ const submit = async (formEl: FormInstance | undefined) => {
     }
 
     try {
-      const { data, message } = await createReport(form);
+      const { data, message } = await createReport({
+        ...form,
+        outputs: form.outputs.map(({ outputId, total }) => ({ outputId, total })),
+      });
       feedback.value = {
         title: "Success",
         message: message,
@@ -138,6 +142,7 @@ const submit = async (formEl: FormInstance | undefined) => {
 
 const addOutput = () => {
   form.outputs.push({
+    activityId: "",
     outputId: "",
     total: "",
   });

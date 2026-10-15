@@ -1,15 +1,23 @@
 <template>
   <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
+    <el-form-item required label="Kegiatan">
+      <el-select v-model="activityId" placeholder="Pilih Nama Kegiatan" clearable filterable
+        @change="form.output.outputId = ''">
+        <el-option v-for="activity in activityOptions" :key="activity._id" :label="activity.name"
+          :value="activity._id" />
+      </el-select>
+    </el-form-item>
     <el-form-item required label="Output" prop="output.outputId">
-      <el-select v-model="form.output.outputId" placeholder="Pilih Nama Output" clearable filterable>
-        <el-option v-for="output in outputs" :key="output._id" :label="output.name" :value="output._id">
+      <el-select v-model="form.output.outputId" :disabled="!activityId" placeholder="Pilih Nama Output" clearable
+        filterable>
+        <el-option v-for="output in filteredOutputs" :key="output._id" :label="output.name" :value="output._id">
           <span style="float: left">{{ output.name }}</span>
           <span style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
             ">
-            {{ output.activity.name }}
+            {{ output.unit }}
           </span>
         </el-option>
       </el-select>
@@ -55,7 +63,7 @@
 
 <script lang="ts" setup>
 import Papa from "papaparse";
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 import FormReportPartnerItem from "@/components/report/FormReportPartnerItem.vue";
 import { createReport } from "@/api/reportApi";
 import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
@@ -103,6 +111,22 @@ const initialState = {
 };
 
 const outputs = ref<any[]>([]);
+const activityId = ref("");
+
+// Kegiatan diturunkan dari output agar hanya kegiatan yang punya output yang tampil.
+const activityOptions = computed(() => {
+  const map = new Map<string, any>();
+
+  outputs.value.forEach((output) => {
+    map.set(String(output.activity._id), { _id: String(output.activity._id), name: output.activity.name });
+  });
+
+  return [...map.values()];
+});
+
+const filteredOutputs = computed(() =>
+  outputs.value.filter((output) => String(output.activity._id) === activityId.value)
+);
 const partners = ref<any[]>([]);
 let feedback = ref({
   title: "",
@@ -115,6 +139,7 @@ const form = reactive({ ...initialState });
 const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
+  activityId.value = "";
 };
 
 const downloadMasterPartner = () => {
@@ -181,6 +206,7 @@ const submit = async (formEl: FormInstance | undefined) => {
 
       if (formRef.value) {
         formRef.value.resetFields();
+        activityId.value = "";
       }
     } catch (e) {
       if (e instanceof Error) {
