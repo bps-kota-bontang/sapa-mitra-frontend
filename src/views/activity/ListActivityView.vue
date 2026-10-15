@@ -161,7 +161,7 @@ const paginatedData = computed(() => {
   }
 
   if (filter.value.year?.length) {
-    paginatedData = paginatedData.filter((item: any) => filter.value.year?.includes(item.year));
+    paginatedData = paginatedData.filter((item: any) => filter.value.year?.includes(String(item.year)));
   }
 
   if (filter.value.pok?.length) {

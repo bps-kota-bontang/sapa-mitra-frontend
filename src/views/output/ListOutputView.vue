@@ -150,7 +150,7 @@ const filterOutputs = computed(() => {
       (!search.value ||
         data.name.toLowerCase().includes(search.value.toLowerCase())) &&
       (!filter.value.team?.length || filter.value.team.includes(data.activity.team)) &&
-      (!filter.value.year?.length || filter.value.year.includes(data.year))
+      (!filter.value.year?.length || filter.value.year.includes(String(data.year)))
   );
 });
 

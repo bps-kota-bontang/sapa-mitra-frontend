@@ -148,7 +148,7 @@ const filterPartners = computed(() => {
     const hasAccount = !!data.accountNumber && data.accountNumber.trim() !== "";
     return (
       (!search.value || data.name.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!filter.value.year?.length || filter.value.year.includes(data.year)) &&
+      (!filter.value.year?.length || filter.value.year.includes(String(data.year))) &&
       (!filter.value.accountNumber?.length || filter.value.accountNumber.includes(hasAccount))
     );
   });
