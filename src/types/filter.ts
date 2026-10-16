@@ -10,6 +10,7 @@ export type Filter = {
   total?: boolean[];
   year?: string[];
   pok?: boolean[];
+  mainActivityId?: string[];
   accountNumber?: boolean[];
 };
 
@@ -24,7 +25,7 @@ const initialFilterConfig: Record<FilterType, Partial<Filter>> = {
     total: [],
     hasSpecial: [],
   },
-  activity: { team: [], category: [], isSpecial: [] },
+  activity: { team: [], category: [], isSpecial: [], mainActivityId: [] },
   output: { year: [] },
   partner: { year: [] },
 };

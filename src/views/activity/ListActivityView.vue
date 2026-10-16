@@ -29,6 +29,16 @@
 
       <el-table-column prop="index" width="50" label="No" />
       <el-table-column label="Nama" sortable="custom" prop="name" />
+      <el-table-column label="Kegiatan Utama" min-width="180" :filters="mainActivityFilters" column-key="mainActivityId">
+        <template #default="{ row }">
+          <div class="main-activity-cell">
+            <span>{{ row.mainActivity?.name || row.main || "-" }}</span>
+            <el-tag v-if="row.mainActivityId && row.mainActivity" size="small" type="success">Master baru</el-tag>
+            <el-tag v-else-if="row.mainActivityId" size="small" type="danger">Relasi putus</el-tag>
+            <el-tag v-else-if="row.legacyMain || row.main" size="small" type="warning">Legacy</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="Kode Kegiatan" prop="code" />
       <el-table-column label="Unit" prop="unit" />
       <el-table-column label="Kategori" prop="category" :formatter="categoryFormatter" :filters="activityCategories"
@@ -146,6 +156,10 @@ const paginatedData = computed(() => {
     });
   }
 
+  if (filter.value.mainActivityId?.length) {
+    paginatedData = paginatedData.filter((item: any) => filter.value.mainActivityId?.includes(String(item.mainActivity?._id ?? item.mainActivityId ?? "")));
+  }
+
   if (filter.value.isSpecial?.length) {
     paginatedData = paginatedData.filter((item) => {
       return filter.value.isSpecial?.includes(item.isSpecial);
@@ -156,7 +170,8 @@ const paginatedData = computed(() => {
     paginatedData = paginatedData.filter(
       (data: any) =>
         !search.value ||
-        data.name.toLowerCase().includes(search.value.toLowerCase())
+        data.name.toLowerCase().includes(search.value.toLowerCase()) ||
+        String(data.mainActivity?.name || data.main || "").toLowerCase().includes(search.value.toLowerCase())
     );
   }
 
@@ -177,6 +192,15 @@ const paginatedData = computed(() => {
 });
 
 const sortState = ref(createSortState());
+const mainActivityFilters = computed(() => {
+  const unique = new Map<string, string>();
+  for (const item of activities.value) {
+    const id = String(item.mainActivity?._id ?? item.mainActivityId ?? "");
+    const name = item.mainActivity?.name || item.main || "";
+    if (id && name) unique.set(id, name);
+  }
+  return Array.from(unique, ([value, text]) => ({ value, text }));
+});
 
 const handleSortChange = (e: any) => {
   sortState.value = toSortState(e);
@@ -196,6 +220,7 @@ const clearFilter = () => {
     team: [],
     category: [],
     isSpecial: [],
+    mainActivityId: [],
     year: [],
     pok: []
   }
@@ -209,6 +234,10 @@ const handleFilterChange = (newFilters: any) => {
 
   if (newFilters.category) {
     filter.value.category = newFilters.category
+  }
+
+  if (newFilters.mainActivityId) {
+    filter.value.mainActivityId = newFilters.mainActivityId;
   }
 
   if (newFilters.isSpecial) {
@@ -361,5 +390,12 @@ onMounted(async () => {
 
 .container-activity {
   margin: 10px;
+}
+
+.main-activity-cell {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 </style>

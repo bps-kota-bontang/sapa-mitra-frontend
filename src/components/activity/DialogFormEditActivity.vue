@@ -1,8 +1,15 @@
 <template>
     <el-dialog v-model="props.isShow" title="Ubah Kegiatan" width="500" :before-close="handleClose" fullscreen>
         <el-form :model="form" ref="formRef" label-width="auto" label-position="top" :rules="rules" v-loading="loading">
-            <el-form-item required label="Nama Kegiatan Utama" prop="main">
-                <el-input v-model="form.main" placeholder="Masukkan Nama Kegiatan Utama" />
+            <el-form-item required label="Kegiatan Utama" prop="mainActivityId">
+                <div class="legacy-preview">
+                    <span class="legacy-preview__label">Nama Kegiatan Utama legacy:</span>
+                    <strong>{{ legacyMain || "Tidak ada nama legacy tersimpan" }}</strong>
+                </div>
+                <el-select v-model="form.mainActivityId" placeholder="Pilih Kegiatan Utama" clearable filterable :disabled="!form.year || loadingMainActivities">
+                    <el-option v-for="item in selectableMainActivities" :key="item._id" :label="`${item.name}${item.isActive ? '' : ' (Nonaktif)'}`" :value="item._id" />
+                </el-select>
+                <small v-if="form.year && !mainActivities.length && !loadingMainActivities" class="field-hint">Belum ada Kegiatan Utama aktif untuk tahun ini.</small>
             </el-form-item>
             <el-form-item required label="Nama Kegiatan" prop="name">
                 <el-input v-model="form.name" placeholder="Masukkan Nama Kegiatan" />
@@ -71,13 +78,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { getActivity, updateActivity } from "@/api/activityApi";
+import { getMainActivities } from "@/api/mainActivityApi";
+import type { MainActivity } from "@/types/mainActivity";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { activityCategories, teams } from "@/utils/constant";
 
 const initialState = {
-    main: "",
+    mainActivityId: "",
     name: "",
     code: "",
     unit: "",
@@ -139,11 +148,11 @@ const rules = reactive<FormRules<any>>({
             trigger: "change",
         },
     ],
-    main: [
+    mainActivityId: [
         {
             required: true,
-            message: "Nama kegiatan utama perlu terisi",
-            trigger: "blur",
+            message: "Kegiatan Utama perlu dipilih",
+            trigger: "change",
         },
     ],
     "pok.program": [
@@ -213,9 +222,31 @@ const props: any = defineProps({
 });
 
 const loading = ref(false);
+const loadingMainActivities = ref(false);
+const mainActivities = ref<MainActivity[]>([]);
+const legacyMainActivity = ref<MainActivity | null>(null);
+const selectableMainActivities = computed(() => {
+    if (!legacyMainActivity.value || form.mainActivityId !== legacyMainActivity.value._id || mainActivities.value.some((item) => item._id === legacyMainActivity.value?._id)) return mainActivities.value;
+    return [...mainActivities.value, legacyMainActivity.value];
+});
+const legacyMain = ref("");
 const handleClose = () => {
     emit('closeDialog')
 }
+
+watch(() => [form.year, form.team] as const, async ([year, team], [oldYear, oldTeam]) => {
+    if ((oldYear && year !== oldYear) || (oldTeam && team !== oldTeam)) form.mainActivityId = "";
+    mainActivities.value = [];
+    if (!year || !team) return;
+    loadingMainActivities.value = true;
+    try {
+        mainActivities.value = await getMainActivities(year, false, team);
+    } catch (error) {
+        ElNotification({ title: "Error", message: error instanceof Error ? error.message : "Gagal memuat Kegiatan Utama", type: "error" });
+    } finally {
+        loadingMainActivities.value = false;
+    }
+});
 
 const update = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
@@ -254,13 +285,23 @@ const update = async (formEl: FormInstance | undefined) => {
 watch(() => props.id, async (newId) => {
     if (newId) {
         const data = await getActivity(props.id);
-        form.main = data.main;
         form.name = data.name;
         form.code = data.code;
         form.unit = data.unit;
         form.category = data.category;
         form.team = data.team;
         form.year = data.year;
+        form.mainActivityId = String(data.mainActivityId ?? "");
+        legacyMain.value = String(data.legacyMain ?? data.main ?? "");
+        legacyMainActivity.value = data.mainActivity && data.mainActivityId
+            ? {
+                _id: String(data.mainActivityId),
+                name: data.mainActivity.name,
+                year: Number(data.mainActivity.year),
+                isActive: Boolean(data.mainActivity.isActive),
+                team: data.mainActivity.team ?? null,
+            }
+            : null;
         form.isSpecial = data.isSpecial;
         if (data.pok) {
             form.pok = data.pok;
@@ -284,3 +325,22 @@ watch(
 
 
 </script>
+
+<style scoped>
+.legacy-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    background-color: var(--el-fill-color-light);
+    color: var(--el-text-color-regular);
+}
+
+.legacy-preview__label {
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+}
+</style>

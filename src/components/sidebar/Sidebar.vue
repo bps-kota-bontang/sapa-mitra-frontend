@@ -48,6 +48,7 @@
       <el-menu-item index="/kegiatan"><router-link to="/kegiatan" class="menu-link">Daftar Kegiatan</router-link></el-menu-item>
       <el-menu-item index="/kegiatan/tambah"><router-link to="/kegiatan/tambah" class="menu-link">Tambah
           Kegiatan</router-link></el-menu-item>
+        <el-menu-item v-if="user.team" index="/kegiatan-utama"><router-link to="/kegiatan-utama" class="menu-link">Kegiatan Utama</router-link></el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="5">
       <template #title>

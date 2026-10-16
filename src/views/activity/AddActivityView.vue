@@ -23,6 +23,12 @@
     <el-form-item required label="Tahun" prop="year">
       <el-input v-model="form.year" placeholder="Masukkan Tahun Kegiatan"  />
     </el-form-item>
+    <el-form-item required label="Kegiatan Utama" prop="mainActivityId">
+      <el-select v-model="form.mainActivityId" placeholder="Pilih Kegiatan Utama" clearable filterable :disabled="!form.year || loadingMainActivities">
+        <el-option v-for="item in mainActivities" :key="item._id" :label="item.name" :value="item._id" />
+      </el-select>
+      <small v-if="form.year && !mainActivities.length && !loadingMainActivities" class="field-hint">Belum ada Kegiatan Utama aktif untuk tahun ini.</small>
+    </el-form-item>
     <el-form-item label="Khusus" prop="isSpecial">
       <el-switch v-model="form.isSpecial" />
     </el-form-item>
@@ -36,6 +42,8 @@
 <script lang="ts" setup>
 import { ref, reactive, watch } from "vue";
 import { createActivity } from "@/api/activityApi";
+import { getMainActivities } from "@/api/mainActivityApi";
+import type { MainActivity } from "@/types/mainActivity";
 import { ElNotification, type FormInstance, type FormRules } from "element-plus";
 import { teams, activityCategories } from "@/utils/constant";
 
@@ -84,6 +92,7 @@ const rules = reactive<FormRules<any>>({
       trigger: "change",
     },
   ],
+  mainActivityId: [{ required: true, message: "Kegiatan Utama perlu dipilih", trigger: "change" }],
 });
 
 const initialState = {
@@ -93,6 +102,7 @@ const initialState = {
   category: "",
   team: "",
   year: "",
+  mainActivityId: "",
   isSpecial: false
 };
 
@@ -102,7 +112,23 @@ let feedback = ref({
   type: "",
 });
 const loading = ref(false);
+const loadingMainActivities = ref(false);
+const mainActivities = ref<MainActivity[]>([]);
 const form = reactive({ ...initialState });
+
+watch(() => [form.year, form.team] as const, async ([year, team]) => {
+  form.mainActivityId = "";
+  mainActivities.value = [];
+  if (!year || !team) return;
+  loadingMainActivities.value = true;
+  try {
+    mainActivities.value = await getMainActivities(year, true, team);
+  } catch (error) {
+    ElNotification({ title: "Error", message: error instanceof Error ? error.message : "Gagal memuat Kegiatan Utama", type: "error" });
+  } finally {
+    loadingMainActivities.value = false;
+  }
+});
 
 const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
