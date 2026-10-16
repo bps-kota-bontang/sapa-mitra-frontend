@@ -13,6 +13,7 @@ import { useAuthStore } from "@/stores/auth";
 import trainingRoutes from "@/router/trainingRoute";
 import recapRoutes from "@/router/recapRoute";
 import mainActivityRoutes from "@/router/mainActivityRoute";
+import skRoutes from "@/router/skRoute";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,7 @@ const router = createRouter({
     ...recapRoutes,
     ...activityRoutes,
     ...mainActivityRoutes,
+    ...skRoutes,
     ...outputRoutes,
     ...partnerRoutes,
     ...userRoutes,

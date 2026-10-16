@@ -29,6 +29,9 @@
       <el-menu-item v-if="!['KEPALA'].includes(user.position)" index="/bast/buat"><router-link to="/bast/buat"
           class="menu-link">Buat BAST</router-link></el-menu-item>
     </el-sub-menu>
+    <el-menu-item index="/sk">
+      <router-link to="/sk" class="menu-link"><el-icon><Document /></el-icon><span>Surat Keputusan</span></router-link>
+    </el-menu-item>
     <el-menu-item index="/pelatihan" v-if="['TU'].includes(user.team)">
       <router-link to="/pelatihan" class="menu-link"><el-icon>
           <Money />
